@@ -1,0 +1,27 @@
+{
+  "name"       : "walkner-outdoor",
+  "version"    : "0.1.0",
+  "description": "Wygrzewanie opraw LED",
+  "homepage"   : "https://github.com/morkai/walkner-outdoor",
+  "author"     :
+  {
+    "name" : "Łukasz Walukiewicz",
+    "email": "lukasz@walukiewicz.eu",
+    "url"  : "http://lukasz.walukiewicz.eu/"
+  },
+  "bugs"      : "https://github.com/morkai/walkner-outdoor/issues",
+  "repository":
+  {
+    "type": "git",
+    "url" :  "http://github.com/morkai/walkner-outdoor.git"
+  },
+  "engine"      : ["node >=0.6.0"],
+  "main"        : "./lib/index",
+  "dependencies": {
+    "mongoose"  : "2.4.1",
+    "express"   : "2.5.1",
+    "socket.io" : "0.8.7",
+    "step"      : "0.0.5",
+    "underscore": "1.2.3"
+  }
+}
