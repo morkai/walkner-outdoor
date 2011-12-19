@@ -1,5 +1,5 @@
 var indexHtml = require('fs').readFileSync(
-  'public/app/templates/index.html', 'utf8'
+  __dirname + '/../../public/app/templates/index.html', 'utf8'
 );
 
 app.get('/', function(req, res)
