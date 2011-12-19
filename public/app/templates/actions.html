@@ -1,0 +1,10 @@
+<ul class="page-actions">
+  <% _.each(actions, function(action) { %>
+  <li>
+    <% if (action.href) { %>
+    <a id="<%- action.id %>" class="<%- action.className %>" href="<%- action.href %>"><%- action.text %></a>
+    <% } else { %>
+    <input id="<%- action.id %>" class="<%- action.className %>" type="<%- action.type %>" value="<%- action.text %>">
+    <% } %>
+  <% }) %>
+</ul>

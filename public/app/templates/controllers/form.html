@@ -1,0 +1,8 @@
+<form class="controller form" method="post" action="<%- action %>">
+  <input type="submit">
+  <ul class="fields">
+    <li>
+      <label for="controller-name">Nazwa<span class="required" title="Wymagane">*</span></label>
+      <input id="controller-name" name="controller.name" class="full textline" type="text" autofocus value="<%= controller.name %>">
+  </ul>
+</form>

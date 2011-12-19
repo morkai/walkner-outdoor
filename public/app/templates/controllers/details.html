@@ -1,0 +1,20 @@
+<div class="properties">
+  <div class="property">
+    <span class="property-name">Nazwa:</span>
+    <span class="property-value"><%- controller.name %></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Typ:</span>
+    <span class="property-value"><%- controller.typeText %></span>
+  </div>
+  <% if (controller.type === 'modbus-tcp') { %>
+  <div class="property">
+    <span class="property-name">Host:</span>
+    <span class="property-value"><%- controller.connectionInfo.host %></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Port:</span>
+    <span class="property-value"><%- controller.connectionInfo.port %></span>
+  </div>
+  <% } %>
+</div>

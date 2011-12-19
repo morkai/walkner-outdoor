@@ -1,0 +1,14 @@
+<li>
+  <label for="controller-type">Typ</label>
+  <select id="controller-type" name="controller.type" class="short select" data-placeholder="Wybierz typ...">
+    <option>
+  </select>
+<li class="controller-type" data-type="modbus-tcp">
+  <ul class="fields">
+    <li>
+      <label for="controller-modbus-tcp-host">Host</label>
+      <input id="controller-modbus-tcp-host" name="controller.connectionInfo.host" class="short textline" type="text" value="<%= controller.connectionInfo.host %>">
+    <li>
+      <label for="controller-modbus-tcp-port">Port</label>
+      <input id="controller-modbus-tcp-port" name="controller.connectionInfo.port" class="short textline" type="number" value="<%= controller.connectionInfo.port %>">
+  </ul>

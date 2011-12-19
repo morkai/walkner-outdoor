@@ -1,0 +1,26 @@
+<li>
+  <label for="zone-controller">Sterownik<span class="required" title="Wymagane">*</span></label>
+  <select id="zone-controller" name="zone.controller" class="short select" data-placeholder="Wybierz sterownik..." data-type="<%- zone.controller.type %>">
+    <option>
+  </select>
+<li class="controller-info" data-type="modbus-tcp">
+  <ul class="fields">
+    <li>
+      <label for="zone-modbus-tcp-state-unit">Jednostka stanu strefy</label>
+      <input id="zone-modbus-tcp-state-unit" name="zone.controllerInfo.stateUnit" class="short textline" type="number" min="0" max="255" value="<%= zone.controllerInfo.stateUnit %>">
+    <li>
+      <label for="zone-modbus-tcp-state-output">Wyjście stanu strefy</label>
+      <input id="zone-modbus-tcp-state-output" name="zone.controllerInfo.stateOutput" class="short textline" type="number" min="0" max="65535" value="<%= zone.controllerInfo.stateOutput %>">
+    <li>
+      <label for="zone-modbus-tcp-green-unit">Jednostka zielonej lampy</label>
+      <input id="zone-modbus-tcp-green-unit" name="zone.controllerInfo.greenLedUnit" class="short textline" type="number" min="0" max="255" value="<%= zone.controllerInfo.greenLedUnit %>">
+    <li>
+      <label for="zone-modbus-tcp-green-output">Wyjście zielonej lampy</label>
+      <input id="zone-modbus-tcp-green-output" name="zone.controllerInfo.greenLedOutput" class="short textline" type="number" min="0" max="65535" value="<%= zone.controllerInfo.greenLedOutput %>">
+    <li>
+      <label for="zone-modbus-tcp-red-unit">Jednostka czerwonej lampy</label>
+      <input id="zone-modbus-tcp-red-unit" name="zone.controllerInfo.redLedUnit" class="short textline" type="number" min="0" max="255" value="<%= zone.controllerInfo.redLedUnit %>">
+    <li>
+      <label for="zone-modbus-tcp-red-output">Wyjście czerwony lampy</label>
+      <input id="zone-modbus-tcp-red-output" name="zone.controllerInfo.redLedOutput" class="short textline" type="number" min="0" max="65535" value="<%= zone.controllerInfo.redLedOutput %>">
+  </ul>

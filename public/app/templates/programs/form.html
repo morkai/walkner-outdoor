@@ -1,0 +1,13 @@
+<form class="program form" method="post" action="<%- action %>">
+  <input type="submit">
+  <ul class="fields">
+    <li>
+      <label for="program-name">Nazwa<span class="required" title="Wymagane">*</span></label>
+      <input id="program-name" name="program.name" class="full textline" type="text" autofocus value="<%= program.name %>">
+    <li>
+      <input id="program-infinite" name="program.infinite" class="checkbox" type="checkbox">
+      <label for="program-infinite">Powtarzany w nieskończoność</label>
+    <li>
+      <table class="program-steps"></table>
+  </ul>
+</form>

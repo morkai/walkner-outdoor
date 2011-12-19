@@ -1,0 +1,7 @@
+<ol class="<%- className %> list">
+  <% _.each(list, function(item) { %>
+  <li>
+    <a href="<%- item.href %>" class="<%- item.className || '' %>"><%- item.text %></a>
+  </li>
+  <% }) %>
+</ol>

@@ -1,0 +1,67 @@
+<form class="form" method="post" action="<%- action %>">
+  <ul class="fields">
+    <li>
+      <label for="form-auto-textline">Text line (auto width) followed by
+        button</label>
+      <input class="textline" id="form-auto-textline" type="text">
+      <input class="button" type="button" value="Button after text">
+    <li>
+      <label for="form-short-textline">Short text
+        line<span class="required" title="Required">*</span></label>
+      <input class="short textline" id="form-short-textline" type="text">
+    <li>
+      <label for="form-medium-textline">Medium text line
+        <em>(required)</em></label>
+      <input class="medium textline" id="form-medium-textline" type="text">
+    <li>
+      <label for="form-full-textline">Full text line</label>
+      <input class="full textline" id="form-full-textline" type="text">
+    <li>
+      <label for="form-short-textarea">Short textarea</label>
+      <textarea class="short textarea" id="form-short-textarea" rows="5"></textarea>
+    <li>
+      <label for="form-medium-textarea">Medium textarea</label>
+      <textarea class="medium textarea" id="form-medium-textarea" rows="5"></textarea>
+    <li>
+      <label for="form-long-textarea">Long textarea</label>
+      <textarea class="long textarea" id="form-long-textarea" rows="5"></textarea>
+    <li>
+      <label for="form-auto-textarea">Auto full textarea</label>
+      <textarea class="textarea" id="form-auto-textarea" rows="5"></textarea>
+    <li>
+      <label for="form-select-single">Single select</label>
+      <select class="select" id="form-select-single">
+        <option value="0">Zero
+        <option value="1">One
+        <option value="2">Two
+        <option value="3">Three
+        <option value="4">Four
+        <option value="5">Five
+      </select>
+    <li>
+      <label for="form-select-multi">Multi select</label>
+      <select class="select" id="form-select-multi" multiple>
+        <option value="0">Zero
+        <option value="1">One
+        <option value="2">Two
+        <option value="3">Three
+        <option value="4">Four
+        <option value="5">Five
+      </select>
+    <li>
+      <input id="form-checkbox" name="checkbox" class="checkbox" type="checkbox" value="1">
+      <label for="form-checkbox">Remember me</label>
+    <li>
+      <input id="form-radio-yes" name="radio" class="radio" type="radio" value="1">
+      <label for="form-radio-yes">Yes</label>
+      <input id="form-radio-no" name="radio" class="radio" type="radio" value="0">
+      <label for="form-radio-no">No</label>
+    <li>
+      <ul class="actions">
+        <li><input class="button" type="submit" value="Sign in">
+        <li><input class="button" type="button" value="Do something">
+        <li><a href="#recoverPassword">Recover lost password</a>
+        <li><a href="#registerAccount">Register a new account</a>
+      </ul>
+  </ul>
+</form>

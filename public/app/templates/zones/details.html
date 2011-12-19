@@ -1,0 +1,39 @@
+<div class="properties">
+  <div class="property">
+    <span class="property-name">Nazwa:</span>
+    <span class="property-value"><%- zone.name %></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Sterownik:</span>
+    <span class="property-value">
+      <% if (zone.controller) { %>
+      <a href="#controllers/<%- zone.controller._id %>"><%- zone.controller.name %></a>
+      <% } else { %>
+      -
+      <% } %>
+    </span>
+  </div>
+  <% if (zone.controller.type === 'modbus-tcp') { %>
+  <div class="property">
+    <span class="property-name">Adres stanu strefy:</span>
+    <span class="property-value">
+      Wyjście <code><%- zone.controllerInfo.stateOutput %></code>
+      w jednostce <code><%- zone.controllerInfo.stateUnit %></code>
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Adres zielonej lampy:</span>
+    <span class="property-value">
+      Wyjście <code><%- zone.controllerInfo.greenLedOutput %></code>
+      w jednostce <code><%- zone.controllerInfo.greenLedUnit %></code>
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Adres czerwonej lampy:</span>
+    <span class="property-value">
+      Wyjście <code><%- zone.controllerInfo.redLedOutput %></code>
+      w jednostce <code><%- zone.controllerInfo.redLedUnit %></code>
+    </span>
+  </div>
+  <% } %>
+</div>

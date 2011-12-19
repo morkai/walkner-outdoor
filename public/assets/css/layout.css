@@ -1,0 +1,184 @@
+.layout
+{
+  margin-bottom: 1em;
+}
+a
+{
+  color: #06C;
+  text-decoration: none;
+}
+a:hover,
+a:active
+{
+  color: #F50;
+}
+.menu
+{
+  display: block;
+  background: #FFF;
+  background: -moz-linear-gradient(#FFF, #F1F1F1);
+  background: -webkit-linear-gradient(#FFF, #F1F1F1);
+  background: -o-linear-gradient(#FFF, #F1F1F1);
+  background: -ms-linear-gradient(#FFF, #F1F1F1);
+  background: linear-gradient(#FFF, #F1F1F1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FFFFFF', endColorstr = '#F1F1F1');
+  text-align: center;
+  border-bottom: 1px solid #D4D4D4;
+}
+.menu li
+{
+  margin: 0 auto 0 -1px;
+  display: inline-block;
+  border-left: 1px solid #D4D4D4;
+  border-right: 1px solid #D4D4D4;
+}
+.menu .active
+{
+  background: #F1F1F1;
+  background: -moz-linear-gradient(#F1F1F1, #FFF);
+  background: -webkit-linear-gradient(#F1F1F1, #FFF);
+  background: -o-linear-gradient(#F1F1F1, #FFF);
+  background: -ms-linear-gradient(#F1F1F1, #FFF);
+  background: linear-gradient(#F1F1F1, #FFF);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#F1F1F1', endColorstr = '#FFFFFF');
+}
+.menu a
+{
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  font-size: 1.5em;
+  padding: .5em .5em .5em .5em;
+  text-transform: lowercase;
+  font-variant: small-caps;
+  font-weight: bold;
+  text-shadow: 1px 1px 1px #FFF;
+}
+.list
+{
+  background: #FFF;
+  box-shadow: 0 1px 3px #666;
+  margin: 1em;
+}
+.list li
+{
+  margin: 0;
+  padding: 0;
+}
+.list a
+{
+  border-bottom: 1px solid #D4D4D4;
+  display: block;
+  font-size: 1.5em;
+  margin: 0;
+  padding: .5em;
+  text-decoration: none;
+}
+.list > :last-child a
+{
+  border-bottom: 0;
+}
+.list a:hover,
+.list a:active,
+.list a.active
+{
+  background: #39F;
+  color: #FFF;
+  outline: 0;
+}
+.breadcrumbs
+{
+  margin: .5em;
+  display: block;
+  font-size: 2em;
+}
+.breadcrumbs li
+{
+  display: inline;
+}
+.breadcrumbs li:after
+{
+  content: " > ";
+}
+.breadcrumbs li:last-child:after
+{
+  content: "";
+}
+.page-actions
+{
+  margin-top: .85em;
+  display: block;
+  float: right;
+}
+.page-actions li
+{
+  display: inline-block;
+  margin-right: 1em;
+}
+.page-actions a,
+.page-actions input
+{
+  font-size: 1.5em;
+}
+.details h1
+{
+  font-size: 2em;
+}
+.properties
+{
+  margin: 1em;
+  background: #FFF;
+  box-shadow: 0 1px 3px #666;
+  padding: 1em;
+}
+.property
+{
+  margin-top: 1em;
+}
+.property:first-child
+{
+  margin-top: 0;
+}
+.property-name
+{
+  margin-bottom: .25em;
+  font-weight: bold;
+  display: block;
+}
+.property-value em
+{
+  font-style: oblique;
+}
+.property-value code
+{
+  font-family: monospace;
+}
+
+.delete-confirm
+{
+  margin: 1em;
+  background: #FFF;
+  box-shadow: 0 1px 3px #666;
+  padding: 1em;
+}
+.delete-confirm p
+{
+  margin-bottom: 1em;
+}
+.dialog .delete-confirm
+{
+  width: auto;
+}
+
+@media all and (max-width: 700px)
+{
+  .menu
+  {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  .breadcrumbs li
+  {
+    display: block;
+  }
+}
