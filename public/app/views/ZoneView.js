@@ -4,13 +4,14 @@ define(
   'Underscore',
   'Backbone',
 
+  'app/time',
   'app/models/Programs',
   'app/views/viewport',
   'app/views/programs/ProgramListView',
 
   'text!app/templates/zones/zone.html'
 ],
-function($, _, Backbone, Programs, viewport, ProgramListView, zoneTpl)
+function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
 {
   var renderZone = _.template(zoneTpl);
 
@@ -86,7 +87,7 @@ function($, _, Backbone, Programs, viewport, ProgramListView, zoneTpl)
         return;
       }
 
-      var startTime  = state.startTime;
+      var startTime  = state.startTime - time.offset;
       var totalTime  = state.totalTime * 1000;
       var endTime    = startTime + totalTime;
       var now        = Date.now();

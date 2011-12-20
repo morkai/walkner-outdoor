@@ -9,11 +9,12 @@ require(
   'Underscore',
   'Backbone',
 
+  'app/time',
   'app/socket',
   'app/routers/main',
   'app/views/viewport'
 ],
-function(domReady, $, _, Backbone, socket, setupRouting, viewport)
+function(domReady, $, _, Backbone, time, socket, setupRouting, viewport)
 {
   setupRouting({});
   domReady(function()

@@ -8,6 +8,11 @@ app.get('/', function(req, res)
   res.send(indexHtml);
 });
 
+app.get('/time', function(req, res)
+{
+  res.send(Date.now().toString());
+});
+
 require('./zones');
 require('./programs');
 require('./controllers');
