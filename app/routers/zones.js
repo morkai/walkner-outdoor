@@ -1,5 +1,8 @@
+var _          = require('underscore');
+var step       = require('step');
 var Zone       = require('../models/Zone');
 var Controller = require('../models/Controller');
+var Program    = require('../models/Program');
 
 app.get('/zones', function(req, res, next)
 {
@@ -25,21 +28,49 @@ app.post('/zones', function(req, res, next)
 
 app.get('/zones/:id', function(req, res, next)
 {
-  Zone.findById(req.params.id, function(err, zone)
-  {
-    if (err) return next(err);
-
-    if (!zone) return res.send(404);
-
-    var zone = zone.toJSON();
-
-    Controller.findById(zone.controller, function(err, controller)
+  step(
+    function findZoneStep()
     {
-      zone.controller = controller ? controller : null;
+      Zone.findById(req.params.id, this);
+    },
+    function findControllerStep(err, zone)
+    {
+      if (err) throw err;
+
+      if (!zone) throw 404;
+
+      var zone = zone.toJSON();
+      var next = this;
+
+      Controller.findById(zone.controller, {name: 1, type: 1}, function(err, controller)
+      {
+        next(err, zone, controller);
+      });
+    },
+    function findProgramStep(err, zone, controller)
+    {
+      if (err) throw err;
+
+      zone.controller = controller ? controller.toJSON() : null;
+
+      var next = this;
+
+      Program.findById(zone.program, {name: 1}, function(err, program)
+      {
+        next(err, zone, program);
+      });
+    },
+    function sendResponseStep(err, zone, program)
+    {
+      if (err === 404) return res.send(404);
+
+      if (err) return next(err);
+
+      zone.program = program ? program.toJSON() : null;
 
       res.send(zone);
-    });
-  });
+    }
+  );
 });
 
 app.post('/zones/:id', function(req, res, next)
@@ -82,9 +113,21 @@ app.post('/zones/:id', function(req, res, next)
 
 app.put('/zones/:id', function(req, res, next)
 {
-  delete req.body._id;
+  var data = req.body;
 
-  Zone.update({_id: req.params.id}, req.body, function(err, count)
+  delete data._id;
+
+  if (_.isObject(data.controller))
+  {
+    data.controller = data.controller._id;
+  }
+
+  if (_.isObject(data.program))
+  {
+    data.program = data.program._id;
+  }
+
+  Zone.update({_id: req.params.id}, data, function(err, count)
   {
     if (err) return next(err);
 

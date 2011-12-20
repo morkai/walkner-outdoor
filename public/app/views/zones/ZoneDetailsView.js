@@ -34,6 +34,7 @@ function($, _, Backbone, viewport, PageLayout, DeleteZoneView, detailsTpl)
       var id    = model.get('_id');
 
       return [
+        {href: '#zones/' + id + ';program', text: 'Programuj'},
         {href: '#zones/' + id + ';edit', text: 'Edytuj'},
         {href: '#zones/' + id + ';delete', text: 'Usuń', handler: function(e)
         {

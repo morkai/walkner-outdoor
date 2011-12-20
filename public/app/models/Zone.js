@@ -3,14 +3,16 @@ define(
   'Underscore',
   'Backbone',
 
-  'app/models/Controller'
+  'app/models/Controller',
+  'app/models/Program'
 ],
 /**
  * @param {Underscore} _
  * @param {Backbone} Backbone
  * @param {function(new:Controller)} Controller
+ * @param {function(new:Program)} Program
  */
-function(_, Backbone, Controller)
+function(_, Backbone, Controller, Program)
 {
   /**
    * @class Zone
@@ -35,9 +37,19 @@ function(_, Backbone, Controller)
    */
   Zone.prototype.parse = function(res)
   {
-    if (res && _.isObject(res.controller))
+    if (!res)
+    {
+      return res;
+    }
+
+    if (_.isObject(res.controller))
     {
       res.controller = new Controller(res.controller);
+    }
+
+    if (_.isObject(res.program))
+    {
+      res.program = new Program(res.program);
     }
 
     return res;
@@ -73,6 +85,10 @@ function(_, Backbone, Controller)
       data.controller     = {};
       data.controllerInfo = {};
     }
+
+    data.program = data.program instanceof Program
+      ? data.program.toTemplateData()
+      : {};
 
     return data;
   };

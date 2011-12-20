@@ -9,7 +9,8 @@ define(
   'app/views/zones/AddZoneFormView',
   'app/views/zones/ZoneDetailsView',
   'app/views/zones/EditZoneFormView',
-  'app/views/zones/DeleteZoneView'
+  'app/views/zones/DeleteZoneView',
+  'app/views/zones/ProgramZoneView',
 ],
 /**
  * @param {Backbone} Backbone
@@ -21,6 +22,7 @@ define(
  * @param {function(new:ZoneDetailsView)} ZoneDetailsView
  * @param {function(new:EditZoneFormView)} EditZoneFormView
  * @param {function(new:DeleteZoneView)} DeleteZoneView
+ * @param {function(new:ProgramZoneView)} ProgramZoneView
  */
 function(
   Backbone,
@@ -31,7 +33,8 @@ function(
   AddZoneFormView,
   ZoneDetailsView,
   EditZoneFormView,
-  DeleteZoneView)
+  DeleteZoneView,
+  ProgramZoneView)
 {
 
 /**
@@ -42,11 +45,12 @@ function(
  */
 var ZonesRouter = Backbone.Router.extend({
   routes: {
-    'zones'           : 'list',
-    'zones;add'       : 'add',
-    'zones/:id'       : 'view',
-    'zones/:id;edit'  : 'edit',
-    'zones/:id;delete': 'delete'
+    'zones'            : 'list',
+    'zones;add'        : 'add',
+    'zones/:id'        : 'view',
+    'zones/:id;edit'   : 'edit',
+    'zones/:id;delete' : 'delete',
+    'zones/:id;program': 'program'
   }
 });
 
@@ -114,6 +118,22 @@ ZonesRouter.prototype.delete = function(id)
     success: function(model)
     {
       viewport.showView(new DeleteZoneView({model: model}));
+    },
+    error: function()
+    {
+      viewport.msg.loadingFailed();
+    }
+  });
+};
+
+ZonesRouter.prototype.program = function(id)
+{
+  viewport.msg.loading();
+
+  new Zone({_id: id}).fetch({
+    success: function(model)
+    {
+      viewport.showView(new ProgramZoneView({model: model}));
     },
     error: function()
     {

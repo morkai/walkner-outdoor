@@ -4,9 +4,19 @@
     <span class="property-value"><%- zone.name %></span>
   </div>
   <div class="property">
+    <span class="property-name">Przypisany program:</span>
+    <span class="property-value">
+      <% if (zone.program._id) { %>
+      <a href="#programs/<%- zone.program._id %>"><%- zone.program.name %></a>
+      <% } else { %>
+      -
+      <% } %>
+    </span>
+  </div>
+  <div class="property">
     <span class="property-name">Sterownik:</span>
     <span class="property-value">
-      <% if (zone.controller) { %>
+      <% if (zone.controller._id) { %>
       <a href="#controllers/<%- zone.controller._id %>"><%- zone.controller.name %></a>
       <% } else { %>
       -
