@@ -2,6 +2,9 @@ define(
 [
   'jQuery'
 ],
+/**
+ * @param {jQuery} $
+ */
 function($)
 {
   var time = {offset: 0};
