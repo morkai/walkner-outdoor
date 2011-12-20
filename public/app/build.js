@@ -1,6 +1,10 @@
 ({
   baseUrl: "../",
-  name: 'app/main',
-  out: "main.min.js",
-  wrap: true
+  dir: "../../public-build",
+  out: "app.min.js",
+  name: "app/main",
+  wrap: true,
+  paths: {
+    "socket.io": "empty:"
+  }
 })

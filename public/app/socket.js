@@ -1,6 +1,6 @@
 define(
 [
-  '/socket.io/socket.io.js'
+  'socket.io'
 ],
 function()
 {
