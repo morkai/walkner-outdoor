@@ -37,6 +37,23 @@ Instalujemy zależne pakiety:
 
     $ npm install
 
+## Konfiguracja
+
+Pliki konfiguracyjne to pliki JavaScript znajdujące się w katalogu `config/`.
+
+### express.js
+
+  * `port` - port na jakim ma odpowiadać aplikacja.
+
+### libcoap.js
+
+Konfiguracja sterownika opartego na _libcoap_.
+
+  * `coapClientPath` - absolutna ścieżka do pliku wykonywalnego `coap-client`.
+
+  * `stateFilesDir` - absolutna ścieżka do folderu z plikami `one.bin`
+    oraz `zero.bin`.
+
 ## Uruchomienie
 
 Jeżeli jeszcze nie uruchomione, startujemy MongoDB:
@@ -47,4 +64,4 @@ Uruchamiamy serwer aplikacji:
 
     $ node walkner-outdoor/app/server.js
 
-Aplikacja powinna być dostępna na porcie 8080.
+Aplikacja powinna być dostępna na porcie, który jest ustawiony w `config/express.js` (domyślnie 8080).
