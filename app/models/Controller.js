@@ -10,7 +10,7 @@ var Controller = new mongoose.Schema({
   type: {
     type    : String,
     required: true,
-    enum    : ['modbus-tcp']
+    enum    : ['modbus-tcp', 'libcoap']
   },
   connectionInfo: {}
 });

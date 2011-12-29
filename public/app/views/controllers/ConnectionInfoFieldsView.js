@@ -4,12 +4,15 @@ define(
   'Underscore',
   'Backbone',
 
+  'app/models/controllerTypes',
+
   'text!app/templates/controllers/connectionInfoFields.html'
 ],
 function(
   $,
   _,
   Backbone,
+  controllerTypes,
   connectionInfoFieldsTpl)
 {
   var renderConnectionInfoFields = _.template(connectionInfoFieldsTpl);
@@ -48,7 +51,7 @@ function(
       var selectedType = this.model.type;
       var selectEl     = this.$('select[name="controller.type"]');
 
-      _.each({'modbus-tcp': 'MODBUS TCP/IP'}, function(text, value)
+      _.each(controllerTypes, function(text, value)
       {
         $('<option></option>')
           .attr({value: value, selected: value === selectedType})

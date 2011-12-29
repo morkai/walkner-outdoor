@@ -10,11 +10,17 @@
   <% if (controller.type === 'modbus-tcp') { %>
   <div class="property">
     <span class="property-name">Host:</span>
-    <span class="property-value"><%- controller.connectionInfo.host %></span>
+    <span class="property-value"><code><%- controller.connectionInfo.host %></code></span>
   </div>
   <div class="property">
     <span class="property-name">Port:</span>
-    <span class="property-value"><%- controller.connectionInfo.port %></span>
+    <span class="property-value"><code><%- controller.connectionInfo.port %></code></span>
+  </div>
+  <% } %>
+  <% if (controller.type === 'libcoap') { %>
+  <div class="property">
+    <span class="property-name">URI:</span>
+    <span class="property-value"><code><%- controller.connectionInfo.uri %></code></span>
   </div>
   <% } %>
 </div>

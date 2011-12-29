@@ -78,6 +78,14 @@ function(_, Backbone, Controller, Program)
             redLedUnit    : 0
           });
           break;
+
+        case 'libcoap':
+          data.controllerInfo = _.defaults(data.controllerInfo || {}, {
+            stateResource   : '/io/state',
+            greenLedResource: '/io/greenLed',
+            redLedResource  : '/io/redLed'
+          });
+          break;
       }
     }
     else

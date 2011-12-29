@@ -24,3 +24,15 @@
       <label for="zone-modbus-tcp-red-output">Wyjście czerwony lampy</label>
       <input id="zone-modbus-tcp-red-output" name="zone.controllerInfo.redLedOutput" class="short textline" type="number" min="0" max="65535" value="<%= zone.controllerInfo.redLedOutput %>">
   </ul>
+<li class="controller-info" data-type="libcoap">
+  <ul class="fields">
+    <li>
+      <label for="zone-libcoap-state-resource">Zasób stanu strefy</label>
+      <input id="zone-libcoap-state-resource" name="zone.controllerInfo.stateResource" class="short textline" type="text" value="<%= zone.controllerInfo.stateResource %>">
+    <li>
+      <label for="zone-libcoap-green-resource">Zasób zielonej lampy</label>
+      <input id="zone-libcoap-green-resource" name="zone.controllerInfo.greenLedResource" class="short textline" type="text" value="<%= zone.controllerInfo.greenLedResource %>">
+    <li>
+      <label for="zone-libcoap-red-resource">Zasób czerwonej lampy</label>
+      <input id="zone-libcoap-red-resource" name="zone.controllerInfo.redLedResource" class="short textline" type="text" value="<%= zone.controllerInfo.redLedResource %>">
+  </ul>

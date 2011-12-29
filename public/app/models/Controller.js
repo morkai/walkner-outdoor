@@ -1,13 +1,15 @@
 define(
 [
   'Underscore',
-  'Backbone'
+  'Backbone',
+
+  'app/models/controllerTypes'
 ],
 /**
  * @param {Underscore} _
  * @param {Backbone} Backbone
  */
-function(_, Backbone)
+function(_, Backbone, controllerTypes)
 {
   /**
    * @class Controller
@@ -27,13 +29,20 @@ function(_, Backbone)
   {
     var data = this.toJSON();
 
+    data.typeText = controllerTypes[data.type] || '-';
+
     switch (data.type)
     {
       case 'modbus-tcp':
-        data.typeText       = 'MODBUS TCP/IP';
         data.connectionInfo = _.defaults(data.connectionInfo || {}, {
           host: '127.0.0.1',
           port: 502
+        });
+        break;
+
+      case 'libcoap':
+        data.connectionInfo = _.defaults(data.connectionInfo || {}, {
+          uri: 'coap://127.0.0.1'
         });
         break;
 

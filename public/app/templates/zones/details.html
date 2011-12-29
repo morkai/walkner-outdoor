@@ -46,4 +46,18 @@
     </span>
   </div>
   <% } %>
+  <% if (zone.controller.type === 'libcoap') { %>
+  <div class="property">
+    <span class="property-name">Zasób stanu strefy:</span>
+    <span class="property-value"><code><%- zone.controllerInfo.stateResource %></code></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Zasób zielonej lampy:</span>
+    <span class="property-value"><code><%- zone.controllerInfo.greenLedResource %></code></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Zasób czerwonej lampy:</span>
+    <span class="property-value"><code><%- zone.controllerInfo.redLedResource %></code></span>
+  </div>
+  <% } %>
 </div>
