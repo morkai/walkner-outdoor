@@ -42,6 +42,11 @@ app.get('/zones/:id', function(req, res, next)
       var zone = zone.toJSON();
       var next = this;
 
+      if (!zone.controller)
+      {
+        return next(null, zone);
+      }
+
       Controller.findById(zone.controller, {name: 1, type: 1}, function(err, controller)
       {
         next(err, zone, controller);
@@ -54,6 +59,11 @@ app.get('/zones/:id', function(req, res, next)
       zone.controller = controller ? controller.toJSON() : null;
 
       var next = this;
+
+      if (!zone.program)
+      {
+        return next(null, zone);
+      }
 
       Program.findById(zone.program, {name: 1}, function(err, program)
       {
