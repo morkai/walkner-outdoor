@@ -49,7 +49,7 @@ var ZonesRouter = Backbone.Router.extend({
     'zones;add'        : 'add',
     'zones/:id'        : 'view',
     'zones/:id;edit'   : 'edit',
-    'zones/:id;delete' : 'delete',
+    'zones/:id;delete' : 'del',
     'zones/:id;program': 'program'
   }
 });
@@ -110,7 +110,7 @@ ZonesRouter.prototype.edit = function(id)
   });
 };
 
-ZonesRouter.prototype.delete = function(id)
+ZonesRouter.prototype.del = function(id)
 {
   viewport.msg.loading();
 

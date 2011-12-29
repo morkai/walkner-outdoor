@@ -46,7 +46,7 @@ var ProgramsRouter = Backbone.Router.extend({
     'programs;add': 'add',
     'programs/:id': 'view',
     'programs/:id;edit': 'edit',
-    'programs/:id;delete': 'delete'
+    'programs/:id;delete': 'del'
   }
 });
 
@@ -106,7 +106,7 @@ ProgramsRouter.prototype.edit = function(id)
   });
 };
 
-ProgramsRouter.prototype.delete = function(id)
+ProgramsRouter.prototype.del = function(id)
 {
   viewport.msg.loading();
 

@@ -45,7 +45,7 @@ function(
       'controllers;add'       : 'add',
       'controllers/:id'       : 'view',
       'controllers/:id;edit'  : 'edit',
-      'controllers/:id;delete': 'delete'
+      'controllers/:id;delete': 'del'
     }
   });
 
@@ -105,7 +105,7 @@ function(
     });
   };
 
-  ControllersRouter.prototype.delete = function(id)
+  ControllersRouter.prototype.del = function(id)
   {
     viewport.msg.loading();
 
