@@ -54,4 +54,4 @@ app.configure('development', function()
 
 require('./routers');
 
-app.listen(8080);
+app.listen(require('../config/express').port);
