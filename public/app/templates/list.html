@@ -1,3 +1,4 @@
+<% if (list.length) { %>
 <ol class="<%- className %> list">
   <% _.each(list, function(item) { %>
   <li>
@@ -5,3 +6,6 @@
   </li>
   <% }) %>
 </ol>
+<% } else { %>
+<p class="content">Brak.</p>
+<% } %>
