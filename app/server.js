@@ -54,4 +54,4 @@ app.configure('development', function()
 
 require('./routers');
 
-app.listen(require('../config/express').port);
+app.listen(require(__dirname + '/../config/express').port);

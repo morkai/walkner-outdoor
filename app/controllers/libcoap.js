@@ -9,7 +9,7 @@ controller.run({
   stopZone    : stopZone
 });
 
-var config = require('../../config/libcoap');
+var config = require(__dirname + '/../../config/libcoap');
 
 var uri    = '';
 var zones  = {};
