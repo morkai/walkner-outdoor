@@ -86,6 +86,8 @@ function($, _, Backbone)
 
     hide: function()
     {
+      clearTimeout(this.showTimeout);
+
       $(this.el).slideUp('fast');
 
       return this;
