@@ -91,7 +91,7 @@ function(
             $('<option></option>')
               .attr({
                 value: program.get('_id'),
-                selected: program.get('_id') === program
+                selected: program.get('_id') === currentProgram
               })
               .text(program.get('name'))
               .appendTo(selectEl);
