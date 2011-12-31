@@ -31,6 +31,11 @@ module.exports = {
 
   zoneFinished: function(err, zoneId)
   {
+    if (err && err instanceof Error)
+    {
+      err = err.message;
+    }
+
     process.send({
       type: 'zoneFinished',
       data: {error: err, zoneId: zoneId}

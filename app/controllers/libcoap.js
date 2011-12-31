@@ -11,8 +11,8 @@ controller.run({
 
 var config = require(__dirname + '/../../config/libcoap');
 
-var uri    = '';
-var zones  = {};
+var uri   = '';
+var zones = {};
 
 function initialize(connectionInfo, cb)
 {
@@ -40,10 +40,14 @@ function startZone(options, cb)
 
   zones[zoneId] = options;
 
-  setLeds(zoneId, {green: 1, red: 0}, function()
+  setLeds(zoneId, {green: 1, red: 0}, function(err)
   {
-    executeStep(0, 0, zoneId);
-    cb();
+    if (!err)
+    {
+      executeStep(0, 0, zoneId);
+    }
+
+    cb(err);
   });
 }
 
@@ -173,10 +177,10 @@ function setLeds(zoneId, leds, cb)
 {
   var zone = zones[zoneId];
 
-  if (!zone) return;
+  if (!zone) return cb(null);
 
   step(
-    function setGreenLed()
+    function setGreenLedStep()
     {
       var next = this;
 
@@ -187,8 +191,10 @@ function setLeds(zoneId, leds, cb)
 
       setResource('/io/greenLed', leds.green, next);
     },
-    function setRedLed()
+    function setGreenLedStep(err)
     {
+      if (err) throw 'Nie udało się ustawić zielonej lampy :(';
+
       var next = this;
 
       if (!leds.hasOwnProperty('red'))
@@ -198,7 +204,15 @@ function setLeds(zoneId, leds, cb)
 
       setResource('/io/redLed', leds.red, next);
     },
-    cb
+    function checkErrorStep(err)
+    {
+      if (err && typeof err.message === 'string')
+      {
+        err = 'Nie udało się ustawić czerwonej lampy :(';
+      }
+
+      cb(err);
+    }
   );
 }
 
@@ -213,7 +227,7 @@ function getResource(resource, cb)
 
   cmd += resource;
 
-  execCmd(cmd, cb);
+  exec(cmd, cb);
 }
 
 function setResource(resource, state, cb)
@@ -229,16 +243,5 @@ function setResource(resource, state, cb)
 
   cmd += resource;
 
-  execCmd(cmd, cb);
-}
-
-function execCmd(cmd, cb)
-{
-  exec(cmd, function(err)
-  {
-    if (err)
-      console.error(err);
-
-    return cb(err);
-  });
+  exec(cmd, cb);
 }

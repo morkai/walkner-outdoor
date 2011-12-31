@@ -84,11 +84,7 @@ ZoneState.prototype.stopped = function(user)
 {
   this.stopTime = Date.now();
 
-  mongoose.model('HistoryEntry').stopped(this.historyId, user, function(err, count)
-  {
-    if (err)
-      console.error(err.stack);
-  });
+  mongoose.model('HistoryEntry').stopped(this.historyId, user);
 
   if (typeof this.onStop === 'function')
   {
