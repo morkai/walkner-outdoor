@@ -21,12 +21,18 @@ function initialize(connectionInfo, cb)
     autoConnect          : false,
     autoReconnect        : true,
     timeout              : 200,
+    maxTimeouts          : 5,
+    maxRetries           : 3,
     maxConcurrentRequests: 1
   });
+
+  var reconnects = 0;
 
   master.on('error', function() {});
   master.on('connect', onConnect);
   master.on('disconnect', onDisconnect);
+  master.on('connect', resetReconnects);
+  master.on('disconnect', checkLostConnection);
 
   master.connect();
 
@@ -45,6 +51,35 @@ function initialize(connectionInfo, cb)
 
     cb('Nie udało się połączyć ze sterownikiem :(');
   }
+
+  function resetReconnects()
+  {
+    reconnects = 0;
+  }
+
+  function checkLostConnection(reconnect)
+  {
+    if (reconnect)
+    {
+      reconnects += 1;
+    }
+
+    if (reconnects === 4)
+    {
+      for (var zoneId in zones)
+      {
+        var zone = zones[zoneId];
+
+        zone.stopped = true;
+        clearTimeout(zone.timeout);
+
+        controller.zoneFinished('Utracono połączenie ze sterownikiem.', zoneId);
+      }
+
+      zones               = {};
+      master.requestQueue = [];
+    }
+  }
 }
 
 function finalize(cb)
@@ -58,17 +93,19 @@ function startZone(options, cb)
 
   zones[zoneId] = options;
 
-  setLeds(zoneId, {green: 1, red: 0}, function()
+  setLeds(zoneId, {green: 1, red: 0}, function(err)
   {
-    executeStep(0, 0, zoneId);
-    cb();
+    if (!err)
+    {
+      executeStep(0, 0, zoneId);
+    }
+
+    cb(err);
   });
 }
 
 function stopZone(zoneId, cb)
 {
-  console.log('Stopping zone...');
-
   var zone = zones[zoneId];
 
   if (!zone) return cb();
@@ -208,7 +245,7 @@ function setLeds(zoneId, leds, cb)
   if (!zone) return;
 
   step(
-    function setGreenLed()
+    function setGreenLedStep()
     {
       var next = this;
 
@@ -225,9 +262,14 @@ function setLeds(zoneId, leds, cb)
         handler: next
       });
     },
-    function setRedLed()
+    function setRedLedStep(err)
     {
       var next = this;
+
+      if (err)
+      {
+        return next('Nie udało się ustawić zielonej lampy.');
+      }
 
       if (!leds.hasOwnProperty('red'))
       {
@@ -242,6 +284,14 @@ function setLeds(zoneId, leds, cb)
         handler: next
       });
     },
-    cb
+    function checkErrorStep(err)
+    {
+      if (err && err instanceof Error)
+      {
+        err = 'Nie udało się ustawić czerwonej lampy.';
+      }
+
+      return cb(err);
+    }
   );
 }
