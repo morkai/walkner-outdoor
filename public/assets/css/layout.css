@@ -12,6 +12,10 @@ a:active
 {
   color: #F50;
 }
+em
+{
+  font-style: oblique;
+}
 .menu
 {
   display: block;
@@ -24,6 +28,8 @@ a:active
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FFFFFF', endColorstr = '#F1F1F1');
   text-align: center;
   border-bottom: 1px solid #D4D4D4;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 .menu li
 {
@@ -180,11 +186,6 @@ a:active
 
 @media all and (max-width: 700px)
 {
-  .menu
-  {
-    overflow-x: auto;
-    white-space: nowrap;
-  }
   .breadcrumbs li
   {
     display: block;
