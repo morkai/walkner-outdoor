@@ -96,7 +96,7 @@ ControllerProcess.messageHandlers = {
 
     delete this.zoneStates[message.zoneId];
 
-    zoneState.stopped(message.error);
+    zoneState.finished(message.error);
   }
 
 };

@@ -1,6 +1,7 @@
 define(
 [
   './HomeRouter',
+  './HistoryRouter',
   './ProgramsRouter',
   './ZonesRouter',
   './UsersRouter',
@@ -8,6 +9,7 @@ define(
 ],
 /**
  * @param {function(new:HomeRouter)} HomeRouter
+ * @param {function(new:HomeRouter)} HistoryRouter
  * @param {function(new:ProgramsRouter)} ProgramsRouter
  * @param {function(new:ZonesRouter)} ZonesRouter
  * @param {function(new:UsersRouter)} UsersRouter
@@ -15,6 +17,7 @@ define(
  */
 function(
   HomeRouter,
+  HistoryRouter,
   ProgramsRouter,
   ZonesRouter,
   UsersRouter,
@@ -23,6 +26,7 @@ function(
   return function(options)
   {
     new HomeRouter(options);
+    new HistoryRouter(options);
     new ProgramsRouter(options);
     new ZonesRouter(options);
     new UsersRouter(options);

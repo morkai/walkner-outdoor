@@ -14,5 +14,6 @@ app.get('/time', function(req, res)
 });
 
 require('./zones');
+require('./history');
 require('./programs');
 require('./controllers');

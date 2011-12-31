@@ -93,10 +93,10 @@ Zone.methods.start = function(programId, cb)
 
 Zone.methods.stop = function(cb)
 {
-  var zoneId = this.get('id');
-  var state  = zoneStates[zoneId];
+  var zoneId    = this.get('id');
+  var zoneState = zoneStates[zoneId];
 
-  if (!state)
+  if (!zoneState)
   {
     return cb('Strefa nie jest uruchomiona.');
   }
@@ -105,11 +105,8 @@ Zone.methods.stop = function(cb)
   {
     controller.stop(zoneId, function()
     {
-      delete zoneStates[zoneId];
-
+      zoneState.stopped();
       cb();
-
-      app.io.sockets.emit('zone stopped', {zone: zoneId});
     });
   });
 };

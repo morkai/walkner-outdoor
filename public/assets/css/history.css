@@ -1,0 +1,18 @@
+.history small
+{
+  font-size: .7em;
+  color: #333;
+}
+.history .list a:hover small
+{
+  color: inherit;
+}
+.history .moreContainer
+{
+  margin: 0 auto 1em auto;
+  text-align: center;
+}
+.history .more
+{
+  font-size: 2em;
+}

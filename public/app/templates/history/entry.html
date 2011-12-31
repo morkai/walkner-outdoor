@@ -1,0 +1,66 @@
+<div class="properties">
+  <div class="property">
+    <span class="property-name">Strefa:</span>
+    <span class="property-value">
+      <a href="#zones/<%- entry.zoneId %>"><%- entry.zoneName %></a>
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Program:</span>
+    <span class="property-value">
+      <a href="#programs/<%- entry.programId %>"><%- entry.programName %></a>
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Stan zakończenia:</span>
+    <span class="property-value"><%- entry.finishStateText %></span>
+  </div>
+  <% if (entry.finishState === 'error') { %>
+  <div class="property">
+    <span class="property-name">Opis błędu:</span>
+    <span class="property-value"><%- entry.error %></span>
+  </div>
+  <% } %>
+  <div class="property">
+    <span class="property-name">Data uruchomienia:</span>
+    <span class="property-value"><%- entry.startDate %></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Data zakończenia:</span>
+    <span class="property-value"><%- entry.finishDate %></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Czas trwania (s):</span>
+    <span class="property-value"><%- entry.totalTime %></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Uruchomiony przez:</span>
+    <span class="property-value">
+      <% if (entry.startUserName) { %>
+      <a href="#users/<%- entry.startUserId %>"><%- entry.startUserName %></a>
+      <% } else { %>
+      <em>przycisk</em>
+      <% } %>
+    </span>
+  </div>
+  <% if (entry.finishState === 'stop') { %>
+  <div class="property">
+    <span class="property-name">Zatrzymany przez:</span>
+    <span class="property-value">
+      <% if (entry.stopUserName) { %>
+      <a href="#users/<%- entry.stopUserId %>"><%- entry.stopUserName %></a>
+      <% } else { %>
+      <em>przycisk</em>
+      <% } %>
+    </span>
+  </div>
+  <% } %>
+  <div class="property">
+    <span class="property-name">Kroki:</span>
+    <% if (entry.programSteps.length) { %>
+    <div class="program-steps"></div>
+    <% } else { %>
+    <span class="property-value">-</span>
+    <% } %>
+  </div>
+</div>
