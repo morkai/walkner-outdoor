@@ -49,6 +49,9 @@ Pliki konfiguracyjne to pliki JavaScript znajdujące się w katalogu `config/`.
 
 Konfiguracja sterownika opartego na _libcoap_.
 
+  * `maxRetries` - ile razy dane żądanie ma zostać ponownie wysłane zanim
+    zostanie ono uznane za zakończone błędem.
+
   * `coapClientPath` - absolutna ścieżka do pliku wykonywalnego `coap-client`.
 
   * `stateFilesDir` - absolutna ścieżka do folderu z plikami `one.bin`
