@@ -227,7 +227,7 @@ function getResource(resource, cb)
 
   cmd += resource;
 
-  exec(cmd, cb);
+  execCmd(cmd, cb);
 }
 
 function setResource(resource, state, cb)
@@ -243,5 +243,32 @@ function setResource(resource, state, cb)
 
   cmd += resource;
 
-  exec(cmd, cb);
+  execCmd(cmd, cb);
+}
+
+function execCmd(cmd, cb, count)
+{
+  if (!count)
+  {
+    count = 0;
+  }
+
+  exec(cmd, function(err)
+  {
+    count += 1;
+
+    if (err && count <= config.maxRetries)
+    {
+      process.nextTick(function()
+      {
+        console.log('#%d retry: %s', count, cmd);
+
+        execCmd(cmd, cb, count);
+      });
+    }
+    else
+    {
+      return cb(err);
+    }
+  })
 }
