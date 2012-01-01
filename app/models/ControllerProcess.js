@@ -29,7 +29,22 @@ ControllerProcess.prototype.initialize = function(connectionInfo, cb)
 {
   var self = this;
 
-  this.send('initialize', connectionInfo, function(err) { cb(err, self); });
+  this.send('initialize', connectionInfo, function(err)
+  {
+    if (err)
+    {
+      self.destroy();
+    }
+
+    cb(err, self);
+  });
+};
+
+ControllerProcess.prototype.destroy = function()
+{
+  this.process.removeAllListeners();
+  this.process.kill();
+  this.process = null;
 };
 
 ControllerProcess.prototype.startZone = function(zoneState, cb)
@@ -70,7 +85,7 @@ ControllerProcess.prototype.onExit = function(code, signal)
 
     delete this.zoneStates[zoneId];
 
-    zoneState.stopped('Zamknięcie procesu sterownika.');
+    zoneState.finished('Zamknięcie procesu sterownika.');
   }
 };
 
