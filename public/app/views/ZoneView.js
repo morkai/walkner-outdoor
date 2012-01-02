@@ -32,6 +32,8 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
         'updateState'
       );
 
+      this.progressUpdates = 0;
+
       this.model.bind('change:state', this.updateState);
     },
 
@@ -71,6 +73,7 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
         return;
       }
 
+      this.progressUpdates = 0;
       this.updateProgress();
 
       ledEl.addClass('green');
@@ -91,13 +94,20 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
       var totalTime  = state.totalTime * 1000;
       var endTime    = startTime + totalTime;
       var now        = Date.now();
-      var completion = (now - startTime) / totalTime * 100;
-      var timeToEnd;
+      var completion = (Math.round(now / 1000) - Math.round(startTime / 1000))
+                       / state.totalTime * 100;
 
       if (completion > 100)
       {
         completion = state.infinite ? completion % 100 : 100;
       }
+
+      if (this.progressUpdates > 1 && completion === 0)
+      {
+        completion = 100;
+      }
+
+      var timeToEnd;
 
       if (state.infinite)
       {
@@ -109,7 +119,19 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
       }
 
       this.$('.zone-end-time').text(timeToEnd);
-      this.$('.zone-bar-value').width(completion.toFixed(2) + '%');
+
+      var valueEl = this.$('.zone-bar-value');
+
+      if (completion < 1)
+      {
+        valueEl.hide();
+      }
+      else
+      {
+        valueEl.width(completion.toFixed(2) + '%').show();
+      }
+
+      this.progressUpdates += 1;
     },
 
     prepareViewData: function()
