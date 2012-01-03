@@ -87,6 +87,7 @@ function(require, $, _, Backbone, Layout, MessageView)
       $(document).on('keyup', this.onEscPressCloseDialog);
 
       this.msg.trigger('change:view');
+      this.trigger('dialog:show');
 
       return this;
     },
@@ -172,6 +173,8 @@ function(require, $, _, Backbone, Layout, MessageView)
       }
 
       this.dialog = null;
+
+      this.trigger('dialog:close');
 
       if (this.dialogQueue.length)
       {
