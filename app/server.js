@@ -29,6 +29,7 @@ app.db = mongoose;
 app.configure('development', function()
 {
   app.use(express.logger('dev'));
+  app.io.set('log level', 0);
 });
 
 app.configure('production', function()

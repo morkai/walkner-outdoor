@@ -1,6 +1,15 @@
 require.config({
   baseUrl: './',
   paths: {
+    'text'     : 'vendor/require/text',
+    'order'    : 'vendor/require/order',
+    'domReady' : 'vendor/require/domReady',
+
+    'jQuery'    : 'app/vendor/jQuery',
+    'Underscore': 'app/vendor/Underscore',
+    'Backbone'  : 'app/vendor/Backbone',
+    'moment'    : 'app/vendor/moment',
+
     'socket.io': '/socket.io/socket.io.js'
   }
 });
