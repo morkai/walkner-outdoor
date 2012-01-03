@@ -149,6 +149,9 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
 
     start: function()
     {
+      var self = this;
+
+      self.toggleActions();
       viewport.msg.loading();
 
       new Programs().fetch({
@@ -158,6 +161,7 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
         success: this.showProgramList,
         error: function()
         {
+          self.toggleActions();
           viewport.msg.loadingFailed();
         }
       });
@@ -165,6 +169,10 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
 
     stop: function()
     {
+      var self = this;
+
+      self.toggleActions();
+
       $.ajax({
         url: '/zones/' + this.model.get('_id'),
         type: 'POST',
@@ -184,6 +192,10 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
             time: 3000,
             text: 'Nie udało się zatrzymać strefy :('
           });
+        },
+        complete: function()
+        {
+          self.toggleActions();
         }
       });
     },
@@ -198,11 +210,21 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
       });
 
       viewport.showDialog(listView);
+
+      var self = this;
+
+      viewport.bind('dialog:close', function closeDialog()
+      {
+        self.toggleActions();
+        viewport.unbind('dialog:close', closeDialog);
+      });
     },
 
     selectProgram: function(e)
     {
       viewport.closeDialog();
+
+      this.toggleActions();
 
       var href = e.target.href;
       var frag = href.substr(href.indexOf('#') + 1);
@@ -214,6 +236,8 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
 
     startProgram: function(programId)
     {
+      var self = this;
+
       viewport.msg.show({
         delay: 200,
         text : 'Uruchamianie strefy...'
@@ -245,8 +269,19 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
             time: 3000,
             text: text
           });
+        },
+        complete: function()
+        {
+          self.toggleActions();
         }
-      })
+      });
+    },
+
+    toggleActions: function()
+    {
+      var actions = this.$('.action');
+
+      actions.attr('disabled', actions.attr('disabled') ? false : true);
     },
 
     translateEndTime: function(timeToEnd)
