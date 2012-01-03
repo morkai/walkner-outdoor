@@ -165,12 +165,12 @@ function executeStep(stepIndex, stepIteration, zoneId)
 
 function turnOn(zone, handler)
 {
-  setResource('/io/state', true, handler);
+  setResource(zone.controllerInfo.stateResource || '/io/state', true, handler);
 }
 
 function turnOff(zone, handler)
 {
-  setResource('/io/state', false, handler);
+  setResource(zone.controllerInfo.stateResource || '/io/state', false, handler);
 }
 
 function setLeds(zoneId, leds, cb)
@@ -189,7 +189,11 @@ function setLeds(zoneId, leds, cb)
         next();
       }
 
-      setResource('/io/greenLed', leds.green, next);
+      setResource(
+        zone.controllerInfo.greenLedResource || '/io/greenLed',
+        leds.green,
+        next
+      );
     },
     function setGreenLedStep(err)
     {
@@ -202,7 +206,11 @@ function setLeds(zoneId, leds, cb)
         next();
       }
 
-      setResource('/io/redLed', leds.red, next);
+      setResource(
+        zone.controllerInfo.greenLedResource || '/io/redLed',
+        leds.red,
+        next
+      );
     },
     function checkErrorStep(err)
     {
