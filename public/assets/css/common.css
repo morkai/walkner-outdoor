@@ -45,9 +45,14 @@ body
   padding: .25em .5em;
   box-sizing: border-box;
 }
+.action[disabled]
+{
+  cursor: wait!important;
+  opacity: .5!important;
+}
 .action:hover
 {
-  color: #333;
+
 }
 .action:active
 {
