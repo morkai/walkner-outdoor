@@ -61,10 +61,13 @@ Konfiguracja sterownika opartego na _libcoap_.
 
 Jeżeli jeszcze nie uruchomione, startujemy MongoDB:
 
-    $ mongod --fork --logpath /dev/null
+    $ mongod --fork \
+             --logpath walkner-outdoor/var/logs/mongod.log \
+             --dbpath walkner-outdoor/var/data/
 
 Uruchamiamy serwer aplikacji:
 
     $ node walkner-outdoor/app/server.js
 
-Aplikacja powinna być dostępna na porcie, który jest ustawiony w `config/express.js` (domyślnie 8080).
+Aplikacja powinna być dostępna na porcie, który jest ustawiony
+w `config/express.js` (domyślnie 8080).
