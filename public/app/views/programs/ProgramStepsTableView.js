@@ -16,9 +16,14 @@ function($, _, Backbone, Program, PageLayout, stepsTableTpl)
   return Backbone.View.extend({
 
     events: {
-      'click th': 'selectLastFieldInColumn',
+      'click th'                  : 'selectLastFieldInColumn',
       'click .remove-program-step': 'removeProgramStep',
-      'click .add-program-step': 'addProgramStep'
+      'click .add-program-step'   : 'addProgramStep'
+    },
+
+    initialize: function()
+    {
+      this.nextStepIndex = 0;
     },
 
     destroy: function()
@@ -28,9 +33,11 @@ function($, _, Backbone, Program, PageLayout, stepsTableTpl)
 
     render: function()
     {
+      this.nextStepIndex = this.options.steps.length;
+
       this.el.innerHTML = renderStepsTable({
         mutable: !this.options.readOnly,
-        steps: this.options.steps
+        steps  : this.options.steps
       });
 
       return this;
@@ -53,8 +60,8 @@ function($, _, Backbone, Program, PageLayout, stepsTableTpl)
 
     selectLastFieldInColumn: function(e)
     {
-      var clickedHeader = $(e.target).index();
-      var lastStepCells = this.$('tbody tr').last().children();
+      var clickedHeader     = $(e.target).index();
+      var lastStepCells     = this.$('tbody tr').last().children();
       var correspondingCell = lastStepCells.eq(clickedHeader);
 
       correspondingCell.find('input').focus();
@@ -62,9 +69,9 @@ function($, _, Backbone, Program, PageLayout, stepsTableTpl)
 
     removeProgramStep: function(e)
     {
-      var self = this;
+      var self          = this;
       var clickedButton = $(e.target);
-      var desiredRow = clickedButton.closest('tr');
+      var desiredRow    = clickedButton.closest('tr');
 
       desiredRow.fadeOut(function()
       {
@@ -88,15 +95,24 @@ function($, _, Backbone, Program, PageLayout, stepsTableTpl)
 
     addProgramStep: function()
     {
+      var self  = this;
       var steps = this.$('.program-steps tbody');
-      var step = this.$('.program-step-template').clone();
+      var step  = this.$('.program-step-template').clone();
 
       step.hide().removeClass('program-step-template');
+      step.find('input[type="number"]').each(function()
+      {
+        this.name = this.name.replace(
+          'steps[]', 'steps[' + self.nextStepIndex + ']'
+        );
+      });
       step.appendTo(steps).fadeIn();
 
       this.recountSteps();
 
       step.find('input').first().focus();
+
+      this.nextStepIndex += 1;
     }
 
   });
