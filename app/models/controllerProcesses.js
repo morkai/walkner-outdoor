@@ -6,7 +6,7 @@ var controllerProcesses = {};
 function initialize(controller, cb)
 {
   var controllerFile    = __dirname + '/../controllers/' + controller.get('type') + '.js';
-  var forkedProcess     = fork(controllerFile);
+  var forkedProcess     = fork(controllerFile, [], {env: process.env});
   var controllerProcess = new ControllerProcess(forkedProcess);
 
   controllerProcess.initialize(controller.get('connectionInfo'), cb);
