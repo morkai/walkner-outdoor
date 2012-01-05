@@ -67,11 +67,17 @@ Zone.methods.start = function(programId, cb)
 
       if (!controller) throw 'Strefa nie ma przypisanego sterownika.';
 
-      controller.start(new ZoneState(zone, program, zone.onStop.bind(zone)), this);
+      controller.start(
+        new ZoneState(zone, program, zone.onStop.bind(zone)),
+        this
+      );
     },
     function finalize(err, zoneState)
     {
-      if (err) throw err;
+      if (err)
+      {
+        return this(err, zoneState);
+      }
 
       zoneStates[zoneState.zoneId] = zoneState;
 

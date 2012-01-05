@@ -96,6 +96,33 @@ app.post('/zones/:id', function(req, res, next)
       case 'start':
         zone.start(req.body.program, function(err, state)
         {
+          if (err)
+          {
+            var program = req.body.program;
+
+            if (state)
+            {
+              program = state.programName || req.body.program;
+
+              state.destroy();
+            }
+
+            console.debug(
+              'Failed to start program <%s> on zone <%s>: %s',
+              program,
+              zone.get('name'),
+              err
+            );
+          }
+          else
+          {
+            console.debug(
+              'Started program <%s> on zone <%s>',
+              state.programName,
+              zone.get('name')
+            );
+          }
+
           if (err instanceof Error) return next(err);
 
           if (err) return res.send(err, 500);
@@ -107,6 +134,19 @@ app.post('/zones/:id', function(req, res, next)
       case 'stop':
         zone.stop(function(err)
         {
+          if (err)
+          {
+            console.debug(
+              'Failed to stop zone <%s>: %s',
+              zone.get('name'),
+              err
+            );
+          }
+          else
+          {
+            console.debug('Stopped zone <%s>',zone.get('name'));
+          }
+
           if (err instanceof Error) return next(err);
 
           if (err) return res.send(err, 500);

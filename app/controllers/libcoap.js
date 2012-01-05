@@ -1,3 +1,5 @@
+require('../utils/logging');
+
 var exec       = require('child_process').exec;
 var step       = require('step');
 var controller = require('./controller');
@@ -259,6 +261,12 @@ function execCmd(cmd, cb, count)
   if (!count)
   {
     count = 0;
+
+    console.debug('Exec coap-client request: %s', cmd);
+  }
+  else
+  {
+    console.debug('<%d> retry of coap-client request: %s', count, cmd);
   }
 
   exec(cmd, function(err)
@@ -269,8 +277,6 @@ function execCmd(cmd, cb, count)
     {
       process.nextTick(function()
       {
-        console.log('#%d retry: %s', count, cmd);
-
         execCmd(cmd, cb, count);
       });
     }

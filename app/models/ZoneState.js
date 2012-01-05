@@ -99,6 +99,24 @@ ZoneState.prototype.finished = function(err)
 
   mongoose.model('HistoryEntry').finished(this.historyId, err);
 
+  if (err)
+  {
+    console.debug(
+      'Program <%s> failed on zone <%s>: %s',
+      this.programName,
+      this.zoneName,
+      err
+    );
+  }
+  else
+  {
+    console.debug(
+      'Program <%s> finished on zone <%s>',
+      this.programName,
+      this.zoneName
+    );
+  }
+
   if (typeof this.onStop === 'function')
   {
     this.onStop();

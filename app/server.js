@@ -1,3 +1,10 @@
+require('./utils/logging');
+
+process.on('uncaughtException', function(err)
+{
+  console.error('Uncaught exception:\n%s', err.stack);
+});
+
 var express  = require('express');
 var io       = require('socket.io');
 var mongoose = require('mongoose');
@@ -14,22 +21,38 @@ var mongoose = require('mongoose');
   };
 })();
 
+var expressConfig = require('../config/express');
+
+app = express.createServer();
+
 mongoose.connect('mongodb://localhost/walkner-outdoor', function(err)
 {
   if (err)
   {
-    console.error(err.message);
+    console.error('Could not connect to MongoDB: %s', err.message);
+    process.exit(1);
+  }
+  else
+  {
+    console.debug('Connected to MongoDB');
+
+    app.listen(expressConfig.port, function()
+    {
+      console.debug('Express HTTP server listening on port %d', app.address().port);
+      console.info('Started!');
+    });
   }
 });
 
-app    = express.createServer();
-app.io = io.listen(app);
 app.db = mongoose;
+
+app.io = io.listen(app, {
+  log: false
+});
 
 app.configure('development', function()
 {
-  app.use(express.logger('dev'));
-  app.io.set('log level', 0);
+
 });
 
 app.configure('production', function()
@@ -37,7 +60,6 @@ app.configure('production', function()
   app.io.enable('browser client minification');
   app.io.enable('browser client etag');
   app.io.enable('browser client gzip');
-  app.io.set('log level', 0);
 });
 
 app.configure(function()
@@ -54,5 +76,3 @@ app.configure('development', function()
 });
 
 require('./routers');
-
-app.listen(require(__dirname + '/../config/express').port);

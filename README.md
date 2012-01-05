@@ -57,6 +57,17 @@ Konfiguracja sterownika opartego na _libcoap_.
   * `stateFilesDir` - absolutna ścieżka do folderu z plikami `one.bin`
     oraz `zero.bin`.
 
+### logging.js
+
+Konfiguracja logów. Do `stdout` przekazywane będą logi poziomów: `log`, `debug`,
+`info`, `warn` oraz `error`.
+
+  * `productionLevels` - obiekt definiujący jakiego poziomu logi mają
+    przechodzić przez filtr, jeżeli `NODE_ENV` jest ustawione na `production`.
+
+  * `developmentLevels` - obiekt definiujący jakiego poziomu logi mają
+    przechodzić przez filtr, jeżeli `NODE_ENV` jest ustawione na `development`.
+
 ## Uruchomienie
 
 Jeżeli jeszcze nie uruchomione, startujemy MongoDB:
@@ -65,9 +76,10 @@ Jeżeli jeszcze nie uruchomione, startujemy MongoDB:
              --logpath walkner-outdoor/var/logs/mongod.log \
              --dbpath walkner-outdoor/var/data/
 
-Uruchamiamy serwer aplikacji:
+Uruchamiamy serwer aplikacji w trybie `development` lub `production`:
 
-    $ node walkner-outdoor/app/server.js
+    $ NODE_ENV=development node walkner-outdoor/app/server.js
 
 Aplikacja powinna być dostępna na porcie, który jest ustawiony
-w `config/express.js` (domyślnie 8080).
+w `config/express.js` (domyślnie 8080). Wchodzimy w przeglądarce na adres
+http://127.0.0.1:8080/.
