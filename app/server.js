@@ -21,11 +21,12 @@ var mongoose = require('mongoose');
   };
 })();
 
-var expressConfig = require('../config/express');
+var expressConfig  = require('../config/express');
+var mongooseConfig = require('../config/mongoose');
 
 app = express.createServer();
 
-mongoose.connect('mongodb://localhost/walkner-outdoor', function(err)
+mongoose.connect(mongooseConfig.uri, function(err)
 {
   if (err)
   {

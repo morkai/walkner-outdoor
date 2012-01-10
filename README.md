@@ -4,7 +4,7 @@
 
 ### node.js
 
-JavaScript po stronie serwera. Najlepiej najnowsza wersja.
+JavaScript po stronie serwera. Najlepiej najnowsza wersja produkcyjna.
 
 Do pobrania tutaj: http://nodejs.org/#download
 
@@ -16,7 +16,7 @@ Menadżer pakietów node.js. NPM dołączany jest od niedawna do node.js.
 
 ### MongoDB
 
-Baza danych NoSQL. Najlepiej wersja produkcyjna.
+Baza danych NoSQL. Najlepiej najnowsza wersja produkcyjna.
 
 Do pobrania tutaj: http://www.mongodb.org/downloads
 
@@ -43,7 +43,16 @@ Pliki konfiguracyjne to pliki JavaScript znajdujące się w katalogu `config/`.
 
 ### express.js
 
+Konfiguracja serwera HTTP [express](http://expressjs.com/).
+
   * `port` - port na jakim ma odpowiadać aplikacja.
+
+### mongoose.js
+
+Konfiguracja klienta bazy danych _MongoDB_.
+
+  * `uri` - URI zawierające informacje potrzebne do połączenia się z bazą
+    danych w formacie `mongodb://<host>[:<port>]/<nazwa bazy>`.
 
 ### libcoap.js
 
