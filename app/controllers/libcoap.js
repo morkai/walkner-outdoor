@@ -22,7 +22,7 @@ function initialize(connectionInfo, cb)
 
   if (uri[uri.length - 1] === '/')
   {
-    uri = uri.substring(0, uri.length);
+    uri = uri.substring(0, uri.length - 1);
   }
 
   getResource('/helloworld', function(err)
@@ -226,32 +226,24 @@ function setLeds(zoneId, leds, cb)
   );
 }
 
+function getResourceUri(resource)
+{
+  return uri + (resource[0] !== '/' ? '/' : '') + resource;
+}
+
 function getResource(resource, cb)
 {
-  var cmd = config.coapClientPath + ' ' + uri;
-
-  if (resource[0] !== '/')
-  {
-    cmd += '/';
-  }
-
-  cmd += resource;
+  var cmd = config.coapClientPath + ' ' + getResourceUri(resource);
 
   execCmd(cmd, cb);
 }
 
 function setResource(resource, state, cb)
 {
-  var stateFile = config.stateFilesDir + '/' + (state ? 'one' : 'zero') + '.bin';
-
-  var cmd = config.coapClientPath + ' -m put -f ' + stateFile + ' ' + uri;
-
-  if (resource[0] !== '/')
-  {
-    cmd += '/';
-  }
-
-  cmd += resource;
+  var stateFile = config.stateFilesDir + '/' + (state ? 'one' : 'zero')
+                + '.bin';
+  var cmd       = config.coapClientPath + ' -m put -f ' + stateFile + ' '
+                + getResourceUri(resource);
 
   execCmd(cmd, cb);
 }
