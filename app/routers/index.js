@@ -29,4 +29,5 @@ app.get('/app/models/limits.js', function(req, res)
 require('./zones');
 require('./history');
 require('./programs');
+require('./users');
 require('./controllers');

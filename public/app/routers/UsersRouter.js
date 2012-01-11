@@ -2,32 +2,124 @@ define(
 [
   'Backbone',
 
-  'app/views/todo'
+  'app/models/User',
+  'app/models/Users',
+  'app/views/viewport',
+  'app/views/users/UserListView',
+  'app/views/users/AddUserFormView',
+  'app/views/users/UserDetailsView',
+  'app/views/users/EditUserFormView',
+  'app/views/users/DeleteUserView'
 ],
 /**
  * @param {Backbone} Backbone
- * @param {Function} tbd
+ * @param {function(new:User)} User
+ * @param {function(new:Users)} Users
+ * @param {Viewport} viewport
+ * @param {function(new:UserListView)} UserListView
+ * @param {function(new:AddUserFormView)} AddUserFormView
+ * @param {function(new:UserDetailsView)} UserDetailsView
+ * @param {function(new:EditUserFormView)} EditUserFormView
+ * @param {function(new:DeleteUserView)} DeleteUserView
  */
-function(Backbone, tbd)
+function(
+  Backbone,
+  User,
+  Users,
+  viewport,
+  UserListView,
+  AddUserFormView,
+  UserDetailsView,
+  EditUserFormView,
+  DeleteUserView)
 {
+  /**
+   * @class UsersRouter
+   * @constructor
+   * @extends Backbone.Router
+   * @param {Object} [options]
+   */
+  var UsersRouter = Backbone.Router.extend({
+    routes: {
+      'users'           : 'list',
+      'users;add'       : 'add',
+      'users/:id'       : 'view',
+      'users/:id;edit'  : 'edit',
+      'users/:id;delete': 'del'
+    }
+  });
 
-/**
- * @class UsersRouter
- * @constructor
- * @extends Backbone.Router
- * @param {Object} [options]
- */
-var UsersRouter = Backbone.Router.extend({
-  routes: {
-    'users': 'list'
-  }
-});
+  UsersRouter.prototype.list = function()
+  {
+    viewport.msg.loading();
 
-UsersRouter.prototype.list = function()
-{
-  tbd();
-};
+    new Users().fetch({
+      data: {
+        fields: ['name']
+      },
+      success: function(collection)
+      {
+        viewport.showView(new UserListView({collection: collection}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
 
-return UsersRouter;
+  UsersRouter.prototype.add = function()
+  {
+    viewport.showView(new AddUserFormView({model: new User()}));
+  };
 
+  UsersRouter.prototype.view = function(id)
+  {
+    viewport.msg.loading();
+
+    new User({_id: id}).fetch({
+      success: function(model)
+      {
+        viewport.showView(new UserDetailsView({model: model}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  UsersRouter.prototype.edit = function(id)
+  {
+    viewport.msg.loading();
+
+    new User({_id: id}).fetch({
+      success: function(model)
+      {
+        viewport.showView(new EditUserFormView({model: model}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  UsersRouter.prototype.del = function(id)
+  {
+    viewport.msg.loading();
+
+    new User({_id: id}).fetch({
+      success: function(model)
+      {
+        viewport.showView(new DeleteUserView({model: model}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  return UsersRouter;
 });

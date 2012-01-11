@@ -1,0 +1,71 @@
+<form class="user form" method="post" action="<%- action %>">
+  <input type="submit">
+  <ul class="fields">
+    <li>
+      <label for="user-name">Imię i nazwisko<span class="required" title="Wymagane">*</span></label>
+      <input id="user-name" name="user.name" class="medium textline" type="text" autofocus value="<%= user.name %>">
+    <li>
+      <label for="user-email">Adres e-mail<span class="required" title="Wymagane">*</span></label>
+      <input id="user-email" name="user.email" class="medium textline" type="text" value="<%= user.email %>">
+    <li>
+      <label for="user-login">Login<span class="required" title="Wymagane">*</span></label>
+      <input id="user-login" name="user.login" class="medium textline" type="text" value="<%= user.login %>">
+    <li>
+      <label for="user-password">Hasło<span class="required" title="Wymagane">*</span></label>
+      <input id="user-password" name="user.password" class="short textline" type="password" value="">
+    <li>
+      <label for="user-password2">Powtórz hasło<span class="required" title="Wymagane">*</span></label>
+      <input id="user-password2" name="user.password2" class="short textline" type="password" value="">
+    <li>
+      <label for="user-pin">PIN</label>
+      <input id="user-pin" name="user.pin" class="short textline" type="password" value="" maxlength=6>
+    <li>
+      <label for="user-pin2">Powtórz PIN</label>
+      <input id="user-pin2" name="user.pin2" class="short textline" type="password" value="" maxlength=6>
+    <li>
+      <fieldset>
+        <legend>Uprawnienia</legend>
+        <ul class="fields">
+          <li>
+            <input id="user-privilages-startStop" name="user.privilages.startStop" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-startStop">Uruchamianie i zatrzymywanie stref</label>
+          <li>
+            <input id="user-privilages-pickProgram" name="user.privilages.pickProgram" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-pickProgram">Wybieranie programów do uruchomienia</label>
+          <li>
+            <input id="user-privilages-viewHistory" name="user.privilages.viewHistory" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-viewHistory">Przeglądanie historii</label>
+          <li>
+            <input id="user-privilages-purgeHistory" name="user.privilages.purgeHistory" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-purgeHistory">Czyszczenie historii</label>
+          <li>
+            <input id="user-privilages-viewPrograms" name="user.privilages.viewPrograms" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-viewPrograms">Przeglądanie programów</label>
+          <li>
+            <input id="user-privilages-managePrograms" name="user.privilages.managePrograms" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-managePrograms">Zarządzanie programami</label>
+          <li>
+            <input id="user-privilages-viewZones" name="user.privilages.viewZones" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-viewZones">Przeglądanie stref</label>
+          <li>
+            <input id="user-privilages-assignPrograms" name="user.privilages.assignPrograms" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-assignPrograms">Przypisywanie programów do stref</label>
+          <li>
+            <input id="user-privilages-manageZones" name="user.privilages.manageZones" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-manageZones">Zarządzanie strefami</label>
+          <li>
+            <input id="user-privilages-viewControllers" name="user.privilages.viewControllers" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-viewControllers">Przeglądanie sterowników</label>
+          <li>
+            <input id="user-privilages-manageControllers" name="user.privilages.manageControllers" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-manageControllers">Zarządzanie sterownikami</label>
+          <li>
+            <input id="user-privilages-viewUsers" name="user.privilages.viewUsers" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-viewUsers">Przeglądanie użytkowników</label>
+          <li>
+            <input id="user-privilages-manageUsers" name="user.privilages.manageUsers" class="checkbox" type="checkbox" value="1">
+            <label for="user-privilages-manageUsers">Zarządzanie użytkownikami</label>
+        </ul>
+      </fieldset>
+  </ul>
+</form>
