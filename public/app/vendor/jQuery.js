@@ -5,5 +5,10 @@ define(
 ],
 function()
 {
+  $.fn.fromObject = function(obj)
+  {
+    js2form(this[0], obj);
+  };
+
   return $.noConflict();
 });
