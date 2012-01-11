@@ -52,6 +52,8 @@ var HistoryEntry = new mongoose.Schema({
   error: {
     type: String
   }
+}, {
+  strict: true
 });
 
 function finish(id, state, data, cb)

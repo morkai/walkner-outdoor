@@ -15,6 +15,8 @@ var Zone = new mongoose.Schema({
     type: mongoose.SchemaTypes.ObjectId
   },
   controllerInfo: {}
+}, {
+  strict: true
 });
 
 Zone.methods.toObject = function(options)

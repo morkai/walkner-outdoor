@@ -13,6 +13,8 @@ var Step = new mongoose.Schema({
     type: Number,
     required: true
   }
+}, {
+  strict: true
 });
 
 Step.virtual('totalTime').get(function()
@@ -33,6 +35,8 @@ var Program = new mongoose.Schema({
   steps: {
     type: [Step]
   }
+}, {
+  strict: true
 });
 
 Program.virtual('totalTime').get(function()

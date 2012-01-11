@@ -13,6 +13,8 @@ var Controller = new mongoose.Schema({
     enum    : ['modbus-tcp', 'libcoap']
   },
   connectionInfo: {}
+}, {
+  strict: true
 });
 
 Controller.methods.start = function(zoneState, cb)
