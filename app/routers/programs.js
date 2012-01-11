@@ -1,4 +1,5 @@
 var Program = require('../models/Program');
+var limits  = require('../../config/limits');
 
 app.get('/programs', function(req, res, next)
 {
@@ -12,13 +13,26 @@ app.get('/programs', function(req, res, next)
 
 app.post('/programs', function(req, res, next)
 {
-  var program = new Program(req.body);
-
-  program.save(function(err)
+  Program.count(function(err, count)
   {
     if (err) return next(err);
 
-    res.send(program, 201);
+    if (count >= limits.maxPrograms)
+    {
+      return res.send(
+        'Nie można dodać programu. Maksymalna ilość programów została osiągnięta.',
+        400
+      );
+    }
+
+    var program = new Program(req.body);
+
+    program.save(function(err)
+    {
+      if (err) return next(err);
+
+      res.send(program, 201);
+    });
   });
 });
 

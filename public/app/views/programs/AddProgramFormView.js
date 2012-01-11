@@ -100,12 +100,12 @@ function(
 
           Backbone.history.navigate('programs/' + program.get('_id'), true);
         },
-        error: function()
+        error: function(_, xhr)
         {
           viewport.msg.show({
             type: 'error',
             time: 5000,
-            text: 'Nie udało się zapisać nowego programu :('
+            text: xhr.responseText || 'Nie udało się zapisać nowego programu :('
           });
         }
       });

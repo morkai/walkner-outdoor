@@ -3,6 +3,7 @@ var step       = require('step');
 var Zone       = require('../models/Zone');
 var Controller = require('../models/Controller');
 var Program    = require('../models/Program');
+var limits     = require('../../config/limits');
 
 app.get('/zones', function(req, res, next)
 {
@@ -16,13 +17,26 @@ app.get('/zones', function(req, res, next)
 
 app.post('/zones', function(req, res, next)
 {
-  var zone = new Zone(req.body);
-
-  zone.save(function(err)
+  Zone.count(function(err, count)
   {
     if (err) return next(err);
 
-    res.send(zone, 201);
+    if (count >= limits.maxZones)
+    {
+      return res.send(
+        'Nie można dodać strefy. Maksymalna ilość stref została osiągnięta.',
+        400
+      );
+    }
+
+    var zone = new Zone(req.body);
+
+    zone.save(function(err)
+    {
+      if (err) return next(err);
+
+      res.send(zone, 201);
+    });
   });
 });
 

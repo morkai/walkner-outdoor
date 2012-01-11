@@ -95,12 +95,12 @@ function(
             'zones/' + zone.get('_id'), true
           );
         },
-        error: function()
+        error: function(_, xhr)
         {
           viewport.msg.show({
             type: 'error',
             time: 5000,
-            text: 'Nie udało się zapisać nowej strefy :('
+            text: xhr.responseText || 'Nie udało się zapisać nowej strefy :('
           });
         }
       });
