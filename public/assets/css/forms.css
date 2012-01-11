@@ -5,6 +5,12 @@
   box-shadow: 0 1px 3px #666;
   padding: 1em;
 }
+.form legend
+{
+  font-weight: bold;
+  padding-bottom: .5em;
+  display: block;
+}
 .form input[type="submit"]
 {
   visibility: hidden;
