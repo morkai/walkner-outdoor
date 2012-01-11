@@ -41,6 +41,10 @@ mongoose.connect(mongooseConfig.uri, function(err)
     {
       console.debug('Express HTTP server listening on port %d', app.address().port);
       console.info('Started!');
+
+      require('fs').writeFile(
+        __dirname + '/../var/pids/server.pid', process.pid
+      );
     });
   }
 });
