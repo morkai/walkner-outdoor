@@ -8,6 +8,11 @@ app.get('/', function(req, res)
   res.send(indexHtml);
 });
 
+app.get('/ping', function(req, res)
+{
+  res.send('pong');
+});
+
 app.get('/time', function(req, res)
 {
   res.send(Date.now().toString());
