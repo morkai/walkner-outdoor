@@ -1,6 +1,7 @@
 var User = require('../models/User');
+var auth = require('../utils/middleware').auth;
 
-app.get('/users', function(req, res, next)
+app.get('/users', auth('viewUsers'), function(req, res, next)
 {
   User.find({}, req.query.fields, function(err, docs)
   {
@@ -10,7 +11,7 @@ app.get('/users', function(req, res, next)
   });
 });
 
-app.post('/users', function(req, res, next)
+app.post('/users', auth('manageUsers'), function(req, res, next)
 {
   var data     = req.body;
   var password = User.hashPassword(data.password);
@@ -28,7 +29,7 @@ app.post('/users', function(req, res, next)
   });
 });
 
-app.get('/users/:id', function(req, res, next)
+app.get('/users/:id', auth('viewUsers'), function(req, res, next)
 {
   User.findById(req.params.id, function(err, doc)
   {
@@ -40,7 +41,7 @@ app.get('/users/:id', function(req, res, next)
   });
 });
 
-app.put('/users/:id', function(req, res, next)
+app.put('/users/:id', auth('manageUsers'), function(req, res, next)
 {
   User.findById(req.params.id, function(err, user)
   {
@@ -78,7 +79,7 @@ app.put('/users/:id', function(req, res, next)
   });
 });
 
-app.del('/users/:id', function(req, res, next)
+app.del('/users/:id', auth('manageUsers'), function(req, res, next)
 {
   User.remove({_id: req.params.id}, function(err)
   {

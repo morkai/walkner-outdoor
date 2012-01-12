@@ -1,6 +1,7 @@
 var HistoryEntry = require('../models/HistoryEntry');
+var auth         = require('../utils/middleware').auth;
 
-app.get('/history', function(req, res, next)
+app.get('/history', auth('viewHistory'), function(req, res, next)
 {
   var page  = parseInt(req.query.page || 1) - 1;
   var limit = 10;
@@ -19,7 +20,7 @@ app.get('/history', function(req, res, next)
   });
 });
 
-app.get('/history/:id', function(req, res, next)
+app.get('/history/:id', auth('viewHistory'), function(req, res, next)
 {
   HistoryEntry.findById(req.params.id, function(err, doc)
   {

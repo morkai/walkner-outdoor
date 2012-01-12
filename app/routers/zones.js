@@ -4,8 +4,9 @@ var Zone       = require('../models/Zone');
 var Controller = require('../models/Controller');
 var Program    = require('../models/Program');
 var limits     = require('../../config/limits');
+var auth       = require('../utils/middleware').auth;
 
-app.get('/zones', function(req, res, next)
+app.get('/zones', auth('viewZones'), function(req, res, next)
 {
   Zone.find({}, req.query.fields).asc('name').run(function(err, docs)
   {
@@ -15,7 +16,7 @@ app.get('/zones', function(req, res, next)
   });
 });
 
-app.post('/zones', function(req, res, next)
+app.post('/zones', auth('manageZones'), function(req, res, next)
 {
   Zone.count(function(err, count)
   {
@@ -40,7 +41,7 @@ app.post('/zones', function(req, res, next)
   });
 });
 
-app.get('/zones/:id', function(req, res, next)
+app.get('/zones/:id', auth('viewZones'), function(req, res, next)
 {
   step(
     function findZoneStep()
@@ -191,17 +192,22 @@ app.put('/zones/:id', function(req, res, next)
     data.program = data.program._id;
   }
 
-  Zone.update({_id: req.params.id}, data, function(err, count)
+  var privilage = data.program ? 'assignPrograms' : 'manageZones';
+
+  auth(privilage)(req, res, function()
   {
-    if (err) return next(err);
+    Zone.update({_id: req.params.id}, data, function(err, count)
+    {
+      if (err) return next(err);
 
-    if (!count) return res.send(404);
+      if (!count) return res.send(404);
 
-    res.send(204);
+      res.send(204);
+    });
   });
 });
 
-app.del('/zones/:id', function(req, res, next)
+app.del('/zones/:id', auth('manageZones'), function(req, res, next)
 {
   Zone.remove({_id: req.params.id}, function(err)
   {
