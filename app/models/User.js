@@ -41,11 +41,14 @@ var User = new mongoose.Schema({
   strict: true
 });
 
-User.statics.hashPassword = function(password)
+User.statics.hashPassword = function(password, salt)
 {
-  var salt = createHash('sha1').update(Date.now().toString())
-                               .update(Math.random().toString())
-                               .digest('hex');
+  if (!salt)
+  {
+    salt = createHash('sha1').update(Date.now().toString())
+                             .update(Math.random().toString())
+                             .digest('hex');
+  }
 
   var hash = createHash('sha256').update(salt)
                                  .update(password)
