@@ -83,7 +83,14 @@ function(require, $, _, Backbone, Layout, MessageView)
 
       this.getDialogContainer().append(this.dialog.el).show();
 
-      $(this.dialog.el).on('click', '.cancel', this.closeDialog);
+      var closeDialog = this.closeDialog;
+
+      $(this.dialog.el).on('click', '.cancel', function()
+      {
+        closeDialog();
+
+        return false;
+      });
       $(document).on('keyup', this.onEscPressCloseDialog);
 
       this.msg.trigger('change:view');
