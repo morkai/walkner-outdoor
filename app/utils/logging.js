@@ -19,6 +19,11 @@ for (var level in _console)
 
 function decorateLog(level)
 {
+  if (arguments.length === 1)
+  {
+    return _console.log();
+  }
+
   if (!logLevels[level])
   {
     return;
