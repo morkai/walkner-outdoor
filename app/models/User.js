@@ -30,9 +30,8 @@ var User = new mongoose.Schema({
     trim    : true
   },
   pin: {
-    type    : Number,
-    required: true,
-    unique  : true
+    type  : Number,
+    unique: true
   },
   privilages: {
     type: {}
