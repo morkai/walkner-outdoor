@@ -69,10 +69,13 @@ app.configure('production', function()
 
 app.configure(function()
 {
+  app.use(express.cookieParser());
+  app.use(express.session({secret: '~`z@!#X!@: >#x21"4va'}));
   app.use(express.methodOverride());
   app.use(express.bodyParser());
   app.use(app.router);
   app.use(express.static(__dirname + '/../public'));
+  app.set('views', __dirname + '/templates/');
 });
 
 app.configure('development', function()

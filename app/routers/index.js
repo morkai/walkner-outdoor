@@ -7,8 +7,10 @@ var limits = 'define("app/models/limits", '
 
 app.get('/', function(req, res)
 {
-  res.contentType('html');
-  res.send(indexHtml);
+  res.render('index.ejs', {
+    layout: false,
+    user  : JSON.stringify(req.session.user || {})
+  });
 });
 
 app.get('/ping', function(req, res)
@@ -31,3 +33,4 @@ require('./history');
 require('./programs');
 require('./users');
 require('./controllers');
+require('./auth');

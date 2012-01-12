@@ -2,9 +2,11 @@ define(
 [
   'jQuery',
   'Underscore',
-  'Backbone'
+  'Backbone',
+
+  'app/user'
 ],
-function($, _, Backbone)
+function($, _, Backbone, user)
 {
   return Backbone.View.extend({
 
@@ -130,6 +132,21 @@ function($, _, Backbone)
         type: 'error',
         text: 'Ładowanie nie powiodło się :('
       });
+    },
+
+    auth: function(privilages)
+    {
+      if (user.isAllowedTo(privilages))
+      {
+        return false;
+      }
+
+      this.show({
+        type: 'error',
+        text: 'Brak uprawnień.'
+      });
+
+      return true;
     }
 
   });

@@ -23,7 +23,12 @@ function($, _, Backbone, limits, viewport, PageLayout, ListView)
     breadcrumbs: ['Programy'],
 
     actions: [
-      {href: '#programs;add', text: 'Dodaj', className: 'blue add-program action'}
+      {
+        href      : '#programs;add',
+        text      : 'Dodaj',
+        className : 'blue add-program action',
+        privilages: 'managePrograms'
+      }
     ],
 
     render: function()

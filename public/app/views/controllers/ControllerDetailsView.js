@@ -31,15 +31,24 @@ function($, _, Backbone, PageLayout, viewport, DeleteControllerView, detailsTpl)
       var id    = model.get('_id');
 
       return [
-        {href: '#controllers/' + id + ';edit', text: 'Edytuj'},
-        {href: '#controllers/' + id + ';delete', text: 'Usuń', handler: function(e)
         {
-          if (e.button !== 0) return;
+          href      : '#controllers/' + id + ';edit',
+          text      : 'Edytuj',
+          privilages: 'manageControllers'
+        },
+        {
+          href      : '#controllers/' + id + ';delete',
+          text      : 'Usuń',
+          privilages: 'manageControllers',
+          handler   : function(e)
+          {
+            if (e.button !== 0) return;
 
-          viewport.showDialog(new DeleteControllerView({model: model}));
+            viewport.showDialog(new DeleteControllerView({model: model}));
 
-          return false;
-        }}
+            return false;
+          }
+        }
       ];
     },
 

@@ -2,17 +2,27 @@ define(
 [
   'jQuery',
   'Underscore',
-  'Backbone'
+  'Backbone',
+
+  'app/views/PageLayout',
+
+  'text!app/templates/logoutForm.html'
 ],
-function($, _, Backbone)
+function($, _, Backbone, PageLayout, logoutFormTpl)
 {
+  var renderLogoutForm = _.template(logoutFormTpl);
+
   return Backbone.View.extend({
 
-    id: 'logout',
+    layout: PageLayout,
+
+    className: 'logout',
+
+    breadcrumbs: ['Wylogowywanie'],
 
     render: function()
     {
-      this.el.innerHTML = '<p>Logout...</p>';
+      this.el.innerHTML = renderLogoutForm();
 
       return this;
     }

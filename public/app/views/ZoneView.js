@@ -5,13 +5,23 @@ define(
   'Backbone',
 
   'app/time',
+  'app/user',
   'app/models/Programs',
   'app/views/viewport',
   'app/views/programs/ProgramListView',
 
   'text!app/templates/zones/zone.html'
 ],
-function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
+function(
+  $,
+  _,
+  Backbone,
+  time,
+  user,
+  Programs,
+  viewport,
+  ProgramListView,
+  zoneTpl)
 {
   var renderZone = _.template(zoneTpl);
 
@@ -46,6 +56,11 @@ function($, _, Backbone, time, Programs, viewport, ProgramListView, zoneTpl)
     render: function()
     {
       this.el.innerHTML = renderZone(this.prepareViewData());
+
+      if (!user.isAllowedTo('startStop'))
+      {
+        this.$('.action').hide();
+      }
 
       this.updateState();
 

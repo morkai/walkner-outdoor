@@ -41,15 +41,24 @@ function(
       var id    = model.get('_id');
 
       return [
-        {href: '#programs/' + id + ';edit', text: 'Edytuj'},
-        {href: '#programs/' + id + ';delete', text: 'Usuń', handler: function(e)
         {
-          if (e.button !== 0) return;
+          href      : '#programs/' + id + ';edit',
+          text      : 'Edytuj',
+          privilages: 'managePrograms'
+        },
+        {
+          href      : '#programs/' + id + ';delete',
+          text      : 'Usuń',
+          privilages: 'managePrograms',
+          handler   : function(e)
+          {
+            if (e.button !== 0) return;
 
-          viewport.showDialog(new DeleteProgramView({model: model}));
+            viewport.showDialog(new DeleteProgramView({model: model}));
 
-          return false;
-        }}
+            return false;
+          }
+        }
       ];
     },
 

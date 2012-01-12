@@ -52,6 +52,11 @@ var ProgramsRouter = Backbone.Router.extend({
 
 ProgramsRouter.prototype.list = function()
 {
+  if (viewport.msg.auth('viewPrograms'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new Programs().fetch({
@@ -71,11 +76,21 @@ ProgramsRouter.prototype.list = function()
 
 ProgramsRouter.prototype.add = function()
 {
+  if (viewport.msg.auth('managePrograms'))
+  {
+    return;
+  }
+
   viewport.showView(new AddProgramFormView({model: new Program()}));
 };
 
 ProgramsRouter.prototype.view = function(id)
 {
+  if (viewport.msg.auth('viewPrograms'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new Program({_id: id}).fetch({
@@ -92,6 +107,11 @@ ProgramsRouter.prototype.view = function(id)
 
 ProgramsRouter.prototype.edit = function(id)
 {
+  if (viewport.msg.auth('managePrograms'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new Program({_id: id}).fetch({
@@ -108,6 +128,11 @@ ProgramsRouter.prototype.edit = function(id)
 
 ProgramsRouter.prototype.del = function(id)
 {
+  if (viewport.msg.auth('managePrograms'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new Program({_id: id}).fetch({

@@ -19,7 +19,13 @@ function($, _, Backbone, PageLayout, ListView)
 
     breadcrumbs: ['Sterowniki'],
 
-    actions: [{href: '#controllers;add', text: 'Dodaj'}]
+    actions: [
+      {
+        href      : '#controllers;add',
+        text      : 'Dodaj',
+        privilages: 'manageControllers'
+      }
+    ]
 
   });
 });

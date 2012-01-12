@@ -40,6 +40,11 @@ var HistoryRouter = Backbone.Router.extend({
 
 HistoryRouter.prototype.list = function()
 {
+  if (viewport.msg.auth('viewHistory'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new History().fetch({
@@ -59,6 +64,11 @@ HistoryRouter.prototype.list = function()
 
 HistoryRouter.prototype.view = function(id)
 {
+  if (viewport.msg.auth('viewHistory'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new HistoryEntry({_id: id}).fetch({

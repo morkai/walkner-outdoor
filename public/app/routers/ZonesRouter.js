@@ -56,6 +56,11 @@ var ZonesRouter = Backbone.Router.extend({
 
 ZonesRouter.prototype.list = function()
 {
+  if (viewport.msg.auth('viewZones'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new Zones().fetch({
@@ -75,11 +80,21 @@ ZonesRouter.prototype.list = function()
 
 ZonesRouter.prototype.add = function()
 {
+  if (viewport.msg.auth('manageZones'))
+  {
+    return;
+  }
+
   viewport.showView(new AddZoneFormView({model: new Zone()}));
 };
 
 ZonesRouter.prototype.view = function(id)
 {
+  if (viewport.msg.auth('viewZones'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new Zone({_id: id}).fetch({
@@ -96,6 +111,11 @@ ZonesRouter.prototype.view = function(id)
 
 ZonesRouter.prototype.edit = function(id)
 {
+  if (viewport.msg.auth('manageZones'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new Zone({_id: id}).fetch({
@@ -112,6 +132,11 @@ ZonesRouter.prototype.edit = function(id)
 
 ZonesRouter.prototype.del = function(id)
 {
+  if (viewport.msg.auth('manageZones'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new Zone({_id: id}).fetch({
@@ -128,6 +153,11 @@ ZonesRouter.prototype.del = function(id)
 
 ZonesRouter.prototype.program = function(id)
 {
+  if (viewport.msg.auth('assignPrograms'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   new Zone({_id: id}).fetch({

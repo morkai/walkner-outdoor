@@ -51,6 +51,11 @@ function(
 
   ControllersRouter.prototype.list = function()
   {
+    if (viewport.msg.auth('viewControllers'))
+    {
+      return;
+    }
+
     viewport.msg.loading();
 
     new Controllers().fetch({
@@ -70,11 +75,21 @@ function(
 
   ControllersRouter.prototype.add = function()
   {
+    if (viewport.msg.auth('manageControllers'))
+    {
+      return;
+    }
+
     viewport.showView(new AddControllerFormView({model: new Controller()}));
   };
 
   ControllersRouter.prototype.view = function(id)
   {
+    if (viewport.msg.auth('viewControllers'))
+    {
+      return;
+    }
+
     viewport.msg.loading();
 
     new Controller({_id: id}).fetch({
@@ -91,6 +106,11 @@ function(
 
   ControllersRouter.prototype.edit = function(id)
   {
+    if (viewport.msg.auth('manageControllers'))
+    {
+      return;
+    }
+
     viewport.msg.loading();
 
     new Controller({_id: id}).fetch({
@@ -107,6 +127,11 @@ function(
 
   ControllersRouter.prototype.del = function(id)
   {
+    if (viewport.msg.auth('manageControllers'))
+    {
+      return;
+    }
+
     viewport.msg.loading();
 
     new Controller({_id: id}).fetch({

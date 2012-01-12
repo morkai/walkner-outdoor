@@ -1,12 +1,15 @@
 define(
 [
+  'require',
   'jQuery',
   'Underscore',
   'Backbone',
 
+  'app/user',
+
   'text!app/templates/menu.html'
 ],
-function($, _, Backbone, menuTpl)
+function(require, $, _, Backbone, user, menuTpl)
 {
   var renderMenu = _.template(menuTpl);
 
@@ -15,6 +18,11 @@ function($, _, Backbone, menuTpl)
     tagName: 'ul',
 
     className: 'menu',
+
+    events: {
+      'click .login-link' : 'onLoginLinkClick',
+      'click .logout-link': 'onLogoutLinkClick'
+    },
 
     initialize: function()
     {
@@ -37,7 +45,39 @@ function($, _, Backbone, menuTpl)
         this.el.innerHTML = renderMenu();
       }
 
+      this.toggleLinks();
+
       return this;
+    },
+
+    toggleLinks: function()
+    {
+      this.$('li').hide();
+
+      this.$('.dashboard-link').show();
+
+      if (user.isLoggedIn())
+      {
+        this.$('.logout-link').show();
+      }
+      else
+      {
+        this.$('.login-link').show();
+      }
+
+      this.showLinkIfAllowedTo('history', 'viewHistory');
+      this.showLinkIfAllowedTo('programs', 'viewPrograms');
+      this.showLinkIfAllowedTo('zones', 'viewZones');
+      this.showLinkIfAllowedTo('controllers', 'viewControllers');
+      this.showLinkIfAllowedTo('users', 'viewUsers');
+    },
+
+    showLinkIfAllowedTo: function(link, privilage)
+    {
+      if (user.isAllowedTo(privilage))
+      {
+        this.$('.' + link + '-link').show();
+      }
     },
 
     onLoadChangeActiveMenuItem: function(fragment)
@@ -70,6 +110,32 @@ function($, _, Backbone, menuTpl)
           break;
         }
       }
+    },
+
+    onLoginLinkClick: function()
+    {
+      require(
+        ['app/views/viewport', 'app/views/LoginView'],
+        function(viewport, LoginView)
+        {
+          viewport.showDialog(new LoginView());
+        }
+      );
+
+      return false;
+    },
+
+    onLogoutLinkClick: function(e)
+    {
+      require(
+        ['app/views/viewport', 'app/views/LogoutView'],
+        function(viewport, LogoutView)
+        {
+          viewport.showDialog(new LogoutView());
+        }
+      );
+
+      return false;
     }
 
   });

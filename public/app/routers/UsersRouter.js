@@ -51,6 +51,11 @@ function(
 
   UsersRouter.prototype.list = function()
   {
+    if (viewport.msg.auth('viewUsers'))
+    {
+      return;
+    }
+
     viewport.msg.loading();
 
     new Users().fetch({
@@ -70,11 +75,21 @@ function(
 
   UsersRouter.prototype.add = function()
   {
+    if (viewport.msg.auth('manageUsers'))
+    {
+      return;
+    }
+
     viewport.showView(new AddUserFormView({model: new User()}));
   };
 
   UsersRouter.prototype.view = function(id)
   {
+    if (viewport.msg.auth('viewUsers'))
+    {
+      return;
+    }
+
     viewport.msg.loading();
 
     new User({_id: id}).fetch({
@@ -91,6 +106,11 @@ function(
 
   UsersRouter.prototype.edit = function(id)
   {
+    if (viewport.msg.auth('manageUsers'))
+    {
+      return;
+    }
+
     viewport.msg.loading();
 
     new User({_id: id}).fetch({
@@ -107,6 +127,11 @@ function(
 
   UsersRouter.prototype.del = function(id)
   {
+    if (viewport.msg.auth('manageUsers'))
+    {
+      return;
+    }
+
     viewport.msg.loading();
 
     new User({_id: id}).fetch({

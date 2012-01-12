@@ -31,15 +31,24 @@ function($, _, Backbone, PageLayout, viewport, DeleteUserView, detailsTpl)
       var id    = model.get('_id');
 
       return [
-        {href: '#users/' + id + ';edit', text: 'Edytuj'},
-        {href: '#users/' + id + ';delete', text: 'Usuń', handler: function(e)
         {
-          if (e.button !== 0) return;
+          href      : '#users/' + id + ';edit',
+          text      : 'Edytuj',
+          privilages: 'manageUsers'
+        },
+        {
+          href      : '#users/' + id + ';delete',
+          text      : 'Usuń',
+          privilages: 'manageUsers',
+          handler   : function(e)
+          {
+            if (e.button !== 0) return;
 
-          viewport.showDialog(new DeleteUserView({model: model}));
+            viewport.showDialog(new DeleteUserView({model: model}));
 
-          return false;
-        }}
+            return false;
+          }
+        }
       ];
     },
 

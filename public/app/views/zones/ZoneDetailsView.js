@@ -34,16 +34,29 @@ function($, _, Backbone, viewport, PageLayout, DeleteZoneView, detailsTpl)
       var id    = model.get('_id');
 
       return [
-        {href: '#zones/' + id + ';program', text: 'Programuj'},
-        {href: '#zones/' + id + ';edit', text: 'Edytuj'},
-        {href: '#zones/' + id + ';delete', text: 'Usuń', handler: function(e)
         {
-          if (e.button !== 0) return;
+          href      : '#zones/' + id + ';program',
+          text      : 'Programuj',
+          privilages: 'assignPrograms'
+        },
+        {
+          href      : '#zones/' + id + ';edit',
+          text      : 'Edytuj',
+          privilages: 'manageZones'
+        },
+        {
+          href      : '#zones/' + id + ';delete',
+          text      : 'Usuń',
+          privilages: 'manageZones',
+          handler   : function(e)
+          {
+            if (e.button !== 0) return;
 
-          viewport.showDialog(new DeleteZoneView({model: model}));
+            viewport.showDialog(new DeleteZoneView({model: model}));
 
-          return false;
-        }}
+            return false;
+          }
+        }
       ];
     },
 

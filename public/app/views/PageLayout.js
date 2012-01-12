@@ -4,13 +4,14 @@ define(
   'Underscore',
   'Backbone',
 
+  'app/user',
   'app/views/menu',
 
   'text!app/templates/pageLayout.html',
   'text!app/templates/breadcrumbs.html',
   'text!app/templates/actions.html'
 ],
-function($, _, Backbone, menu, pageLayoutTpl, breadcrumbsTpl, actionsTpl)
+function($, _, Backbone, user, menu, pageLayoutTpl, breadcrumbsTpl, actionsTpl)
 {
   var renderPageLayout  = _.template(pageLayoutTpl);
   var renderBreadcrumbs = _.template(breadcrumbsTpl);
@@ -109,6 +110,11 @@ function($, _, Backbone, menu, pageLayoutTpl, breadcrumbsTpl, actionsTpl)
         var className = _.isUndefined(action.className)
           ? 'blue action'
           : action.className;
+
+        if (action.privilages && !user.isAllowedTo(action.privilages))
+        {
+          return;
+        }
 
         result.push({
           id       : action.id || _.uniqueId('action-'),
