@@ -1,8 +1,33 @@
-var User = require('../models/User');
+var User   = require('../models/User');
+var config = require('../../config/auth');
 
 app.post('/login', function(req, res, next)
 {
   var credentials = req.body;
+
+  if (credentials.login === config.superUser.login)
+  {
+    if (credentials.password !== config.superUser.password)
+    {
+      return res.send(401);
+    }
+
+    return req.session.regenerate(function(err)
+    {
+      if (err) return next(err);
+
+      req.session.user = config.superUser;
+
+      if (req.is('json'))
+      {
+        res.send(req.session.user);
+      }
+      else
+      {
+        res.redirect('home');
+      }
+    });
+  }
 
   User.findOne({login: credentials.login}, function(err, user)
   {
