@@ -98,7 +98,7 @@ app.get('/zones/:id', auth('viewZones'), function(req, res, next)
   );
 });
 
-app.post('/zones/:id', function(req, res, next)
+app.post('/zones/:id', auth('startStop'), function(req, res, next)
 {
   Zone.findById(req.params.id, function(err, zone)
   {
