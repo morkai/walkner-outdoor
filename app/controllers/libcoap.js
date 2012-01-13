@@ -253,8 +253,6 @@ function execCmd(cmd, cb, count)
   if (!count)
   {
     count = 0;
-
-    console.debug('Exec coap-client request: %s', cmd);
   }
   else
   {
