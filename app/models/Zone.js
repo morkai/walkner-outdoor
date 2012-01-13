@@ -11,6 +11,9 @@ var Zone = new mongoose.Schema({
     required: true,
     trim    : true
   },
+  program: {
+    type: mongoose.SchemaTypes.ObjectId
+  },
   controller: {
     type: mongoose.SchemaTypes.ObjectId
   },
