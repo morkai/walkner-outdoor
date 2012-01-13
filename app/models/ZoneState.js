@@ -1,7 +1,7 @@
 var _        = require('underscore');
 var mongoose = require('mongoose');
 
-var ZoneState = module.exports = function(zone, program, onStop)
+var ZoneState = module.exports = function(zone, program, startUser, onStop)
 {
   this.steps     = program.get('steps');
   this.totalTime = program.get('totalTime');
@@ -17,6 +17,7 @@ var ZoneState = module.exports = function(zone, program, onStop)
   this.programName    = program.get('name');
   this.infinite       = program.get('infinite');
   this.controllerInfo = zone.get('controllerInfo') || {};
+  this.startUser      = startUser;
 
   this.onStop      = onStop;
   this.error       = null;
@@ -70,6 +71,14 @@ ZoneState.prototype.started = function()
     programSteps: this.steps,
     startedAt   : new Date(this.startTime)
   });
+
+  if (this.startUser)
+  {
+    historyEntry.set({
+      startUserId  : this.startUser._id,
+      startUserName: this.startUser.name
+    });
+  }
 
   historyEntry.save(function(err)
   {

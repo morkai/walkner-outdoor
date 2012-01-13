@@ -33,7 +33,7 @@ Zone.methods.toObject = function(options)
   return object;
 };
 
-Zone.methods.start = function(programId, cb)
+Zone.methods.start = function(programId, user, cb)
 {
   var zone         = this;
   var zoneId       = zone.get('id');
@@ -70,7 +70,7 @@ Zone.methods.start = function(programId, cb)
       if (!controller) throw 'Strefa nie ma przypisanego sterownika.';
 
       controller.start(
-        new ZoneState(zone, program, zone.onStop.bind(zone)),
+        new ZoneState(zone, program, user, zone.onStop.bind(zone)),
         this
       );
     },
@@ -99,7 +99,7 @@ Zone.methods.start = function(programId, cb)
   );
 };
 
-Zone.methods.stop = function(cb)
+Zone.methods.stop = function(user, cb)
 {
   var zoneId    = this.get('id');
   var zoneState = zoneStates[zoneId];
@@ -113,7 +113,7 @@ Zone.methods.stop = function(cb)
   {
     controller.stop(zoneId, function()
     {
-      zoneState.stopped();
+      zoneState.stopped(user);
       cb();
     });
   });

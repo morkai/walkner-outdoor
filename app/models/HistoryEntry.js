@@ -86,7 +86,7 @@ HistoryEntry.statics.stopped = function(id, user, cb)
 
   if (user)
   {
-    data.stopUserId   = user.id;
+    data.stopUserId   = user._id;
     data.stopUserName = user.name;
   }
 

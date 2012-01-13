@@ -106,10 +106,15 @@ app.post('/zones/:id', auth('startStop'), function(req, res, next)
 
     if (!zone) return res.send(404);
 
+    var user = {
+      _id : req.session.user._id,
+      name: req.session.user.name
+    };
+
     switch (req.body.action)
     {
       case 'start':
-        zone.start(req.body.program, function(err, state)
+        zone.start(req.body.program, user, function(err, state)
         {
           if (err)
           {
@@ -147,7 +152,7 @@ app.post('/zones/:id', auth('startStop'), function(req, res, next)
         break;
 
       case 'stop':
-        zone.stop(function(err)
+        zone.stop(user, function(err)
         {
           if (err)
           {
