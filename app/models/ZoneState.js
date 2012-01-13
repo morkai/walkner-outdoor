@@ -82,7 +82,13 @@ ZoneState.prototype.started = function()
 
   historyEntry.save(function(err)
   {
-    if (!err)
+    if (err)
+    {
+      console.error(
+        'Could not save history entry. Exception:\n%s', err.message
+      );
+    }
+    else
     {
       self.historyId = historyEntry.get('id');
     }
