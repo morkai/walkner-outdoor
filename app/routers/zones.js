@@ -6,7 +6,7 @@ var Program    = require('../models/Program');
 var limits     = require('../../config/limits');
 var auth       = require('../utils/middleware').auth;
 
-app.get('/zones', auth('viewZones'), function(req, res, next)
+app.get('/zones', function(req, res, next)
 {
   Zone.find({}, req.query.fields).asc('name').run(function(err, docs)
   {
