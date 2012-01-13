@@ -49,7 +49,7 @@ var HistoryEntry = new mongoose.Schema({
     type    : String,
     enum    : ['finish', 'stop', 'error']
   },
-  error: {
+  errorMessage: {
     type: String
   }
 }, {
@@ -70,11 +70,11 @@ HistoryEntry.statics.finished = function(id, error, cb)
 
   if (_.isObject(error) && _.isString(error.message))
   {
-    data.error = error.message;
+    data.errorMessage = error.message;
   }
   else if (_.isString(error))
   {
-    data.error = error;
+    data.errorMessage = error;
   }
 
   finish(id, data.error ? 'error' : 'finish', data, cb);
