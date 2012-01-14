@@ -1,3 +1,5 @@
+var guestUser = require('../../config/auth').guestUser;
+
 exports.auth = function(privilages)
 {
   if (!Array.isArray(privilages))
@@ -9,6 +11,11 @@ exports.auth = function(privilages)
 
   return function(req, res, next)
   {
+    if (!req.session.user)
+    {
+      req.session.user = guestUser;
+    }
+
     var user = req.session.user;
 
     if (!user || !user.privilages)

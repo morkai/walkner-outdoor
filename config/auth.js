@@ -2,8 +2,9 @@
  * Super secret super user data.
  */
 exports.superUser = {
-  _id       : '4f1057cabe991b107405bf96',
-  name      : 'admin',
+  loggedIn  : true,
+  _id       : 'admin1234567890123456789',
+  name      : 'Superadministator',
   login     : 'root',
   password  : 'r00t',
   privilages: {
@@ -20,5 +21,21 @@ exports.superUser = {
     "manageControllers":"1",
     "viewUsers":"1",
     "manageUsers":"1"
+  }
+};
+
+/**
+ * Guest (not logged in) user data.
+ */
+exports.guestUser = {
+  loggedIn  : false,
+  _id       : 'guest1234567890123456789',
+  name      : 'Niezalogowany',
+  login     : 'guest',
+  password  : Math.random().toString(),
+  privilages: {
+    "startStop":"1",
+    "viewHistory":"1",
+    "viewPrograms":"1"
   }
 };

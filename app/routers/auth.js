@@ -48,7 +48,8 @@ app.post('/login', function(req, res, next)
     {
       if (err) return next(err);
 
-      req.session.user = user.toJSON();
+      req.session.user          = user.toJSON();
+      req.session.user.loggedIn = true;
 
       if (req.is('json'))
       {

@@ -1,6 +1,5 @@
-var indexHtml = require('fs').readFileSync(
-  __dirname + '/../../public/app/templates/index.html', 'utf8'
-);
+var guestUser = require('../../config/auth').guestUser;
+
 var limits = 'define("app/models/limits", '
            + JSON.stringify(require(__dirname + '/../../config/limits'))
            + ');';
@@ -9,7 +8,7 @@ app.get('/', function(req, res)
 {
   res.render('index.ejs', {
     layout: false,
-    user  : JSON.stringify(req.session.user || {})
+    user  : JSON.stringify(req.session.user || guestUser)
   });
 });
 
