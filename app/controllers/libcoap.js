@@ -197,7 +197,7 @@ function setLeds(zoneId, leds, cb)
         next
       );
     },
-    function setGreenLedStep(err)
+    function setRedLedStep(err)
     {
       if (err) throw 'Nie udało się ustawić zielonej lampy :(';
 
@@ -209,7 +209,7 @@ function setLeds(zoneId, leds, cb)
       }
 
       setResource(
-        zone.controllerInfo.greenLedResource || '/io/redLed',
+        zone.controllerInfo.redLedResource || '/io/redLed',
         leds.red,
         next
       );
