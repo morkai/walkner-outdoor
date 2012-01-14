@@ -77,6 +77,19 @@ Konfiguracja logów. Do `stdout` przekazywane będą logi poziomów: `log`, `deb
   * `developmentLevels` - obiekt definiujący jakiego poziomu logi mają
     przechodzić przez filtr, jeżeli `NODE_ENV` jest ustawione na `development`.
 
+### auth.js
+
+Konfiguracja uwierzytelniania i autoryzacji.
+
+  * `superUser` - obiekt super użytkownika (ma wszystkie uprawnienia).
+    Można się na niego zalogować używając zdefiniowanego loginu i hasła mimo
+    tego, że nie znajduje się on w bazie danych. Przydatne przy uruchomieniu
+    na czystej bazie danych.
+
+  * `guestUser` - obiekt użytkownika przypisywany do niezalogowanych klientów.
+    Można definiować, do jakich funkcji mają mieć dostęp niezalogowani
+    użytkownicy.
+
 ## Uruchomienie
 
 Jeżeli jeszcze nie uruchomione, startujemy MongoDB:
