@@ -8,7 +8,8 @@ define(
   'app/user',
   'app/models/Programs',
   'app/views/viewport',
-  'app/views/programs/ProgramListView',
+  'app/views/ProgramPickerView',
+  'app/views/EnterPinFormView',
 
   'text!app/templates/zones/zone.html'
 ],
@@ -20,7 +21,8 @@ function(
   user,
   Programs,
   viewport,
-  ProgramListView,
+  ProgramPickerView,
+  EnterPinFormView,
   zoneTpl)
 {
   var renderZone = _.template(zoneTpl);
@@ -36,8 +38,7 @@ function(
     {
       _.bindAll(
         this,
-        'showProgramList',
-        'selectProgram',
+        'showProgramPicker',
         'updateProgress',
         'updateState'
       );
@@ -169,12 +170,11 @@ function(
       self.toggleActions();
       viewport.msg.loading();
 
-      new Programs().fetch({
-        data: {
-          fields: ['name']
-        },
-        success: this.showProgramList,
-        error: function()
+      $.ajax({
+        type   : 'GET',
+        url    : '/zones/' + this.model.get('_id') + '/programs',
+        success: this.showProgramPicker,
+        error  : function()
         {
           self.toggleActions();
           viewport.msg.loadingFailed();
@@ -184,14 +184,38 @@ function(
 
     stop: function()
     {
-      var self = this;
+      this.toggleActions();
 
-      self.toggleActions();
+      if (user.isLoggedIn())
+      {
+        return this.stopZone();
+      }
+
+      this.enterPinFormView = new EnterPinFormView({
+        model: {
+          zone  : {id: this.model.get('_id'), name: this.model.get('name')},
+          action: 'stop'
+        }
+      });
+      this.enterPinFormView.onPinEnter = _.bind(this.stopZone, this);
+      this.enterPinFormView.render();
+
+      viewport.showDialog(this.enterPinFormView);
+    },
+
+    onPinEnterStopZone: function(pin)
+    {
+      this.stopZone(pin);
+    },
+
+    stopZone: function(pin)
+    {
+      var self = this;
 
       $.ajax({
         url: '/zones/' + this.model.get('_id'),
         type: 'POST',
-        data: {action: 'stop'},
+        data: {action: 'stop', pin: pin},
         success: function()
         {
           viewport.msg.show({
@@ -200,33 +224,35 @@ function(
             text: 'Strefa zatrzymana pomyślnie!'
           });
         },
-        error: function()
+        error: function(xhr)
         {
           viewport.msg.show({
             type: 'error',
             time: 3000,
-            text: 'Nie udało się zatrzymać strefy :('
+            text: xhr.responseText || 'Nie udało się zatrzymać strefy :('
           });
         },
         complete: function()
         {
           self.toggleActions();
+          viewport.closeDialog();
         }
       });
     },
 
-    showProgramList: function(collection)
+    showProgramPicker: function(data)
     {
-      var listView = new ProgramListView({collection: collection});
+      var self              = this;
+      var programPickerView = new ProgramPickerView({model: data});
 
-      listView.selectProgram = this.selectProgram;
-      listView.delegateEvents({
-        'click a': 'selectProgram'
-      });
+      programPickerView.onProgramSelect = function(programId, pin)
+      {
+        self.toggleActions();
+        viewport.closeDialog();
+        self.startProgram(programId, pin);
+      };
 
-      viewport.showDialog(listView);
-
-      var self = this;
+      viewport.showDialog(programPickerView);
 
       viewport.bind('dialog:close', function closeDialog()
       {
@@ -235,21 +261,7 @@ function(
       });
     },
 
-    selectProgram: function(e)
-    {
-      viewport.closeDialog();
-
-      this.toggleActions();
-
-      var href = e.target.href;
-      var frag = href.substr(href.indexOf('#') + 1);
-
-      this.startProgram(frag.substr('programs/'.length));
-
-      return false;
-    },
-
-    startProgram: function(programId)
+    startProgram: function(programId, pin)
     {
       var self = this;
 
@@ -263,7 +275,8 @@ function(
         type: 'POST',
         data: {
           action:  'start',
-          program: programId
+          program: programId,
+          pin    : pin
         },
         success: function()
         {

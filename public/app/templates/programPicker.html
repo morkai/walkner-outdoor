@@ -1,0 +1,55 @@
+<% if (showAssignedProgram) { %>
+<div class="assignedProgram box">
+  <h4>Przypisany program</h4>
+  <ol class="list">
+    <li>
+      <a class="program" href="#programs/<%- assignedProgram.id %>" data-id="<%- assignedProgram.id %>"><%- assignedProgram.name %></a>
+    </li>
+  </ol>
+</div>
+<% } %>
+
+<% if (showRecentPrograms) { %>
+<div class="recentPrograms box">
+  <h4>Ostatnio zakończone programy</h4>
+  <ol class="list">
+    <% _.each(recentPrograms, function(program) { %>
+    <li>
+      <a class="program" href="#programs/<%- program.id %>" data-id="<%- program.id %>"><%- program.name %></a>
+    </li>
+    <% }) %>
+  </ol>
+</div>
+<% } %>
+
+<% if (showAllPrograms) { %>
+<div class="allPrograms box">
+  <h4>Wszystkie programy</h4>
+  <ol class="list">
+    <% _.each(allPrograms, function(program) { %>
+    <li>
+      <a class="program" href="#programs/<%- program.id %>" data-id="<%- program.id %>"><%- program.name %></a>
+    </li>
+    <% }) %>
+  </ol>
+</div>
+<% } %>
+
+<% if (showEnterPinForm) { %>
+<p class="content">
+  Jeżeli chcesz uruchomić program <strong>&lt;<%- assignedProgram.name %>&gt;</strong><br>
+  na strefie <strong>&lt;<%- zone.name %>&gt;</strong> to podaj swój PIN<br>
+  i wciśnij przycisk <em>Start</em>.
+</p>
+<div class="enterPinForm"></div>
+<% } %>
+
+<% if (showNoAssignedProgramMessage) { %>
+<div class="content">
+  <p>
+    Nie można uruchomić strefy &lt;<%- zone.name %>&gt;,
+    gdyż nie ma ona przypisanego żadnego programu.
+  </p>
+  <a class="cancel" href="#">Anuluj</a>
+</div>
+<% } %>

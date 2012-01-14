@@ -1,0 +1,23 @@
+<form action="/zones/<%- zone.id %>" method="post">
+<input type="hidden" name="action" value="<%- action %>">
+<input type="hidden" name="pin" value="">
+<input class="key button" type="button" value="x">
+<input class="textline pin" type="text" readonly maxlength=6 placeholder="PIN">
+<input class="key button" type="button" value="&#8592;">
+<br>
+<input class="key button" type="button" value="1">
+<input class="key button" type="button" value="2">
+<input class="key button" type="button" value="3">
+<br>
+<input class="key button" type="button" value="4">
+<input class="key button" type="button" value="5">
+<input class="key button" type="button" value="6">
+<br>
+<input class="key button" type="button" value="7">
+<input class="key button" type="button" value="8">
+<input class="key button" type="button" value="9">
+<br>
+<input class="red cancel action" type="button" value="anuluj">
+<input class="key button" type="button" value="0">
+<input class="green start action" type="submit" value="<%- action %>">
+</form>

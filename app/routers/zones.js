@@ -3,6 +3,8 @@ var step       = require('step');
 var Zone       = require('../models/Zone');
 var Controller = require('../models/Controller');
 var Program    = require('../models/Program');
+var HistoryEntry = require('../models/HistoryEntry');
+var User         = require('../models/User');
 var limits     = require('../../config/limits');
 var auth       = require('../utils/middleware').auth;
 
@@ -106,73 +108,16 @@ app.post('/zones/:id', auth('startStop'), function(req, res, next)
 
     if (!zone) return res.send(404);
 
-    var user = {
-      _id : req.session.user._id,
-      name: req.session.user.name
-    };
+    var user = req.session.user;
 
     switch (req.body.action)
     {
       case 'start':
-        zone.start(req.body.program, user, function(err, state)
-        {
-          if (err)
-          {
-            var program = req.body.program;
-
-            if (state)
-            {
-              program = state.programName || req.body.program;
-
-              state.destroy();
-            }
-
-            console.debug(
-              'Failed to start program <%s> on zone <%s>: %s',
-              program,
-              zone.get('name'),
-              err
-            );
-          }
-          else
-          {
-            console.debug(
-              'Started program <%s> on zone <%s>',
-              state.programName,
-              zone.get('name')
-            );
-          }
-
-          if (err instanceof Error) return next(err);
-
-          if (err) return res.send(err, 500);
-
-          res.send();
-        });
+        startZone(req, res, next, zone, user);
         break;
 
       case 'stop':
-        zone.stop(user, function(err)
-        {
-          if (err)
-          {
-            console.debug(
-              'Failed to stop zone <%s>: %s',
-              zone.get('name'),
-              err
-            );
-          }
-          else
-          {
-            console.debug('Stopped zone <%s>',zone.get('name'));
-          }
-
-          if (err instanceof Error) return next(err);
-
-          if (err) return res.send(err, 500);
-
-          res.send();
-        });
+        stopZone(req, res, next, zone, user);
         break;
 
       default:
@@ -221,3 +166,282 @@ app.del('/zones/:id', auth('manageZones'), function(req, res, next)
     res.send(204);
   });
 });
+
+app.get('/zones/:id/programs', function(req, res, nextHandler)
+{
+  step(
+    function findZoneStep()
+    {
+      Zone.findById(req.params.id, {name: 1, program: 1}).run(this);
+    },
+    function findAssignedProgramStep(err, zone)
+    {
+      var nextStep = this;
+
+      if (err) return nextStep(err);
+
+      if (!zone) return nextStep(404);
+
+      Program.findById(zone.program, {name: 1}).run(function(err, program)
+      {
+        return nextStep(err, zone, program);
+      });
+    },
+    function checkAuthStep(err, zone, program)
+    {
+      var nextStep = this;
+
+      if (err) return nextStep(err);
+
+      var data = {
+        zone: {id: zone.id, name: zone.name}
+      };
+
+      if (program)
+      {
+        data.assignedProgram = {id: program.id, name: program.name};
+      }
+
+      var user = req.session.user;
+
+      if (user && user.privilages.pickProgram)
+      {
+        return attachPickProgramData(data, nextStep);
+      }
+
+      return data;
+    },
+    function sendResponseStep(err, data)
+    {
+      if (err)
+      {
+        return err === 404 ? res.send(404) : nextHandler(err);
+      }
+
+      return res.send(data);
+    }
+  );
+});
+
+function attachPickProgramData(data, done)
+{
+  step(
+    function findAllPrograms()
+    {
+      Program.find({}, {name: 1}).asc('name').run(this);
+    },
+    function findRecentlyRunPrograms(err, allPrograms)
+    {
+      var nextStep = this;
+
+      if (err) return nextStep(err);
+
+      var criteria = {
+        zoneId     : data.zone.id,
+        finishState: 'finish'
+      };
+      var fields = {programId: 1, programName: 1};
+
+      HistoryEntry.find(criteria, fields)
+                  .desc('finishedAt')
+                  .limit(10)
+                  .run(function(err, historyEntries)
+                  {
+                    nextStep(err, allPrograms, historyEntries);
+                  });
+    },
+    function cleanUpListsStep(err, allPrograms, recentHistoryEntries)
+    {
+      var nextStep = this;
+
+      if (err) return nextStep(err);
+
+      var allProgramIds = {};
+
+      data.allPrograms = allPrograms.map(function(program)
+      {
+        allProgramIds[program.id] = true;
+
+        return {
+          id  : program.id,
+          name: program.name
+        };
+      });
+      data.recentPrograms = [];
+
+      var recentProgramIds = {};
+
+      for (var i = 0, l = recentHistoryEntries.length; i < l; ++i)
+      {
+        if (data.recentPrograms.length === 5)
+        {
+          break;
+        }
+
+        var historyEntry = recentHistoryEntries[i];
+        var programId    = historyEntry.programId;
+
+        if (!allProgramIds[programId])
+        {
+          continue;
+        }
+
+        if (recentProgramIds[programId])
+        {
+          continue;
+        }
+
+        recentProgramIds[programId] = 1;
+
+        data.recentPrograms.push({
+          id  : programId,
+          name: historyEntry.programName
+        });
+      }
+
+      return nextStep(null);
+    },
+    function finishStep(err)
+    {
+      return done(err, data);
+    }
+  );
+}
+
+function startZone(req, res, next, zone, user)
+{
+  var canPickProgram = user.privilages.hasOwnProperty('pickProgram');
+  var pin            = req.body.pin;
+  var programId      = req.body.program;
+  var hasPin         = _.isString(pin);
+  var hasProgramId   = _.isString(programId);
+
+  if (hasProgramId && !canPickProgram)
+  {
+    return res.send(401);
+  }
+
+  if (canPickProgram && !hasProgramId)
+  {
+    return res.send('Nie wybrano programu.', 400);
+  }
+
+  if (hasPin && !hasProgramId)
+  {
+    User.findOne({pin: pin}, {name: 1, privilages: 1}).run(function(err, user)
+    {
+      if (err)
+        return next(err);
+
+      if (!user)
+        return res.send('Niepoprawny PIN :(', 400);
+
+      if (!user.privilages.startStop)
+        return res.send('Nie masz uprawnień do uruchamiania stref :(', 401);
+
+      return start(zone.program, {_id: user.id, name: user.name});
+    });
+  }
+  else if (!canPickProgram)
+  {
+    return res.send('Nie masz uprawnień do wybierania programów :(', 401);
+  }
+  else
+  {
+    return start(programId, user);
+  }
+
+  function start(programId, user)
+  {
+    zone.start(programId, user, function(err, state)
+    {
+      if (err)
+      {
+        var program = programId;
+
+        if (state)
+        {
+          program = state.programName;
+
+          state.destroy();
+        }
+
+        console.debug(
+          'Failed to start program <%s> on zone <%s>: %s',
+          program,
+          zone.get('name'),
+          err
+        );
+      }
+      else
+      {
+        console.debug(
+          'Started program <%s> on zone <%s>',
+          state.programName,
+          zone.get('name')
+        );
+      }
+
+      if (err instanceof Error) return next(err);
+
+      if (err) return res.send(err, 500);
+
+      res.send();
+    });
+  }
+}
+
+function stopZone(req, res, next, zone, user)
+{
+  var pin    = req.body.pin;
+  var hasPin = _.isString(pin);
+
+  if (user.privilages.hasOwnProperty('pickProgram'))
+  {
+    return stop(user);
+  }
+
+  if (!_.isString(pin) || !pin.length)
+  {
+    return res.send('PIN jest wymagany :(', 400);
+  }
+
+  User.findOne({pin: pin}, {name: 1, privilages: 1}).run(function(err, user)
+  {
+    if (err)
+      return next(err);
+
+    if (!user)
+      return res.send('Niepoprawny PIN :(', 400);
+
+    if (!user.privilages.startStop)
+      return res.send('Nie masz uprawnień do zatrzymywania stref :(', 401);
+
+    return stop({_id: user.id, name: user.name});
+  });
+
+  function stop(user)
+  {
+    zone.stop(user, function(err)
+    {
+      if (err)
+      {
+        console.debug(
+          'Failed to stop zone <%s>: %s',
+          zone.get('name'),
+          err
+        );
+      }
+      else
+      {
+        console.debug('Stopped zone <%s>', zone.get('name'));
+      }
+
+      if (err instanceof Error) return next(err);
+
+      if (err) return res.send(err, 500);
+
+      res.send();
+    });
+  }
+}

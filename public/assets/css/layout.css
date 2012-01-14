@@ -16,6 +16,10 @@ em
 {
   font-style: oblique;
 }
+strong
+{
+  font-weight: bold;
+}
 .menu
 {
   display: block;
