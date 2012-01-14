@@ -4,7 +4,7 @@ define(function()
 
   user.isLoggedIn = function()
   {
-    return typeof user._id === 'string';
+    return user.loggedIn === true;
   };
 
   user.isAllowedTo = function(privilage)
