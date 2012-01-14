@@ -6,13 +6,19 @@ body
   cursor: default;
 }
 
-.touchEnabled *
+.touchEnabled
 {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   -o-user-select: none;
   user-select: none;
+}
+.touchEnabled a,
+.touchEnabled button,
+.touchEnabled input[type="submit"],
+.touchEnabled input[type="button"]
+{
   -webkit-user-drag: none;
   -moz-user-drag: none;
   -ms-user-drag: none;
