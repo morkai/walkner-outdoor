@@ -1,7 +1,7 @@
-var mongoose          = require('mongoose');
+var mongoose            = require('mongoose');
 var controllerProcesses = require('./controllerProcesses');
 
-var Controller = new mongoose.Schema({
+var Controller = module.exports = new mongoose.Schema({
   name: {
     type    : String,
     required: true,
@@ -37,4 +37,4 @@ Controller.methods.stop = function(zoneId, cb)
   controllerProcesses.stop(this, zoneId, cb);
 };
 
-module.exports = mongoose.model('Controller', Controller);
+mongoose.model('Controller', Controller);

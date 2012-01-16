@@ -1,4 +1,3 @@
-var User   = require('../models/User');
 var config = require('../../config/auth');
 
 app.post('/login', function(req, res, next)
@@ -28,6 +27,8 @@ app.post('/login', function(req, res, next)
       }
     });
   }
+
+  var User = app.db.model('User');
 
   User.findOne({login: credentials.login}, function(err, user)
   {

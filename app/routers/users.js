@@ -1,8 +1,9 @@
-var User = require('../models/User');
 var auth = require('../utils/middleware').auth;
 
 app.get('/users', auth('viewUsers'), function(req, res, next)
 {
+  var User = app.db.model('User');
+
   User.find({}, req.query.fields, function(err, docs)
   {
     if (err) return next(err);
@@ -19,6 +20,7 @@ app.post('/users', auth('manageUsers'), function(req, res, next)
   data.passwordSalt = password.salt;
   data.password     = password.hash;
 
+  var User = app.db.model('User');
   var user = new User(data);
 
   user.save(function(err)
@@ -31,6 +33,8 @@ app.post('/users', auth('manageUsers'), function(req, res, next)
 
 app.get('/users/:id', auth('viewUsers'), function(req, res, next)
 {
+  var User = app.db.model('User');
+
   User.findById(req.params.id, function(err, doc)
   {
     if (err) return next(err);
@@ -43,6 +47,8 @@ app.get('/users/:id', auth('viewUsers'), function(req, res, next)
 
 app.put('/users/:id', auth('manageUsers'), function(req, res, next)
 {
+  var User = app.db.model('User');
+
   User.findById(req.params.id, function(err, user)
   {
     if (err) return next(err);
@@ -81,6 +87,8 @@ app.put('/users/:id', auth('manageUsers'), function(req, res, next)
 
 app.del('/users/:id', auth('manageUsers'), function(req, res, next)
 {
+  var User = app.db.model('User');
+
   User.remove({_id: req.params.id}, function(err)
   {
     if (err) return next(err);

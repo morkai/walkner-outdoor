@@ -1,8 +1,9 @@
-var Controller = require('../models/Controller');
-var auth       = require('../utils/middleware').auth;
+var auth = require('../utils/middleware').auth;
 
 app.get('/controllers', auth('viewControllers'), function(req, res, next)
 {
+  var Controller = app.db.model('Controller');
+
   Controller.find({}, req.query.fields, function(err, docs)
   {
     if (err) return next(err);
@@ -13,6 +14,7 @@ app.get('/controllers', auth('viewControllers'), function(req, res, next)
 
 app.post('/controllers', auth('manageControllers'), function(req, res, next)
 {
+  var Controller = app.db.model('Controller');
   var controller = new Controller(req.body);
 
   controller.save(function(err)
@@ -25,6 +27,8 @@ app.post('/controllers', auth('manageControllers'), function(req, res, next)
 
 app.get('/controllers/:id', auth('viewControllers'), function(req, res, next)
 {
+  var Controller = app.db.model('Controller');
+
   Controller.findById(req.params.id, function(err, doc)
   {
     if (err) return next(err);
@@ -39,6 +43,8 @@ app.put('/controllers/:id', auth('manageControllers'), function(req, res, next)
 {
   delete req.body._id;
 
+  var Controller = app.db.model('Controller');
+
   Controller.update({_id: req.params.id}, req.body, function(err, count)
   {
     if (err) return next(err);
@@ -51,6 +57,8 @@ app.put('/controllers/:id', auth('manageControllers'), function(req, res, next)
 
 app.del('/controllers/:id', auth('manageControllers'), function(req, res, next)
 {
+  var Controller = app.db.model('Controller');
+
   Controller.remove({_id: req.params.id}, function(err)
   {
     if (err) return next(err);

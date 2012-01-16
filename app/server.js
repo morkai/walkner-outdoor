@@ -37,6 +37,8 @@ mongoose.connect(mongooseConfig.uri, function(err)
   {
     console.debug('Connected to MongoDB');
 
+    require('./models');
+
     app.listen(expressConfig.port, function()
     {
       console.debug('Express HTTP server listening on port %d', app.address().port);

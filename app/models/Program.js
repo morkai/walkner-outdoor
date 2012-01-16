@@ -22,7 +22,7 @@ Step.virtual('totalTime').get(function()
   return (this.get('timeOn') + this.get('timeOff')) * this.get('iterations');
 });
 
-var Program = new mongoose.Schema({
+var Program = module.exports = new mongoose.Schema({
   name: {
     type: String,
     required: true,
@@ -48,4 +48,4 @@ Program.virtual('totalTime').get(function()
   return totalTime;
 });
 
-module.exports = mongoose.model('Program', Program);
+mongoose.model('Program', Program);

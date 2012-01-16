@@ -2,7 +2,7 @@ var createHash = require('crypto').createHash;
 var _          = require('underscore');
 var mongoose   = require('mongoose');
 
-var User = new mongoose.Schema({
+var User = module.exports = new mongoose.Schema({
   name: {
     type    : String,
     required: true,
@@ -70,4 +70,4 @@ User.methods.toJSON = function()
   return obj;
 };
 
-module.exports = mongoose.model('User', User);
+mongoose.model('User', User);

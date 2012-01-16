@@ -1,7 +1,7 @@
 var _        = require('underscore');
 var mongoose = require('mongoose');
 
-var HistoryEntry = new mongoose.Schema({
+var HistoryEntry = module.exports = new mongoose.Schema({
   zoneId: {
     type    : mongoose.SchemaTypes.ObjectId,
     required: true
@@ -93,4 +93,4 @@ HistoryEntry.statics.stopped = function(id, user, cb)
   finish(id, 'stop', data, cb);
 };
 
-module.exports = mongoose.model('HistoryEntry', HistoryEntry);
+mongoose.model('HistoryEntry', HistoryEntry);

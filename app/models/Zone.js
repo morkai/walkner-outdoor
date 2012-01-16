@@ -5,7 +5,7 @@ var ZoneState = require('./ZoneState');
 
 var zoneStates = {};
 
-var Zone = new mongoose.Schema({
+var Zone = module.exports = new mongoose.Schema({
   name: {
     type    : String,
     required: true,
@@ -150,4 +150,4 @@ Zone.methods.onStop = function()
   zoneState.destroy();
 };
 
-module.exports = mongoose.model('Zone', Zone);
+mongoose.model('Zone', Zone);

@@ -1,9 +1,10 @@
-var Program = require('../models/Program');
 var limits  = require('../../config/limits');
 var auth    = require('../utils/middleware').auth;
 
 app.get('/programs', auth('viewPrograms'), function(req, res, next)
 {
+  var Program = app.db.model('Program');
+
   Program.find({}, req.query.fields, function(err, docs)
   {
     if (err) return next(err);
@@ -14,6 +15,8 @@ app.get('/programs', auth('viewPrograms'), function(req, res, next)
 
 app.post('/programs', auth('managePrograms'), function(req, res, next)
 {
+  var Program = app.db.model('Program');
+
   Program.count(function(err, count)
   {
     if (err) return next(err);
@@ -39,6 +42,8 @@ app.post('/programs', auth('managePrograms'), function(req, res, next)
 
 app.get('/programs/:id', auth('viewPrograms'), function(req, res, next)
 {
+  var Program = app.db.model('Program');
+
   Program.findById(req.params.id, function(err, doc)
   {
     if (err) return next(err);
@@ -53,6 +58,8 @@ app.put('/programs/:id', auth('managePrograms'), function(req, res, next)
 {
   delete req.body._id;
 
+  var Program = app.db.model('Program');
+
   Program.update({_id: req.params.id}, req.body, function(err, count)
   {
     if (err) return next(err);
@@ -65,6 +72,8 @@ app.put('/programs/:id', auth('managePrograms'), function(req, res, next)
 
 app.del('/programs/:id', auth('managePrograms'), function(req, res, next)
 {
+  var Program = app.db.model('Program');
+
   Program.remove({_id: req.params.id}, function(err)
   {
     if (err) return next(err);
