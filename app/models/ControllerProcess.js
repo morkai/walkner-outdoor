@@ -1,22 +1,27 @@
 var fork = require('child_process').fork;
 var _    = require('underscore');
+var step = require('step');
 
 var messageHandlers = {};
 
 var ControllerProcess = function(controller)
 {
-  this.setUpChildProcess(controller.type);
+  this.requests   = {};
+  this.zones      = {};
+  this.controller = {
+    name          : controller.name,
+    type          : controller.type,
+    connectionInfo: controller.connectionInfo
+  };
 
-  this.requests       = {};
-  this.connectionInfo = controller.connectionInfo;
-  this.zones          = {};
+  this.setUpChildProcess();
 };
 
 _.extend(ControllerProcess.prototype, {
 
   startController: function(done)
   {
-    this.sendMessage('startController', this.connectionInfo, done);
+    this.sendMessage('startController', this.controller.connectionInfo, done);
   },
 
   stopController: function(done)
@@ -55,9 +60,10 @@ _.extend(ControllerProcess.prototype, {
         return done(err);
       }
 
-      self.zones[zone.id] = {
-        running: false
-      };
+      self.zones[zone.id] = _.extend({}, data, {
+        program        : null,
+        onProgramFinish: null
+      });
 
       done();
     });
@@ -120,7 +126,7 @@ _.extend(ControllerProcess.prototype, {
       return done('Invalid controller process for the specified zone.');
     }
 
-    if (zone.programRunning)
+    if (zone.program)
     {
       return done('A program is already running on the specified zone.');
     }
@@ -142,7 +148,7 @@ _.extend(ControllerProcess.prototype, {
         return done(err);
       }
 
-      zone.programRunning  = true;
+      zone.program         = data.program;
       zone.onProgramFinish = onFinish;
 
       done();
@@ -165,12 +171,8 @@ _.extend(ControllerProcess.prototype, {
         return done(err);
       }
 
-      zone.programRunning = false;
-
-      if (_.isFunction(zone.onProgramFinish))
-      {
-        delete zone.onProgramFinish;
-      }
+      zone.program         = null;
+      zone.onProgramFinish = null;
 
       done();
     });
@@ -181,12 +183,13 @@ _.extend(ControllerProcess.prototype, {
    */
   destroy: function()
   {
-    this.process.removeAllListeners();
-    this.process.kill();
+    this.childProcess.removeAllListeners();
+    this.childProcess.kill();
 
-    delete this.process;
-    delete this.requests;
-    delete this.connectionInfo;
+    this.childProcess = null;
+    this.requests     = null;
+    this.zones        = null;
+    this.controller   = null;
   },
 
   /**
@@ -219,10 +222,11 @@ _.extend(ControllerProcess.prototype, {
 
   /**
    * @private
-   * @param {String} controllerType
    */
-  setUpChildProcess: function(controllerType)
+  setUpChildProcess: function()
   {
+    var controllerType = this.controller.type;
+
     var file      = __dirname + '/../controllers/' + controllerType + '.js';
     var arguments = [];
     var options   = {cwd: process.cwd(), env: process.env};
@@ -241,7 +245,59 @@ _.extend(ControllerProcess.prototype, {
    */
   onChildProcessExit: function(code)
   {
-    console.error('Controller process crashed?!');
+    if (!code)
+    {
+      return;
+    }
+
+    console.debug('Controller <%s> crashed :(', this.controller.name);
+
+    var self  = this;
+    var zones = this.zones;
+
+    for (var zoneId in zones)
+    {
+      var zone = zones[zoneId];
+
+      if (!zone.program)
+      {
+        continue;
+      }
+
+      messageHandlers.programFinished.call(this, {
+        zoneId      : zone.id,
+        zoneName    : zone.name,
+        programName : zone.program.name,
+        finishedAt  : new Date(),
+        finishState : 'error',
+        errorMessage: 'Zamknięcie procesu sterownika.'
+      });
+    }
+
+    this.zones = {};
+
+    step(
+      function restartControllerStep()
+      {
+        self.setUpChildProcess();
+        self.startController(this);
+      },
+      function restartZonesStep()
+      {
+        var group = this.group();
+
+        for (var zoneId in zones)
+        {
+          self.startZone(zones[zoneId], group());
+        }
+      },
+      function debugStep()
+      {
+        console.debug(
+          'Restarted controller <%s>!', self.controller.name
+        );
+      }
+    )
   },
 
   /**
@@ -276,7 +332,7 @@ _.extend(messageHandlers, {
   {
     var zone = this.zones[data.zoneId];
 
-    if (!zone || !zone.programRunning)
+    if (!zone || !zone.program)
     {
       return;
     }
@@ -284,11 +340,10 @@ _.extend(messageHandlers, {
     if (_.isFunction(zone.onProgramFinish))
     {
       zone.onProgramFinish(data);
-
-      delete zone.onProgramFinish;
     }
 
-    zone.programRunning = false;
+    zone.program         = null;
+    zone.onProgramFinish = null;
   }
 
 });
