@@ -5,7 +5,6 @@ var logLevels = process.env.NODE_ENV === 'production'
               : config.developmentLevels;
 
 var _console = {
-  log  : console.log,
   debug: console.log,
   info : console.info,
   warn : console.warn,
