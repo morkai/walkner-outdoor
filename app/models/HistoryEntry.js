@@ -24,6 +24,9 @@ var HistoryEntry = module.exports = new mongoose.Schema({
     type    : [{}],
     required: true
   },
+  infinite: {
+    type: Boolean
+  },
   startUserId: {
     type: mongoose.SchemaTypes.ObjectId
   },
