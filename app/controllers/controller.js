@@ -408,7 +408,6 @@ function turnOnRedLed(zone)
         RED_LED_ON_ERROR_FOR
       );
 
-
       controller.impl.setState(false, zone, this);
     }
   );
