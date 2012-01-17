@@ -30,7 +30,7 @@ var DashboardView = Backbone.View.extend({
 
 DashboardView.prototype.initialize = function()
 {
-  _.bindAll(this, 'onZoneStart', 'onZoneStop');
+  _.bindAll(this, 'changeZoneState');
 
   this.adjustBoxes           = _.debounce(_.bind(this.adjustBoxes, this), 100);
   this.zoneViews             = [];
@@ -40,16 +40,16 @@ DashboardView.prototype.initialize = function()
 
   this.collection.bind('change', this.adjustBoxes);
 
-  socket.on('zone started', this.onZoneStart);
-  socket.on('zone stopped', this.onZoneStop);
+  socket.on('program started', this.changeZoneState);
+  socket.on('program stopped', this.changeZoneState);
 };
 
 DashboardView.prototype.destroy = function()
 {
   clearTimeout(this.progressUpdateTimeout);
 
-  socket.removeListener('zone started', this.onZoneStart);
-  socket.removeListener('zone stopped', this.onZoneStop);
+  socket.removeListener('program started', this.changeZoneState);
+  socket.removeListener('program stopped', this.changeZoneState);
 
   this.collection.unbind('change', this.adjustBoxes);
 
@@ -137,26 +137,13 @@ DashboardView.prototype.setUpProgressUpdater = function()
 /**
  * @private
  */
-DashboardView.prototype.onZoneStart = function(message)
+DashboardView.prototype.changeZoneState = function(state)
 {
-  var zone = this.collection.get(message.zone);
+  var zone = this.collection.get(state.zoneId);
 
   if (zone)
   {
-    zone.set({state: message.state});
-  }
-};
-
-/**
- * @private
- */
-DashboardView.prototype.onZoneStop = function(message)
-{
-  var zone = this.collection.get(message.zone);
-
-  if (zone)
-  {
-    zone.set({state: null});
+    zone.set({state: state});
   }
 };
 

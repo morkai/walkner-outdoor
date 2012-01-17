@@ -1,117 +1,296 @@
+var fork = require('child_process').fork;
+var _    = require('underscore');
 
-var ControllerProcess = module.exports = function(forkedProcess)
+var messageHandlers = {};
+
+var ControllerProcess = function(controller)
 {
-  this.process    = forkedProcess;
-  this.requests   = {};
-  this.zoneStates = {};
+  this.setUpChildProcess(controller.type);
 
-  this.process.on('exit', this.onExit.bind(this));
-  this.process.on('message', this.onMessage.bind(this));
+  this.requests       = {};
+  this.connectionInfo = controller.connectionInfo;
+  this.zones          = {};
 };
 
-ControllerProcess.prototype.send = function(type, data, cb)
-{
-  var requestId = Math.random().toString();
+_.extend(ControllerProcess.prototype, {
 
-  this.process.send({
-    id  : requestId,
-    type: type,
-    data: data
-  });
-
-  if (cb)
+  startController: function(done)
   {
-    this.requests[requestId] = cb;
-  }
-};
+    this.sendMessage('startController', this.connectionInfo, done);
+  },
 
-ControllerProcess.prototype.initialize = function(connectionInfo, cb)
-{
-  var self = this;
-
-  this.send('initialize', connectionInfo, function(err)
+  stopController: function(done)
   {
-    if (err)
+    var self = this;
+
+    this.sendMessage('stopController', function(err)
     {
-      self.destroy();
+      if (!err)
+      {
+        self.destroy();
+      }
+
+      done(err);
+    });
+  },
+
+  startZone: function(zone, done)
+  {
+    if (zone.id in this.zones)
+    {
+      return done();
     }
 
-    cb(err, self);
-  });
-};
+    var self = this;
+    var data = {
+      id            : zone.id,
+      name          : zone.name,
+      controllerInfo: zone.controllerInfo
+    };
 
-ControllerProcess.prototype.destroy = function()
-{
-  this.process.removeAllListeners();
-  this.process.kill();
-  this.process = null;
-};
-
-ControllerProcess.prototype.startZone = function(zoneState, cb)
-{
-  var self = this;
-
-  this.send('startZone', zoneState.toControllerObject(), function(err)
-  {
-    if (!err)
+    this.sendMessage('startZone', data, function(err)
     {
-      self.zoneStates[zoneState.zoneId] = zoneState;
+      if (err)
+      {
+        return done(err);
+      }
+
+      self.zones[zone.id] = {
+        running: false
+      };
+
+      done();
+    });
+  },
+
+  stopZone: function(zoneId, done)
+  {
+    var zone = this.zones[zoneId];
+
+    if (!zone)
+    {
+      return done();
     }
 
-    cb(err);
-  });
-};
+    if (zone.running)
+    {
+      zone.stopProgram(zoneId, function(err)
+      {
+        if (err)
+        {
+          done(err);
+        }
+        else
+        {
+          stopZone();
+        }
+      });
+    }
+    else
+    {
+      stopZone();
+    }
 
-ControllerProcess.prototype.stopZone = function(zoneId, cb)
-{
-  var self      = this;
-  var zoneState = this.zoneStates[zoneId];
+    var self = this;
 
-  if (!zoneState) return cb();
+    function stopZone()
+    {
+      self.sendMessage('stopZone', zoneId, function(err)
+      {
+        if (err)
+        {
+          done(err);
+        }
+        else
+        {
+          delete self.zones[zoneId];
 
-  this.send('stopZone', zoneId, function(err)
+          done();
+        }
+      });
+    }
+  },
+
+  startProgram: function(program, zoneId, onFinish, done)
   {
-    delete self.zoneStates[zoneId];
+    var zone = this.zones[zoneId];
 
-    cb(err);
-  });
-};
+    if (!zone)
+    {
+      return done('Invalid controller process for the specified zone.');
+    }
 
-ControllerProcess.prototype.onExit = function(code, signal)
-{
-  for (var zoneId in this.zoneStates)
+    if (zone.programRunning)
+    {
+      return done('A program is already running on the specified zone.');
+    }
+
+    var data = {
+      zoneId : zoneId,
+      program: {
+        id      : program.id,
+        name    : program.name,
+        steps   : program.steps,
+        infinite: program.infinite
+      }
+    };
+
+    this.sendMessage('startProgram', data, function(err)
+    {
+      if (err)
+      {
+        return done(err);
+      }
+
+      zone.programRunning  = true;
+      zone.onProgramFinish = onFinish;
+
+      done();
+    });
+  },
+
+  stopProgram: function(zoneId, done)
   {
-    var zoneState = this.zoneStates[zoneId];
+    var zone = this.zones[zoneId];
 
-    delete this.zoneStates[zoneId];
+    if (!zone || !zone.programRunning)
+    {
+      return done();
+    }
 
-    zoneState.finished('Zamknięcie procesu sterownika.');
+    this.sendMessage('stopProgram', zoneId, function(err)
+    {
+      if (err)
+      {
+        return done(err);
+      }
+
+      zone.programRunning = false;
+
+      if (_.isFunction(zone.onProgramFinish))
+      {
+        delete zone.onProgramFinish;
+      }
+
+      done();
+    });
+  },
+
+  /**
+   * @private
+   */
+  destroy: function()
+  {
+    this.process.removeAllListeners();
+    this.process.kill();
+
+    delete this.process;
+    delete this.requests;
+    delete this.connectionInfo;
+  },
+
+  /**
+   * @private
+   * @param {String} type
+   * @param {?Object} data
+   * @param {?Function} res
+   */
+  sendMessage: function(type, data, res)
+  {
+    if (typeof data === 'function')
+    {
+      res  = data;
+      data = undefined;
+    }
+
+    var message   = {
+      id  : _.uniqueId('REQ-'),
+      type: type,
+      data: data
+    };
+
+    this.childProcess.send(message);
+
+    if (res)
+    {
+      this.requests[message.id] = res;
+    }
+  },
+
+  /**
+   * @private
+   * @param {String} controllerType
+   */
+  setUpChildProcess: function(controllerType)
+  {
+    var file      = __dirname + '/../controllers/' + controllerType + '.js';
+    var arguments = [];
+    var options   = {cwd: process.cwd(), env: process.env};
+
+    var childProcess = fork(file, arguments, options);
+
+    childProcess.on('exit', this.onChildProcessExit.bind(this));
+    childProcess.on('message', this.onChildProcessMessage.bind(this));
+
+    this.childProcess = childProcess;
+  },
+
+  /**
+   * @private
+   * @param {Number} code
+   */
+  onChildProcessExit: function(code)
+  {
+    console.error('Controller process crashed?!');
+  },
+
+  /**
+   * @param {Object} message
+   */
+  onChildProcessMessage: function(message)
+  {
+    var id = message.id;
+
+    if (id && id in this.requests)
+    {
+      var res = this.requests[id];
+
+      delete this.requests[id];
+
+      return res(message.error, message.data);
+    }
+
+    var type = message.type;
+
+    if (type in messageHandlers)
+    {
+      return messageHandlers[type].call(this, message.data);
+    }
   }
-};
 
-ControllerProcess.prototype.onMessage = function(message)
-{
-  if (message.id && message.id in this.requests)
+});
+
+_.extend(messageHandlers, {
+
+  programFinished: function(data)
   {
-    this.requests[message.id](message.data);
-  }
-  else if (message.type in ControllerProcess.messageHandlers)
-  {
-    ControllerProcess.messageHandlers[message.type].call(this, message.data);
-  }
-};
+    var zone = this.zones[data.zoneId];
 
-ControllerProcess.messageHandlers = {
+    if (!zone || !zone.programRunning)
+    {
+      return;
+    }
 
-  zoneFinished: function(message)
-  {
-    var zoneState = this.zoneStates[message.zoneId];
+    if (_.isFunction(zone.onProgramFinish))
+    {
+      zone.onProgramFinish(data);
 
-    if (!zoneState) return;
+      delete zone.onProgramFinish;
+    }
 
-    delete this.zoneStates[message.zoneId];
-
-    zoneState.finished(message.error);
+    zone.programRunning = false;
   }
 
-};
+});
+
+module.exports = ControllerProcess;

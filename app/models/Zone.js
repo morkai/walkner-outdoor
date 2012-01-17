@@ -1,9 +1,11 @@
 var _         = require('underscore');
 var step      = require('step');
 var mongoose  = require('mongoose');
-var ZoneState = require('./ZoneState');
+var controllerProcesses = require('./controllerProcesses');
 
 var zoneStates = {};
+
+const RED_LED_ON_ERROR_FOR = 30000;
 
 var Zone = module.exports = new mongoose.Schema({
   name: {
@@ -22,6 +24,121 @@ var Zone = module.exports = new mongoose.Schema({
   strict: true
 });
 
+Zone.statics.startAll = function(done)
+{
+  mongoose.model('Zone').find().run(function(err, zones)
+  {
+    if (err)
+    {
+      return done(err);
+    }
+
+    var zonesToStart = zones.length;
+    var startedZones = 0;
+
+    zones.forEach(function(zone)
+    {
+      zone.start(function(err)
+      {
+        if (err)
+        {
+          console.debug(
+            'Starting zone <%s> failed: %s', zone.name, err.message || err
+          );
+        }
+
+        if (++startedZones === zonesToStart)
+        {
+          return done();
+        }
+      });
+    });
+  });
+};
+
+Zone.methods.start = function(done)
+{
+  controllerProcesses.startZone(this, done);
+};
+
+Zone.methods.stop = function(done)
+{
+  controllerProcesses.stopZone(this, done);
+};
+
+Zone.methods.startProgram = function(programId, user, done)
+{
+  var zone = this;
+
+  mongoose.model('Program').findById(programId).run(function(err, program)
+  {
+    if (program.totalTime === 0)
+    {
+      return done('Wybrany program nie ma zdefiniowanych żadnych kroków.');
+    }
+
+    controllerProcesses.startProgram(program, zone.id, onProgramFinish, function(err)
+    {
+      if (err)
+      {
+        return done(err);
+      }
+
+      var HistoryEntry = mongoose.model('HistoryEntry');
+      var historyEntry = new HistoryEntry({
+        zoneId       : zone.id,
+        zoneName     : zone.name,
+        programId    : program.id,
+        programName  : program.name,
+        programSteps : program.steps,
+        infinite     : program.infinite,
+        startUserId  : user ? user.id : null,
+        startUserName: user ? user.name : null,
+        startedAt    : new Date()
+      });
+
+      zoneStates[zone.id] = historyEntry;
+
+      done(null, historyEntry);
+
+      app.io.sockets.emit('program started', historyEntry.toJSON());
+    });
+  });
+};
+
+Zone.methods.stopProgram = function(user, done)
+{
+  var zone         = this;
+  var historyEntry = zoneStates[zone.id];
+
+  if (!historyEntry)
+  {
+    return done();
+  }
+
+  controllerProcesses.stopProgram(zone.id, function(err)
+  {
+    if (err)
+    {
+      return done(err);
+    }
+
+    done();
+
+    historyEntry.set({
+      finishState : 'stop',
+      finishedAt  : new Date(),
+      stopUserId  : user ? user.id : null,
+      stopUserName: user ? user.name : null
+    });
+    historyEntry.save();
+
+    app.io.sockets.emit('program stopped', historyEntry.toJSON());
+
+    delete zoneStates[zone.id];
+  });
+};
+
 Zone.methods.toObject = function(options)
 {
   var object = mongoose.Document.prototype.toObject.call(this, options);
@@ -30,124 +147,68 @@ Zone.methods.toObject = function(options)
   {
     var state = zoneStates[object._id];
 
-    object.state = state ? state.toClientObject() : null;
+    if (state)
+    {
+      object.state = state ? state.toJSON() : null;
+    }
   }
 
   return object;
 };
 
-Zone.methods.start = function(programId, user, cb)
+function onProgramFinish(data)
 {
-  var zone         = this;
-  var zoneId       = zone.get('id');
-  var controllerId = zone.get('controller');
-  var state        = zoneStates[zoneId];
+  var zoneId       = data.zoneId;
+  var historyEntry = zoneStates[zoneId];
 
-  if (state)
+  if (!historyEntry)
   {
-    return cb('Strefa jest już uruchomiona.');
+    return console.error(
+      'Unexpected program <%s> just finished on zone <%s> with state <%s>',
+      data.programName,
+      data.zoneName,
+      data.finishState
+    );
   }
 
-  step(
-    function findProgram()
-    {
-      mongoose.model('Program').findById(programId, this);
-    },
-    function findController(err, program)
-    {
-      if (err) throw err;
+  historyEntry.set({
+    finishedAt  : data.finishedAt,
+    finishState : data.finishState,
+    errorMessage: data.errorMessage
+  });
 
-      if (!program) throw 'Nie znaleziono wybranego programu :(';
+  app.io.sockets.emit('program stopped', historyEntry.toJSON());
 
-      var next = this;
+  historyEntry.save();
 
-      mongoose.model('Controller').findById(controllerId, function(err, controller)
-      {
-        next(err, program, controller);
-      });
-    },
-    function setUpZoneState(err, program, controller)
-    {
-      if (err) throw err;
-
-      if (!controller) throw 'Strefa nie ma przypisanego sterownika.';
-
-      controller.start(
-        new ZoneState(zone, program, user, zone.onStop.bind(zone)),
-        this
-      );
-    },
-    function finalize(err, zoneState)
-    {
-      if (err)
-      {
-        return this(err, zoneState);
-      }
-
-      zoneStates[zoneState.zoneId] = zoneState;
-
-      var clientState = zoneState.toClientObject();
-
-      process.nextTick(function()
-      {
-        app.io.sockets.emit('zone started', {
-          zone : zoneState.zoneId,
-          state: clientState
-        });
-      });
-
-      this(null, clientState);
-    },
-    cb
+  console.debug(
+    'Finished program <%s> on zone <%s> with state <%s>',
+    data.programName,
+    data.zoneName,
+    data.finishState
   );
-};
 
-Zone.methods.stop = function(user, cb)
-{
-  var zoneId    = this.get('id');
-  var zoneState = zoneStates[zoneId];
-
-  if (!zoneState)
+  if (data.finishState === 'error')
   {
-    return cb('Strefa nie jest uruchomiona.');
+    var historyEntryId = historyEntry.id;
+
+    setTimeout(
+      function()
+      {
+        var historyEntry = zoneStates[zoneId];
+
+        if (historyEntry && historyEntry.id === historyEntryId)
+        {
+          delete zoneStates[zoneId];
+        }
+      },
+      RED_LED_ON_ERROR_FOR
+    );
   }
-
-  mongoose.model('Controller').findById(this.get('controller'), function(err, controller)
+  else
   {
-    controller.stop(zoneId, function()
-    {
-      zoneState.stopped(user);
-      cb();
-    });
-  });
-};
-
-Zone.methods.onStop = function()
-{
-  var zoneId    = this.get('id');
-  var zoneState = zoneStates[zoneId];
-
-  if (!zoneState) return;
-
-  delete zoneStates[zoneId];
-
-  var error;
-
-  if (_.isString(zoneState.error))
-  {
-    error = zoneState.error;
+    delete zoneStates[data.zoneId];
   }
-  else if (_.isObject(zoneState.error) && _.isString(zoneState.error.message))
-  {
-    error = zoneState.error.message;
-  }
-
-  app.io.sockets.emit('zone stopped', {
-    zone : zoneId,
-    error: error
-  });
-
-  zoneState.destroy();
-};
+}
 
 mongoose.model('Zone', Zone);

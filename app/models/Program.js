@@ -1,4 +1,5 @@
-var mongoose = require('mongoose');
+var mongoose            = require('mongoose');
+var controllerProcesses = require('./controllerProcesses');
 
 var Step = new mongoose.Schema({
   timeOn: {

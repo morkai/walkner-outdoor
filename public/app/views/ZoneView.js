@@ -44,12 +44,15 @@ function(
       );
 
       this.progressUpdates = 0;
+      this.redLedTimeout   = null;
 
       this.model.bind('change:state', this.updateState);
     },
 
     destroy: function()
     {
+      clearTimeout(this.redLedTimeout);
+
       this.model.unbind('change:state', this.updateState);
       this.remove();
     },
@@ -70,10 +73,15 @@ function(
 
     updateState: function()
     {
-      var state = this.model.get('state');
+      clearTimeout(this.redLedTimeout);
+
+      var model = this.model;
+      var state = model.get('state');
 
       var zoneEl = this.$('.zone').removeClass('zone-active');
-      var ledEl  = zoneEl.find('.zone-led').removeClass('gray green red');
+      var ledEl  = zoneEl.find('.zone-led')
+                         .removeClass('gray green red')
+                         .attr('title', '');
 
       if (!_.isObject(state))
       {
@@ -82,9 +90,25 @@ function(
         return;
       }
 
-      if (state.error)
+      if (state.finishState)
       {
-        ledEl.addClass('red');
+        if (state.finishState === 'error')
+        {
+          ledEl.addClass('red').attr('title', state.errorMessage);
+
+          var offset = state.finishedAt
+            ? Date.now() - new Date(state.finishedAt).getTime()
+            : 0;
+
+          this.redLedTimeout = _.timeout(30000 - offset, function()
+          {
+            model.set({state: null});
+          });
+        }
+        else
+        {
+          setTimeout(function() { model.set({state: null}); }, 1);
+        }
 
         return;
       }
@@ -106,7 +130,17 @@ function(
         return;
       }
 
-      var startTime  = state.startTime - time.offset;
+      if (typeof state.totalTime === 'undefined')
+      {
+        state.totalTime = this.countTotalTime(state.programSteps);
+      }
+
+      if (typeof state.startTime === 'undefined')
+      {
+        state.startTime = new Date(state.startedAt).getTime() - time.offset;
+      }
+
+      var startTime  = state.startTime;
       var totalTime  = state.totalTime * 1000;
       var endTime    = startTime + totalTime;
       var now        = Date.now();
@@ -343,6 +377,18 @@ function(
     plural: function(n)
     {
       return (n % 10 < 5) && (n % 10 > 1) && (~~(n / 10) !== 1);
+    },
+
+    countTotalTime: function(steps)
+    {
+      var totalTime = 0;
+
+      _.each(steps, function(step)
+      {
+        totalTime += (step.timeOn + step.timeOff) * step.iterations;
+      });
+
+      return totalTime;
     }
 
   });

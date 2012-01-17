@@ -17,24 +17,48 @@ var Controller = module.exports = new mongoose.Schema({
   strict: true
 });
 
-Controller.methods.start = function(zoneState, cb)
+Controller.statics.startAll = function(done)
 {
-  controllerProcesses.start(
-    this, zoneState, function(err)
+  mongoose.model('Controller').find().run(function(err, controllers)
+  {
+    if (err)
     {
-      if (!err)
-      {
-        zoneState.started();
-      }
-
-      cb(err, zoneState);
+      return done(err);
     }
-  );
+
+    var controllersToStart = controllers.length;
+    var startedControllers = 0;
+
+    controllers.forEach(function(controller)
+    {
+      controller.start(function(err)
+      {
+        if (err)
+        {
+          console.debug(
+            'Starting controller <%s> failed: %s',
+            controller.name,
+            err.message || err
+          );
+        }
+
+        if (++startedControllers === controllersToStart)
+        {
+          return done();
+        }
+      });
+    });
+  });
 };
 
-Controller.methods.stop = function(zoneId, cb)
+Controller.methods.start = function(done)
 {
-  controllerProcesses.stop(this, zoneId, cb);
+  controllerProcesses.startController(this, done);
+};
+
+Controller.methods.stop = function(done)
+{
+  controllerProcesses.stopController(this, done);
 };
 
 mongoose.model('Controller', Controller);

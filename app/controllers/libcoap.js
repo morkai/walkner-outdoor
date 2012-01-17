@@ -4,227 +4,84 @@ var exec       = require('child_process').exec;
 var step       = require('step');
 var controller = require('./controller');
 
-controller.run({
-  initialize  : initialize,
-  finalize    : finalize,
-  startZone   : startZone,
-  stopZone    : stopZone
-});
-
 var config = require(__dirname + '/../../config/libcoap');
 
-var uri   = '';
-var zones = {};
+var uri = '';
 
-function initialize(connectionInfo, cb)
-{
-  uri = connectionInfo.uri;
+controller.run({
 
-  if (uri[uri.length - 1] === '/')
+  initialize: function(connectionInfo, done)
   {
-    uri = uri.substring(0, uri.length - 1);
-  }
+    uri = connectionInfo.uri;
 
-  getResource('/helloworld', function(err)
-  {
-    cb(err ? 'Nie udało się połączyć ze sterownikiem :(' : null);
-  });
-}
-
-function finalize(cb)
-{
-  cb(null);
-}
-
-function startZone(options, cb)
-{
-  var zoneId = options.zoneId;
-
-  zones[zoneId] = options;
-
-  setLeds(zoneId, {green: 1, red: 0}, function(err)
-  {
-    if (!err)
+    if (uri[uri.length - 1] === '/')
     {
-      executeStep(0, 0, zoneId);
+      uri = uri.substring(0, uri.length - 1);
     }
 
-    cb(err);
-  });
-}
+    done();
+  },
 
-function stopZone(zoneId, cb)
-{
-  var zone = zones[zoneId];
-
-  if (!zone) return cb();
-
-  clearTimeout(zone.timeout);
-
-  zone.stopped = true;
-
-  turnOff(zone, function()
+  finalize: function(done)
   {
-    setLeds(zoneId, {green: 0, red: 0}, function()
-    {
-      delete zones[zoneId];
+    uri = null;
 
-      cb();
-    });
-  });
-}
+    done();
+  },
 
-function finishZone(err, zoneId)
-{
-  setLeds(zoneId, {green: 0, red: err}, function()
+  setState: function(state, zone, done)
   {
-    delete zones[zoneId];
+    setResource(zone.controllerInfo.stateResource || '/io/state', state, done);
+  },
 
-    controller.zoneFinished(err, zoneId);
-  });
-}
-
-function executeStep(stepIndex, stepIteration, zoneId)
-{
-  var zone = zones[zoneId];
-
-  if (!zone || zone.stopped) return;
-
-  var programStep = zone.steps[stepIndex];
-
-  if (!programStep)
+  setLeds: function(leds, zone, done)
   {
-    if (zone.infinite)
-    {
-      return process.nextTick(function() { executeStep(0, 0, zoneId); });
-    }
-
-    return process.nextTick(function()
-    {
-      finishZone(null, zoneId);
-    });
-  }
-
-  if (programStep.iterations === stepIteration)
-  {
-    return process.nextTick(function()
-    {
-      executeStep(stepIndex + 1, 0, zoneId);
-    });
-  }
-
-  step(
-    function turnOnStep()
-    {
-      var next      = this;
-      var startTime = Date.now();
-
-      turnOn(zone, function(err)
+    step(
+      function setGreenLedStep()
       {
-        if (err) return next(err);
+        var next = this;
 
-        var timeOn = (programStep.timeOn * 1000) - (Date.now() - startTime);
-
-        zone.timeout = setTimeout(next, timeOn);
-      });
-    },
-    function turnOffStep(err)
-    {
-      if (zone.stopped) return this();
-
-      if (err) throw err;
-
-      var next      = this;
-      var startTime = Date.now();
-
-      turnOff(zone, function(err)
-      {
-        if (err) return next(err);
-
-        var timeOff = (programStep.timeOff * 1000) - (Date.now() - startTime);
-
-        zone.timeout = setTimeout(next, timeOff);
-      });
-    },
-    function nextIterationStep(err)
-    {
-      if (zone.stopped) return;
-
-      if (err)
-      {
-        process.nextTick(function() { finishZone(err, zoneId); });
-      }
-      else
-      {
-        process.nextTick(function()
+        if (!leds.hasOwnProperty('green'))
         {
-          executeStep(stepIndex, stepIteration + 1, zoneId);
-        });
-      }
-    }
-  );
-}
+          next();
+        }
 
-function turnOn(zone, handler)
-{
-  setResource(zone.controllerInfo.stateResource || '/io/state', true, handler);
-}
-
-function turnOff(zone, handler)
-{
-  setResource(zone.controllerInfo.stateResource || '/io/state', false, handler);
-}
-
-function setLeds(zoneId, leds, cb)
-{
-  var zone = zones[zoneId];
-
-  if (!zone) return cb(null);
-
-  step(
-    function setGreenLedStep()
-    {
-      var next = this;
-
-      if (!leds.hasOwnProperty('green'))
+        setResource(
+          zone.controllerInfo.greenLedResource || '/io/greenLed',
+          leds.green,
+          next
+        );
+      },
+      function setRedLedStep(err)
       {
-        next();
-      }
+        if (err) throw 'Nie udało się ustawić zielonej lampy :(';
 
-      setResource(
-        zone.controllerInfo.greenLedResource || '/io/greenLed',
-        leds.green,
-        next
-      );
-    },
-    function setRedLedStep(err)
-    {
-      if (err) throw 'Nie udało się ustawić zielonej lampy :(';
+        var next = this;
 
-      var next = this;
+        if (!leds.hasOwnProperty('red'))
+        {
+          next();
+        }
 
-      if (!leds.hasOwnProperty('red'))
+        setResource(
+          zone.controllerInfo.redLedResource || '/io/redLed',
+          leds.red,
+          next
+        );
+      },
+      function checkErrorStep(err)
       {
-        next();
-      }
+        if (err && typeof err.message === 'string')
+        {
+          err = 'Nie udało się ustawić czerwonej lampy :(';
+        }
 
-      setResource(
-        zone.controllerInfo.redLedResource || '/io/redLed',
-        leds.red,
-        next
-      );
-    },
-    function checkErrorStep(err)
-    {
-      if (err && typeof err.message === 'string')
-      {
-        err = 'Nie udało się ustawić czerwonej lampy :(';
+        done(err);
       }
+    );
+  }
 
-      cb(err);
-    }
-  );
-}
+});
 
 function getResourceUri(resource)
 {
@@ -274,5 +131,5 @@ function execCmd(cmd, cb, count)
     {
       return cb(err);
     }
-  })
+  });
 }

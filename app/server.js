@@ -5,9 +5,14 @@ process.on('uncaughtException', function(err)
   console.error('Uncaught exception:\n%s', err.stack);
 });
 
+require('fs').writeFile(
+  __dirname + '/../var/pids/server.pid', process.pid
+);
+
 var express  = require('express');
 var io       = require('socket.io');
 var mongoose = require('mongoose');
+var step     = require('step');
 
 (function()
 {
@@ -26,30 +31,55 @@ var mongooseConfig = require('../config/mongoose');
 
 app = express.createServer();
 
-mongoose.connect(mongooseConfig.uri, function(err)
-{
-  if (err)
+step(
+  function connectToDbStep()
   {
-    console.error('Could not connect to MongoDB: %s', err.message);
-    process.exit(1);
-  }
-  else
+    console.debug('Starting...');
+    console.debug('Connecting to MongoDB...');
+
+    mongoose.connect(mongooseConfig.uri, this);
+  },
+  function setUpModelsStep(err)
   {
-    console.debug('Connected to MongoDB');
+    if (err)
+    {
+      console.error('Could not connect to MongoDB: %s', err.message);
+      process.exit(1);
+    }
+
+    console.debug('Connected to MongoDB!');
 
     require('./models');
 
-    app.listen(expressConfig.port, function()
-    {
-      console.debug('Express HTTP server listening on port %d', app.address().port);
-      console.info('Started!');
+    return this();
+  },
+  function startControllersStep()
+  {
+    console.debug('Starting controller processes...');
 
-      require('fs').writeFile(
-        __dirname + '/../var/pids/server.pid', process.pid
-      );
-    });
+    app.db.model('Controller').startAll(this);
+  },
+  function startZonesStep()
+  {
+    console.debug('Started controller processes!');
+    console.debug('Starting zones...');
+
+    app.db.model('Zone').startAll(this);
+  },
+  function listenStep(err)
+  {
+    console.debug('Started zones!');
+
+    app.listen(expressConfig.port, this);
+  },
+  function startStep()
+  {
+    console.debug(
+      'Express HTTP server listening on port %d', app.address().port
+    );
+    console.info('Started!');
   }
-});
+);
 
 app.db = mongoose;
 

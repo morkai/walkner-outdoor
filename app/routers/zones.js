@@ -113,11 +113,11 @@ app.post('/zones/:id', auth('startStop'), function(req, res, next)
     switch (req.body.action)
     {
       case 'start':
-        startZone(req, res, next, zone, user);
+        startProgram(req, res, next, zone, user);
         break;
 
       case 'stop':
-        stopZone(req, res, next, zone, user);
+        stopProgram(req, res, next, zone, user);
         break;
 
       default:
@@ -309,7 +309,7 @@ function attachPickProgramData(data, done)
   );
 }
 
-function startZone(req, res, next, zone, user)
+function startProgram(req, res, next, zone, user)
 {
   var canPickProgram = user.privilages.hasOwnProperty('pickProgram');
   var pin            = req.body.pin;
@@ -356,22 +356,13 @@ function startZone(req, res, next, zone, user)
 
   function start(programId, user)
   {
-    zone.start(programId, user, function(err, state)
+    zone.startProgram(programId, user, function(err, historyEntry)
     {
       if (err)
       {
-        var program = programId;
-
-        if (state)
-        {
-          program = state.programName;
-
-          state.destroy();
-        }
-
         console.debug(
           'Failed to start program <%s> on zone <%s>: %s',
-          program,
+          historyEntry ? historyEntry.programName : programId,
           zone.get('name'),
           err
         );
@@ -380,7 +371,7 @@ function startZone(req, res, next, zone, user)
       {
         console.debug(
           'Started program <%s> on zone <%s>',
-          state.programName,
+          historyEntry.programName,
           zone.get('name')
         );
       }
@@ -394,10 +385,9 @@ function startZone(req, res, next, zone, user)
   }
 }
 
-function stopZone(req, res, next, zone, user)
+function stopProgram(req, res, next, zone, user)
 {
-  var pin    = req.body.pin;
-  var hasPin = _.isString(pin);
+  var pin = req.body.pin;
 
   if (user.privilages.hasOwnProperty('pickProgram'))
   {
@@ -427,19 +417,19 @@ function stopZone(req, res, next, zone, user)
 
   function stop(user)
   {
-    zone.stop(user, function(err)
+    zone.stopProgram(user, function(err)
     {
       if (err)
       {
         console.debug(
-          'Failed to stop zone <%s>: %s',
+          'Failed to stop program on zone <%s>: %s',
           zone.get('name'),
           err
         );
       }
       else
       {
-        console.debug('Stopped zone <%s>', zone.get('name'));
+        console.debug('Stopped program on zone <%s>', zone.get('name'));
       }
 
       if (err instanceof Error) return next(err);
