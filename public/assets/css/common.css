@@ -4,6 +4,7 @@ body
   color: #333;
   background: #EEE;
   cursor: default;
+  margin-bottom: 55px;
 }
 
 .touchEnabled

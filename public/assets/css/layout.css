@@ -203,3 +203,39 @@ strong
     display: block;
   }
 }
+.kb
+{
+  margin-bottom: 385px;
+}
+#kbContainer
+{
+  z-index: 9999;
+  position: fixed;
+  bottom: 0;
+  text-align: center;
+  width: 100%;
+  opacity: .8;
+}
+#kbHolder
+{
+  margin: 0 auto;
+  background: #FFF;
+  border-top: 1px solid #AAA;
+}
+#toggleKb
+{
+  font-size: 1.5em;
+  margin: 0 auto -1px 0;
+}
+#virtualKeyboard
+{
+  margin: 0 auto!important;
+  height: 340px!important;
+  border: 0!important;
+}
+#kb_mappingselector,
+#kb_langselector,
+#copyrights
+{
+  display: none;
+}

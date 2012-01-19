@@ -72,6 +72,7 @@ function(require, $, _, Backbone, Layout, MessageView)
       this.closeDialog();
 
       this.msg.trigger('change:view');
+      this.trigger('change:view');
 
       return this;
     },

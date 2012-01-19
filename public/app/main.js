@@ -17,16 +17,21 @@ require.config({
 require(
 [
   'domReady',
-  'jQuery',
-  'Underscore',
   'Backbone',
 
   'app/time',
   'app/socket',
   'app/routers/main',
-  'app/views/viewport'
+  'app/views/viewport',
+  'app/keyboard'
 ],
-function(domReady, $, _, Backbone, time, socket, setupRouting, viewport)
+function(
+  domReady,
+  Backbone,
+  time,
+  socket,
+  setupRouting,
+  viewport)
 {
   setupRouting({});
   domReady(function()
