@@ -29,6 +29,11 @@ Controller.statics.startAll = function(done)
     var controllersToStart = controllers.length;
     var startedControllers = 0;
 
+    if (controllersToStart === 0)
+    {
+      return done();
+    }
+
     controllers.forEach(function(controller)
     {
       controller.start(function(err)

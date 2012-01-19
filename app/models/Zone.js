@@ -36,6 +36,11 @@ Zone.statics.startAll = function(done)
     var zonesToStart = zones.length;
     var startedZones = 0;
 
+    if (zonesToStart === 0)
+    {
+      return done();
+    }
+
     zones.forEach(function(zone)
     {
       zone.start(function(err)
