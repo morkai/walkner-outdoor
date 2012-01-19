@@ -106,13 +106,21 @@ Konfiguracja limitów.
 
 Jeżeli jeszcze nie uruchomione, startujemy MongoDB:
 
-    $ mongod --fork \
-             --logpath walkner-outdoor/var/logs/mongod.log \
-             --dbpath walkner-outdoor/var/data/
+    $ mongod --dbpath walkner-outdoor/var/data/
+
+Dokładne informacje dot. uruchamiania MongoDB dostępne są
+[tutaj](http://www.mongodb.org/display/DOCS/Starting+and+Stopping+Mongo).
 
 Uruchamiamy serwer aplikacji w trybie `development` lub `production`:
 
-    $ NODE_ENV=development node walkner-outdoor/app/server.js
+  * pod *nix:
+
+        $ NODE_ENV=development node walkner-outdoor/app/server.js
+
+  * pod Windows:
+
+        $ SET NODE_ENV=development
+        $ node walkner-outdoor/app/server.js
 
 Aplikacja powinna być dostępna na porcie, który jest ustawiony
 w `config/express.js` (domyślnie 8080). Wchodzimy w przeglądarce na adres
