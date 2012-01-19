@@ -14,13 +14,13 @@ app.get('/users', auth('viewUsers'), function(req, res, next)
 
 app.post('/users', auth('manageUsers'), function(req, res, next)
 {
+  var User     = app.db.model('User');
   var data     = req.body;
   var password = User.hashPassword(data.password);
 
   data.passwordSalt = password.salt;
   data.password     = password.hash;
 
-  var User = app.db.model('User');
   var user = new User(data);
 
   user.save(function(err)
