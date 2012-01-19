@@ -45,6 +45,13 @@
       w jednostce <code><%- zone.controllerInfo.redLedUnit %></code>
     </span>
   </div>
+  <div class="property">
+    <span class="property-name">Adres przycisku stop:</span>
+    <span class="property-value">
+      Wejście <code><%- zone.controllerInfo.stopButtonInput %></code>
+      w jednostce <code><%- zone.controllerInfo.stopButtonUnit %></code>
+    </span>
+  </div>
   <% } %>
   <% if (zone.controller.type === 'libcoap') { %>
   <div class="property">
@@ -58,6 +65,10 @@
   <div class="property">
     <span class="property-name">Zasób czerwonej lampy:</span>
     <span class="property-value"><code><%- zone.controllerInfo.redLedResource %></code></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Zasób przycisku stop:</span>
+    <span class="property-value"><code><%- zone.controllerInfo.stopButtonResource %></code></span>
   </div>
   <% } %>
 </div>

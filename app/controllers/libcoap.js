@@ -79,6 +79,35 @@ controller.run({
         done(err);
       }
     );
+  },
+
+  getInput: function(input, zone, done)
+  {
+    var resource = zone.controllerInfo[input + 'Resource'];
+
+    if (!resource)
+    {
+      return done('Unknown input: ' + input);
+    }
+
+    getResource(zone.controllerInfo[input + 'Resource'], function(err, stdout)
+    {
+      if (err)
+      {
+        return done(err);
+      }
+
+      var matches = stdout.match(/data:'\\x0([0-9])'/);
+
+      if (matches)
+      {
+        done(null, parseInt(matches[1]));
+      }
+      else
+      {
+        done("Couldn't find data in the response.");
+      }
+    });
   }
 
 });
@@ -116,7 +145,7 @@ function execCmd(cmd, cb, count)
     console.debug('<%d> retry of coap-client request: %s', count, cmd);
   }
 
-  exec(cmd, function(err)
+  exec(cmd, function(err, stdout)
   {
     count += 1;
 
@@ -129,7 +158,7 @@ function execCmd(cmd, cb, count)
     }
     else
     {
-      return cb(err);
+      return cb(err, stdout);
     }
   });
 }

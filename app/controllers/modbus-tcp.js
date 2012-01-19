@@ -113,6 +113,35 @@ controller.run({
       },
       done
     );
+  },
+
+  getInput: function(input, zone, done)
+  {
+    step(
+      function getInputStep()
+      {
+        var next = this;
+
+        master.executeRequest({
+          fn      : 2,
+          unit    : zone.controllerInfo[input + 'Unit'],
+          address : zone.controllerInfo[input + 'Input'],
+          quantity: 1,
+          handler : function(err, data)
+          {
+            if (err)
+            {
+              next(err);
+            }
+            else
+            {
+              next(null, data[1] & 1);
+            }
+          }
+        });
+      },
+      done
+    );
   }
 
 });

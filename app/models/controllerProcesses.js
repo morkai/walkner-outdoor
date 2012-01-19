@@ -108,7 +108,7 @@ exports.stopZone = function(zoneId, done)
   });
 };
 
-exports.startProgram = function(program, zoneId, onFinish, done)
+exports.startProgram = function(program, zoneId, user, onFinish, done)
 {
   var controllerId = zoneToControllerMap[zoneId];
 
@@ -119,7 +119,7 @@ exports.startProgram = function(program, zoneId, onFinish, done)
 
   var controllerProcess = controllerProcesses[controllerId];
 
-  controllerProcess.startProgram(program, zoneId, onFinish, done);
+  controllerProcess.startProgram(program, zoneId, user, onFinish, done);
 };
 
 exports.stopProgram = function(zoneId, done)

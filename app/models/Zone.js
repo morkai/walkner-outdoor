@@ -77,13 +77,8 @@ Zone.methods.startProgram = function(programId, user, done)
       return done('Wybrany program nie ma zdefiniowanych żadnych kroków.');
     }
 
-    controllerProcesses.startProgram(program, zone.id, onProgramFinish, function(err)
+    controllerProcesses.startProgram(program, zone.id, user, onProgramFinish, function(err)
     {
-      if (err)
-      {
-        return done(err);
-      }
-
       var HistoryEntry = mongoose.model('HistoryEntry');
       var historyEntry = new HistoryEntry({
         zoneId       : zone.id,
@@ -96,6 +91,11 @@ Zone.methods.startProgram = function(programId, user, done)
         startUserName: user ? user.name : null,
         startedAt    : new Date()
       });
+
+      if (err)
+      {
+        return done(err, historyEntry);
+      }
 
       zoneStates[zone.id] = historyEntry;
 

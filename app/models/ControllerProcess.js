@@ -117,7 +117,7 @@ _.extend(ControllerProcess.prototype, {
     }
   },
 
-  startProgram: function(program, zoneId, onFinish, done)
+  startProgram: function(program, zoneId, user, onFinish, done)
   {
     var zone = this.zones[zoneId];
 
@@ -133,6 +133,7 @@ _.extend(ControllerProcess.prototype, {
 
     var data = {
       zoneId : zoneId,
+      user   : user,
       program: {
         id      : program.id,
         name    : program.name,
@@ -159,7 +160,7 @@ _.extend(ControllerProcess.prototype, {
   {
     var zone = this.zones[zoneId];
 
-    if (!zone || !zone.programRunning)
+    if (!zone || !zone.program)
     {
       return done();
     }
@@ -176,6 +177,11 @@ _.extend(ControllerProcess.prototype, {
 
       done();
     });
+  },
+
+  blinkRedLed: function(zoneId, time)
+  {
+    this.sendMessage('blinkRedLed', {zoneId: zoneId, time: time || 1});
   },
 
   /**
@@ -344,6 +350,62 @@ _.extend(messageHandlers, {
 
     zone.program         = null;
     zone.onProgramFinish = null;
+  },
+
+  startAssignedProgram: function(data)
+  {
+    var zoneId = data.zoneId;
+    var zone   = this.zones[zoneId];
+
+    if (!zone)
+    {
+      return console.error(
+        'Requested zone <%s> is not running on controller <%s>.',
+        zoneId,
+        this.controller.name
+      );
+    }
+
+    if (zone.program)
+    {
+      console.error(
+        'Requested zone <%s> is already running program <%s>.',
+        zone.name,
+        zone.program.name
+      );
+
+      return self.blinkRedLed(zoneId);
+    }
+
+    var self = this;
+
+    app.db.model('Zone').findById(zoneId, function(err, zone)
+    {
+      if (err)
+      {
+        return self.blinkRedLed(zoneId);
+      }
+
+      if (!zone)
+      {
+        return self.stopZone(zoneId, function() {});
+      }
+
+      zone.startProgram(zone.program, null, function(err)
+      {
+        if (err)
+        {
+          console.error(
+            "Couldn't start the requested program <%s> on zone <%s>: %s",
+            zone.program,
+            zone.name,
+            err.message || err
+          );
+
+          return self.blinkRedLed(zoneId);
+        }
+      });
+    });
   }
 
 });

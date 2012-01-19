@@ -1,5 +1,9 @@
-const STATE_RESET_INTERVAL = 2000;
-const RED_LED_ON_ERROR_FOR = 30000;
+const STATE_RESET_INTERVAL       = 2000;
+const INPUT_MONITOR_INTERVAL     = 50;
+const RED_LED_ON_ERROR_FOR       = 30000;
+const STOP_BUTTON_CHANGE_TIMEOUT = 1000;
+const STOP_BUTTON_PRESSED_VALUE  = 0;
+const STOP_BUTTON_RELEASED_VALUE = 1;
 
 var _    = require('underscore');
 var step = require('step');
@@ -10,10 +14,11 @@ var messageHandlers = {};
 _.extend(controller, {
 
   impl: {
-    initialize: function(connectionInfo, done) { return done(); },
-    finalize  : function(done) { return done(); },
-    setState  : function(state, zone, done) { return done(); },
-    setLeds   : function(leds, zone, done) { return done(); }
+    initialize: function(connectionInfo, done) {},
+    finalize  : function(done) {},
+    setState  : function(state, zone, done) {},
+    setLeds   : function(leds, zone, done) {},
+    getInput  : function(input, zone, done) {}
   },
 
   isRunning: false,
@@ -68,7 +73,7 @@ _.extend(controller, {
 
       if (zone.program)
       {
-        finishProgram(zone, err);
+        finishProgram(zone, 'error', err);
       }
     }
   }
@@ -97,10 +102,15 @@ _.extend(messageHandlers, {
     }
 
     controller.zones[zone.id] = _.extend(zone, {
-      program: null
+      program          : null,
+      inputs           : {stopButton: 1},
+      errorTimeout     : null,
+      resetStateTimer  : null,
+      inputMonitorTimer: null
     });
 
     startStateResetTimer(zone);
+    startInputMonitor(zone);
 
     res();
   },
@@ -114,6 +124,7 @@ _.extend(messageHandlers, {
       return res();
     }
 
+    stopInputMonitor(zone);
     stopStateResetTimer(zone);
 
     zone = null;
@@ -133,6 +144,11 @@ _.extend(messageHandlers, {
     if (zone.program)
     {
       return res('A program is already running on the specified zone.');
+    }
+
+    if (req.user && zone.inputs.stopButton !== STOP_BUTTON_RELEASED_VALUE)
+    {
+      return res('Przełącznik załączenia testu musi zostać przełączony :(');
     }
 
     if (zone.errorTimeout)
@@ -157,6 +173,7 @@ _.extend(messageHandlers, {
     if (zone.program.timeout)
     {
       clearTimeout(zone.program.timeout);
+      zone.program.timeout = null;
     }
 
     zone.program = null;
@@ -164,6 +181,18 @@ _.extend(messageHandlers, {
     startStateResetTimer(zone);
 
     res();
+  },
+
+  blinkRedLed: function(data)
+  {
+    var zone = controller.zones[data.zoneId];
+
+    if (!zone)
+    {
+      return;
+    }
+
+    blinkRedLed(zone, data.time || 1);
   }
 
 });
@@ -260,7 +289,7 @@ function executeStep(zone, stepIndex, stepIteration)
 
     return process.nextTick(function()
     {
-      finishProgram(zone);
+      finishProgram(zone, 'finish');
     });
   }
 
@@ -343,7 +372,7 @@ function executeStep(zone, stepIndex, stepIteration)
       {
         process.nextTick(function()
         {
-          finishProgram(zone, err);
+          finishProgram(zone, 'error', err);
         });
       }
       else
@@ -357,14 +386,14 @@ function executeStep(zone, stepIndex, stepIteration)
   );
 }
 
-function finishProgram(zone, err)
+function finishProgram(zone, state, err)
 {
   controller.sendMessage('programFinished', {
     zoneId      : zone.id,
     zoneName    : zone.name,
     programName : zone.program.name,
     finishedAt  : new Date(),
-    finishState : err ? 'error' : 'finish',
+    finishState : state,
     errorMessage: err ? (err.message || err) : null
   });
 
@@ -411,4 +440,152 @@ function turnOnRedLed(zone)
       controller.impl.setState(false, zone, this);
     }
   );
+}
+
+function startInputMonitor(zone)
+{
+  function monitorInputs()
+  {
+    controller.impl.getInput('stopButton', zone, function(err, newValue)
+    {
+      if (!err)
+      {
+        var oldValue = zone.inputs.stopButton;
+
+        if (newValue !== oldValue)
+        {
+          zone.inputs.stopButton = newValue;
+
+          handleInputChange(zone, 'stopButton', newValue, oldValue);
+        }
+      }
+
+      zone.inputMonitorTimer = setTimeout(
+        monitorInputs, INPUT_MONITOR_INTERVAL
+      );
+    });
+  }
+
+  zone.inputMonitorTimer = setTimeout(monitorInputs, Math.random() * 1000);
+}
+
+function stopInputMonitor(zone)
+{
+  clearTimeout(zone.inputMonitorTimer);
+
+  zone.inputMonitorTimer = null;
+}
+
+function handleInputChange(zone, input, newValue, oldValue)
+{
+  switch (input)
+  {
+    case 'stopButton':
+      clearTimeout(zone.stopButtonTimeout);
+
+      zone.stopButtonTimeout = setTimeout(
+        function()
+        {
+          if (zone.inputs.stopButton === newValue)
+          {
+            handleStopButtonChange(zone, newValue, oldValue);
+          }
+        },
+        STOP_BUTTON_CHANGE_TIMEOUT
+      );
+      break;
+  }
+}
+
+function handleStopButtonChange(zone, newValue, oldValue)
+{
+  if (newValue === 1)
+  {
+    if (zone.program)
+    {
+      console.debug(
+        'Someone requested to stop program <%s> on zone <%s>.',
+        zone.program.name,
+        zone.name
+      );
+
+      finishProgram(zone, 'stop');
+    }
+    else
+    {
+      console.debug(
+        'Someone requested to stop program on zone <%s>, ' +
+        'but there is no program running. Setting red LED for 1 second.',
+        zone.name
+      );
+
+      return blinkRedLed(zone, 1);
+    }
+  }
+  else
+  {
+    if (zone.program)
+    {
+      console.debug(
+        'Someone requested to start program on zone <%s>, ' +
+        'but there is one already running. Setting red LED for 1 second.',
+        zone.name
+      );
+
+      return blinkRedLed(zone, 1);
+    }
+    else
+    {
+      console.debug(
+        'Someone requested to start the assigned program on zone <%s>.',
+        zone.name
+      );
+
+      startAssignedProgram(zone);
+    }
+  }
+}
+
+/**
+ * Blink red LED on `zone` for `time` seconds.
+ *
+ * Sets the red LED on the specified zone. If no program was started on that
+ * zone after the specified time, resets that red LED.
+ *
+ * State reset timer is stopped for the whole process.
+ *
+ * @param {Object} zone
+ * @param {Number} time
+ */
+function blinkRedLed(zone, time)
+{
+  stopStateResetTimer(zone);
+
+  controller.impl.setLeds({red: 1}, zone, function()
+  {
+    setTimeout(function()
+    {
+      if (zone.program)
+      {
+        return;
+      }
+
+      controller.impl.setLeds({red: 0}, zone, function()
+      {
+        if (zone.program)
+        {
+          return;
+        }
+
+        startStateResetTimer(zone);
+      });
+    }, time * 1000);
+  });
+}
+
+function startAssignedProgram(zone)
+{
+  controller.sendMessage('startAssignedProgram', {
+    zoneId: zone.id
+  });
 }
