@@ -90,6 +90,18 @@ Konfiguracja uwierzytelniania i autoryzacji.
     Można definiować, do jakich funkcji mają mieć dostęp niezalogowani
     użytkownicy.
 
+### limits.js
+
+Konfiguracja limitów.
+
+  * `maxZones` - maksymalna liczba stref jaka może zostać stworzona.
+    W przypadku osiągnięcia limitu, przycisk dodawania nowej strefy zostanie
+    zablokowany.
+
+  * `maxPrograms` - maksymalna liczba programów jaka może zostać stworzona.
+    W przypadku osiągnięcia limitu, przycisk dodawania nowego programu zostanie
+    zablokowany.
+
 ## Uruchomienie
 
 Jeżeli jeszcze nie uruchomione, startujemy MongoDB:
