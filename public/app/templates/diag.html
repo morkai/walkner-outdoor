@@ -1,0 +1,81 @@
+<div class="properties">
+  <div class="property">
+    <span class="property-name">Data uruchomienia serwera:</span>
+    <span class="property-value"><%- moment(diag.startTime).format('LLLL') %></span>
+  </div>
+</div>
+
+<h2>Uruchomione sterowniki</h2>
+<% _.each(diag.controllers, function(controller) { %>
+<div class="properties">
+  <div class="property">
+    <span class="property-name">Nazwa:</span>
+    <span class="property-value">
+      <a href="#controllers/<%- controller.id %>"><%- controller.name %></a>
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Data uruchomienia:</span>
+    <span class="property-value"><%- moment(controller.startTime).format('LLLL') %></span>
+  </div>
+</div>
+<% }) %>
+
+<h2>Uruchomione strefy</h2>
+<% _.each(diag.zones, function(zone) { %>
+<div class="properties">
+  <div class="property">
+    <span class="property-name">Nazwa:</span>
+    <span class="property-value">
+      <a href="#zones/<%- zone.id %>"><%- zone.name %></a>
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Data uruchomienia:</span>
+    <span class="property-value"><%- moment(zone.startTime).format('LLLL') %></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Uruchomiony program:</span>
+    <span class="property-value">
+      <% if (zone.program) { %>
+      <%- zone.program.name %>
+      <% } else { %>
+      -
+      <% } %>
+    </span>
+  </div>
+</div>
+<% }) %>
+
+<h2>Uruchomione programy</h2>
+
+<% _.each(diag.programs, function(historyEntry) { %>
+<div class="properties">
+  <div class="property">
+    <span class="property-name">Program:</span>
+    <span class="property-value">
+      <a href="#programs/<%- historyEntry.programId %>"><%- historyEntry.programName %></a>
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Strefa:</span>
+    <span class="property-value">
+      <a href="#zones/<%- historyEntry.zoneId %>"><%- historyEntry.zoneName %></a>
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Uruchomiony przez:</span>
+    <span class="property-value">
+      <% if (historyEntry.startUserId) { %>
+      <a href="#zones/<%- historyEntry.startUserId %>"><%- historyEntry.startUserName %></a>
+      <% } else { %>
+      <%- historyEntry.startUserName %>
+      <% } %>
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Data uruchomienia:</span>
+    <span class="property-value"><%- moment(historyEntry.startedAt).format('LLLL') %></span>
+  </div>
+</div>
+<% }) %>

@@ -27,6 +27,18 @@ app.get('/app/models/limits.js', function(req, res)
   res.send(limits, {'Content-Type': 'text/javascript'});
 });
 
+app.get('/diag', function(req, res)
+{
+  var controllerProcesses = require('../models/controllerProcesses');
+
+  res.send({
+    startTime  : app.startTime,
+    controllers: controllerProcesses.getStartedControllers(),
+    zones      : controllerProcesses.getStartedZones(),
+    programs   : app.db.model('Zone').getStartedPrograms()
+  });
+});
+
 require('./zones');
 require('./history');
 require('./programs');

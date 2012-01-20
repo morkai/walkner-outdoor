@@ -78,6 +78,8 @@ step(
       'Express HTTP server listening on port %d', app.address().port
     );
     console.info('Started!');
+
+    app.startTime = Date.now();
   }
 );
 

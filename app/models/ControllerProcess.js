@@ -9,6 +9,7 @@ var ControllerProcess = function(controller)
   this.requests   = {};
   this.zones      = {};
   this.controller = {
+    startTime     : Date.now(),
     name          : controller.name,
     type          : controller.type,
     connectionInfo: controller.connectionInfo
@@ -61,6 +62,7 @@ _.extend(ControllerProcess.prototype, {
       }
 
       self.zones[zone.id] = _.extend({}, data, {
+        startTime      : Date.now(),
         program        : null,
         onProgramFinish: null
       });

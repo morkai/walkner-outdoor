@@ -135,3 +135,29 @@ exports.stopProgram = function(zoneId, done)
 
   controllerProcess.stopProgram(zoneId, done);
 };
+
+exports.getStartedControllers = function()
+{
+  var controllers = {};
+
+  for (var controllerId in controllerProcesses)
+  {
+    controllers[controllerId] = controllerProcesses[controllerId].controller;
+  }
+
+  return controllers;
+};
+
+exports.getStartedZones = function()
+{
+  var zones = {};
+
+  for (var zoneId in zoneToControllerMap)
+  {
+    var controllerProcess = controllerProcesses[zoneToControllerMap[zoneId]];
+
+    zones[zoneId] = controllerProcess.zones[zoneId];
+  }
+
+  return zones;
+};

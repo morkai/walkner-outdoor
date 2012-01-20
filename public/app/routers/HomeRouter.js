@@ -1,28 +1,34 @@
 define(
 [
+  'jQuery',
   'Backbone',
 
   'app/models/Zones',
   'app/views/viewport',
   'app/views/DashboardView',
   'app/views/LoginView',
-  'app/views/LogoutView'
+  'app/views/LogoutView',
+  'app/views/DiagView'
 ],
 /**
+ * @param {jQuery} jQuery
  * @param {Backbone} Backbone
  * @param {function(new:Zones)} Zones
  * @param {Viewport} viewport
  * @param {function(new:DashboardView)} DashboardView
  * @param {function(new:LoginView)} LoginView
  * @param {function(new:LogoutView)} LogoutView
+ * @param {function(new:DiagView)} DiagView
  */
 function(
+  $,
   Backbone,
   Zones,
   viewport,
   DashboardView,
   LoginView,
-  LogoutView)
+  LogoutView,
+  DiagView)
 {
 
 /**
@@ -35,7 +41,8 @@ var HomeRouter = Backbone.Router.extend({
   routes: {
     ''      : 'dashboard',
     'login' : 'login',
-    'logout': 'logout'
+    'logout': 'logout',
+    'diag'  : 'diagnose'
   }
 });
 
@@ -66,6 +73,23 @@ HomeRouter.prototype.login = function()
 HomeRouter.prototype.logout = function()
 {
   viewport.showView(new LogoutView());
+};
+
+HomeRouter.prototype.diagnose = function()
+{
+  viewport.msg.loading();
+
+  $.ajax({
+    url    : '/diag',
+    success: function(diag)
+    {
+      viewport.showView(new DiagView({model: diag}));
+    },
+    error  : function()
+    {
+      viewport.msg.loadingFailed();
+    }
+  });
 };
 
 return HomeRouter;

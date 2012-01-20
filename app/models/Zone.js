@@ -24,6 +24,11 @@ var Zone = module.exports = new mongoose.Schema({
   strict: true
 });
 
+Zone.statics.getStartedPrograms = function()
+{
+  return zoneStates;
+};
+
 Zone.statics.startAll = function(done)
 {
   mongoose.model('Zone').find().run(function(err, zones)
