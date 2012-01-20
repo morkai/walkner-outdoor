@@ -39,7 +39,7 @@ function(require, $, viewport)
 
     var height = window.innerHeight +
                  viewEl.outerHeight() -
-                 layoutEl.outerHeight() - 20;
+                 layoutEl.outerHeight();
 
     if (VirtualKeyboard.isOpen())
     {
