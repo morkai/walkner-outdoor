@@ -140,10 +140,6 @@ function execCmd(cmd, cb, count)
   {
     count = 0;
   }
-  else
-  {
-    console.debug('<%d> retry of coap-client request: %s', count, cmd);
-  }
 
   exec(cmd, function(err, stdout)
   {
