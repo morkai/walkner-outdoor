@@ -23,7 +23,7 @@ require(
   'app/socket',
   'app/routers/main',
   'app/views/viewport',
-  'app/keyboard'
+  'app/touch'
 ],
 function(
   domReady,

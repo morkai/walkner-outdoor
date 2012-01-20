@@ -4,6 +4,7 @@ define(
   'Underscore',
   'Backbone',
 
+  'app/touch',
   'app/user',
   'app/views/EnterPinFormView',
 
@@ -13,6 +14,7 @@ function(
   $,
   _,
   Backbone,
+  touch,
   user,
   EnterPinFormView,
   programPickerTpl)
@@ -82,6 +84,11 @@ function(
         this.enterPinFormView.render();
 
         this.$('.enterPinForm').replaceWith(this.enterPinFormView.el);
+      }
+
+      if (touch.enabled)
+      {
+        this.$('.allPrograms .list').scrolllistview();
       }
 
       return this;

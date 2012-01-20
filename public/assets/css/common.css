@@ -9,6 +9,7 @@ body
 
 .touchEnabled
 {
+  overflow: hidden;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -25,6 +26,10 @@ body
   -ms-user-drag: none;
   -o-user-drag: none;
   user-drag: none;
+}
+.bottomSpacer
+{
+  height: 35px;
 }
 
 .dialog

@@ -35,12 +35,6 @@ function(require, $, _, Backbone, Layout, MessageView)
       this.renderMessage();
       this.renderLayout(Layout);
 
-      if (window.location.hostname === 'localhost'
-          || window.location.hostname === '127.0.0.1')
-      {
-        $('body').addClass('touchEnabled');
-      }
-
       return this;
     },
 
@@ -153,7 +147,14 @@ function(require, $, _, Backbone, Layout, MessageView)
 
       oldLayout && oldLayout.destroy && oldLayout.destroy();
 
-      $(this.el).append(newLayout.render().el);
+      var pageEl = this.$('.page');
+
+      if (pageEl.length === 0)
+      {
+        pageEl = $('<div class="page"></div>').appendTo(this.el);
+      }
+
+      pageEl.append(newLayout.render().el);
 
       this.layout = newLayout;
 
