@@ -77,6 +77,16 @@ Zone.methods.startProgram = function(programId, user, done)
 
   mongoose.model('Program').findById(programId).run(function(err, program)
   {
+    if (err)
+    {
+      return done(err);
+    }
+
+    if (!program)
+    {
+      return done('Dany program nie istnieje.');
+    }
+
     if (program.totalTime === 0)
     {
       return done('Wybrany program nie ma zdefiniowanych żadnych kroków.');
