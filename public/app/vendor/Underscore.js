@@ -48,7 +48,8 @@ define(function()
         var property = arguments[i];
         var instance = object[property];
 
-        if (underscore.isArray(instance))
+        if (underscore.isArray(instance) ||
+            Object.prototype.toString.call(instance) === '[object Object]')
         {
           underscore.each(instance, destructInstance);
         }
