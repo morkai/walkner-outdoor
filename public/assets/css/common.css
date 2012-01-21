@@ -222,7 +222,7 @@ body
   font-size: 1.2em;
   margin: .25em auto .5em auto;
   padding: .5em;
-  text-align: left;
+  text-align: center;
 }
 .message.success > div
 {
