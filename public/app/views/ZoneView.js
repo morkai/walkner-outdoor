@@ -249,7 +249,7 @@ function(
       $.ajax({
         url: '/zones/' + this.model.get('_id'),
         type: 'POST',
-        data: {action: 'stop', pin: pin},
+        data: {action: 'stopProgram', pin: pin},
         success: function()
         {
           viewport.msg.show({
@@ -308,7 +308,7 @@ function(
         url:  '/zones/' + this.model.get('_id'),
         type: 'POST',
         data: {
-          action:  'start',
+          action:  'startProgram',
           program: programId,
           pin    : pin
         },

@@ -112,11 +112,11 @@ app.post('/zones/:id', auth('startStop'), function(req, res, next)
 
     switch (req.body.action)
     {
-      case 'start':
+      case 'startProgram':
         startProgram(req, res, next, zone, user);
         break;
 
-      case 'stop':
+      case 'stopProgram':
         stopProgram(req, res, next, zone, user);
         break;
 
