@@ -54,15 +54,15 @@ function(require, $, _, Backbone, user, menuTpl)
     {
       this.$('li').hide();
 
-      this.$('.dashboard-link').show();
+      this.$('.dashboard-link').css('display', 'inline-block');
 
       if (user.isLoggedIn())
       {
-        this.$('.logout-link').show();
+        this.$('.logout-link').css('display', 'inline-block');
       }
       else
       {
-        this.$('.login-link').show();
+        this.$('.login-link').css('display', 'inline-block');
       }
 
       this.showLinkIfAllowedTo('history', 'viewHistory');
@@ -76,7 +76,7 @@ function(require, $, _, Backbone, user, menuTpl)
     {
       if (user.isAllowedTo(privilage))
       {
-        this.$('.' + link + '-link').show();
+        this.$('.' + link + '-link').css('display', 'inline-block');
       }
     },
 

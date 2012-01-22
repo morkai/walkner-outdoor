@@ -5,6 +5,10 @@ define(
 ],
 function()
 {
+  $.ajaxSetup({
+    cache: false
+  });
+
   $.fn.fromObject = function(obj)
   {
     js2form(this[0], obj);

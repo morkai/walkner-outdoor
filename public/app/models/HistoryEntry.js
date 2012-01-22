@@ -11,7 +11,7 @@ define(
  */
 function(_, Backbone, moment)
 {
-  const STATE_TO_TEXT = {
+  var STATE_TO_TEXT = {
     finish: 'Ukończony',
     stop  : 'Zatrzymany',
     error : 'Błąd'
