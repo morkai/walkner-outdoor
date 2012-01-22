@@ -64,10 +64,13 @@
   font-weight: normal;
 }
 .button::-moz-focus-inner,
-.file > input[type="button"]::-moz-focus-inner
+.file > input[type="button"]::-moz-focus-inner,
+input[type="button"]::-moz-focus-inner,
+input[type="submit"]::-moz-focus-inner,
+input[type="reset"]::-moz-focus-inner
 {
-  padding: 0;
-  border: none;
+  padding: 0!important;
+  border: 0 none!important;
 }
 .button
 {
