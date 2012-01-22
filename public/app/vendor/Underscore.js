@@ -4,7 +4,9 @@ define(function()
 
   function destructInstance(instance)
   {
-    if (typeof instance === 'object' && typeof instance.destroy === 'function')
+    if (instance !== null &&
+        typeof instance === 'object' &&
+        typeof instance.destroy === 'function')
     {
       instance.destroy();
     }
