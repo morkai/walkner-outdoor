@@ -6,7 +6,7 @@ exports.superUser = {
   _id       : 'admin1234567890123456789',
   name      : 'Superadministator',
   login     : 'root',
-  password  : 'r00t',
+  password  : '1',
   privilages: {
     "startStop":"1",
     "pickProgram":"1",
@@ -20,7 +20,8 @@ exports.superUser = {
     "viewControllers":"1",
     "manageControllers":"1",
     "viewUsers":"1",
-    "manageUsers":"1"
+    "manageUsers":"1",
+    "diag":"1"
   }
 };
 
