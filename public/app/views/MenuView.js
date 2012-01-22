@@ -73,9 +73,9 @@ function(require, $, _, Backbone, user, menuTpl)
       this.showLinkIfAllowedTo('diag', 'diag');
     },
 
-    showLinkIfAllowedTo: function(link, privilage)
+    showLinkIfAllowedTo: function(link, privilege)
     {
-      if (user.isAllowedTo(privilage))
+      if (user.isAllowedTo(privilege))
       {
         this.$('.' + link + '-link').css('display', 'inline-block');
       }

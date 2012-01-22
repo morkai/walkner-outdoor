@@ -34,12 +34,12 @@ function($, _, Backbone, PageLayout, viewport, DeleteUserView, detailsTpl)
         {
           href      : '#users/' + id + ';edit',
           text      : 'Edytuj',
-          privilages: 'manageUsers'
+          privileges: 'manageUsers'
         },
         {
           href      : '#users/' + id + ';delete',
           text      : 'Usuń',
-          privilages: 'manageUsers',
+          privileges: 'manageUsers',
           handler   : function(e)
           {
             if (e.button !== 0) return;

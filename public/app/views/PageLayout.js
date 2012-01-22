@@ -111,7 +111,7 @@ function($, _, Backbone, user, menu, pageLayoutTpl, breadcrumbsTpl, actionsTpl)
           ? 'blue action'
           : action.className;
 
-        if (action.privilages && !user.isAllowedTo(action.privilages))
+        if (action.privileges && !user.isAllowedTo(action.privileges))
         {
           return;
         }

@@ -105,20 +105,20 @@ app.get('/zones/:id', auth('viewZones'), function(req, res, next)
 app.post('/zones/:id', function(req, res, next)
 {
   var action           = req.body.action;
-  var actionPrivilages = {
+  var actionprivileges = {
     'startProgram': 'startStop',
     'stopProgram' : 'startStop',
     'start'       : 'diag',
     'stop'        : 'diag'
   };
-  var actionPrivilage  = actionPrivilages[action];
+  var actionprivilege  = actionprivileges[action];
 
-  if (!actionPrivilage)
+  if (!actionprivilege)
   {
     return res.send(400);
   }
 
-  auth(actionPrivilage)(req, res, function()
+  auth(actionprivilege)(req, res, function()
   {
     app.db.model('Zone').findById(req.params.id, function(err, zone)
     {
@@ -169,9 +169,9 @@ app.put('/zones/:id', function(req, res, next)
     data.program = data.program._id;
   }
 
-  var privilage = data.program ? 'assignPrograms' : 'manageZones';
+  var privilege = data.program ? 'assignPrograms' : 'manageZones';
 
-  auth(privilage)(req, res, function()
+  auth(privilege)(req, res, function()
   {
     app.db.model('Zone').update({_id: req.params.id}, data, function(err, count)
     {
@@ -235,7 +235,7 @@ app.get('/zones/:id/programs', function(req, res, nextHandler)
 
       var user = req.session.user;
 
-      if (user && user.privilages.pickProgram)
+      if (user && user.privileges.pickProgram)
       {
         return attachPickProgramData(data, nextStep);
       }
@@ -342,7 +342,7 @@ function attachPickProgramData(data, done)
 
 function startProgram(req, res, next, zone, user)
 {
-  var canPickProgram = user.privilages.hasOwnProperty('pickProgram');
+  var canPickProgram = user.privileges.hasOwnProperty('pickProgram');
   var pin            = req.body.pin;
   var programId      = req.body.program;
   var hasPin         = _.isString(pin);
@@ -362,7 +362,7 @@ function startProgram(req, res, next, zone, user)
   {
     var User = app.db.model('User');
 
-    User.findOne({pin: pin}, {name: 1, privilages: 1}).run(function(err, user)
+    User.findOne({pin: pin}, {name: 1, privileges: 1}).run(function(err, user)
     {
       if (err)
         return next(err);
@@ -370,7 +370,7 @@ function startProgram(req, res, next, zone, user)
       if (!user)
         return res.send('Niepoprawny PIN :(', 400);
 
-      if (!user.privilages.startStop)
+      if (!user.privileges.startStop)
         return res.send('Nie masz uprawnień do uruchamiania stref :(', 401);
 
       return start(zone.program, {_id: user.id, name: user.name});
@@ -420,7 +420,7 @@ function stopProgram(req, res, next, zone, user)
 {
   var pin = req.body.pin;
 
-  if (user.privilages.hasOwnProperty('pickProgram'))
+  if (user.privileges.hasOwnProperty('pickProgram'))
   {
     return stop(user);
   }
@@ -432,7 +432,7 @@ function stopProgram(req, res, next, zone, user)
 
   var User = app.db.model('User');
 
-  User.findOne({pin: pin}, {name: 1, privilages: 1}).run(function(err, user)
+  User.findOne({pin: pin}, {name: 1, privileges: 1}).run(function(err, user)
   {
     if (err)
       return next(err);
@@ -440,7 +440,7 @@ function stopProgram(req, res, next, zone, user)
     if (!user)
       return res.send('Niepoprawny PIN :(', 400);
 
-    if (!user.privilages.startStop)
+    if (!user.privileges.startStop)
       return res.send('Nie masz uprawnień do zatrzymywania stref :(', 401);
 
     return stop({_id: user.id, name: user.name});

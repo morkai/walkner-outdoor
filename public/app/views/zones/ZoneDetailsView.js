@@ -37,17 +37,17 @@ function($, _, Backbone, viewport, PageLayout, DeleteZoneView, detailsTpl)
         {
           href      : '#zones/' + id + ';program',
           text      : 'Programuj',
-          privilages: 'assignPrograms'
+          privileges: 'assignPrograms'
         },
         {
           href      : '#zones/' + id + ';edit',
           text      : 'Edytuj',
-          privilages: 'manageZones'
+          privileges: 'manageZones'
         },
         {
           href      : '#zones/' + id + ';delete',
           text      : 'Usuń',
-          privilages: 'manageZones',
+          privileges: 'manageZones',
           handler   : function(e)
           {
             if (e.button !== 0) return;

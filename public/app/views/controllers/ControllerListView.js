@@ -23,7 +23,7 @@ function($, _, Backbone, PageLayout, ListView)
       {
         href      : '#controllers;add',
         text      : 'Dodaj',
-        privilages: 'manageControllers'
+        privileges: 'manageControllers'
       }
     ]
 

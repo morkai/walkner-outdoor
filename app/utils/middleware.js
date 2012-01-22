@@ -1,13 +1,13 @@
 var guestUser = require('../../config/auth').guestUser;
 
-exports.auth = function(privilages)
+exports.auth = function(privileges)
 {
-  if (!Array.isArray(privilages))
+  if (!Array.isArray(privileges))
   {
-    privilages = [privilages];
+    privileges = [privileges];
   }
 
-  var l = privilages.length;
+  var l = privileges.length;
 
   return function(req, res, next)
   {
@@ -18,14 +18,14 @@ exports.auth = function(privilages)
 
     var user = req.session.user;
 
-    if (!user || !user.privilages)
+    if (!user || !user.privileges)
     {
       return res.send(401);
     }
 
     for (var i = 0; i < l; ++i)
     {
-      if (!(privilages[i] in user.privilages))
+      if (!(privileges[i] in user.privileges))
       {
         return res.send(401);
       }

@@ -27,7 +27,7 @@ function($, _, Backbone, limits, viewport, PageLayout, ListView)
         href      : '#zones;add',
         text      : 'Dodaj',
         className : 'blue add-zone action',
-        privilages: 'manageZones'
+        privileges: 'manageZones'
       }
     ],
 

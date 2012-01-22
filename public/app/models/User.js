@@ -26,7 +26,7 @@ function(_, Backbone)
       password2 : '',
       pin       : '',
       pin2      : '',
-      privilages: {}
+      privileges: {}
     }
   });
 

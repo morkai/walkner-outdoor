@@ -27,7 +27,7 @@ function($, _, Backbone, limits, viewport, PageLayout, ListView)
         href      : '#programs;add',
         text      : 'Dodaj',
         className : 'blue add-program action',
-        privilages: 'managePrograms'
+        privileges: 'managePrograms'
       }
     ],
 

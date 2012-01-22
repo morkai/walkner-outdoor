@@ -33,7 +33,7 @@ var User = module.exports = new mongoose.Schema({
     type  : Number,
     unique: true
   },
-  privilages: {
+  privileges: {
     type: {}
   }
 }, {

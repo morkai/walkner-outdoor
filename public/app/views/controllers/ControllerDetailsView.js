@@ -34,12 +34,12 @@ function($, _, Backbone, PageLayout, viewport, DeleteControllerView, detailsTpl)
         {
           href      : '#controllers/' + id + ';edit',
           text      : 'Edytuj',
-          privilages: 'manageControllers'
+          privileges: 'manageControllers'
         },
         {
           href      : '#controllers/' + id + ';delete',
           text      : 'Usuń',
-          privilages: 'manageControllers',
+          privileges: 'manageControllers',
           handler   : function(e)
           {
             if (e.button !== 0) return;

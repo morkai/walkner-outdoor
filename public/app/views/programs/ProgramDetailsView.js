@@ -44,12 +44,12 @@ function(
         {
           href      : '#programs/' + id + ';edit',
           text      : 'Edytuj',
-          privilages: 'managePrograms'
+          privileges: 'managePrograms'
         },
         {
           href      : '#programs/' + id + ';delete',
           text      : 'Usuń',
-          privilages: 'managePrograms',
+          privileges: 'managePrograms',
           handler   : function(e)
           {
             if (e.button !== 0) return;

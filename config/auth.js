@@ -6,8 +6,8 @@ exports.superUser = {
   _id       : 'admin1234567890123456789',
   name      : 'Superadministator',
   login     : 'root',
-  password  : '1',
-  privilages: {
+  password  : 'r00t',
+  privileges: {
     "startStop":"1",
     "pickProgram":"1",
     "viewHistory":"1",
@@ -34,7 +34,7 @@ exports.guestUser = {
   name      : 'Niezalogowany',
   login     : 'guest',
   password  : Math.random().toString(),
-  privilages: {
+  privileges: {
     "startStop":"1",
     "viewHistory":"1",
     "viewPrograms":"1"

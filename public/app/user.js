@@ -7,25 +7,25 @@ define(function()
     return user.loggedIn === true;
   };
 
-  user.isAllowedTo = function(privilage)
+  user.isAllowedTo = function(privilege)
   {
-    if (!user.privilages)
+    if (!user.privileges)
     {
       return false;
     }
 
-    if (typeof privilage === 'string')
+    if (typeof privilege === 'string')
     {
-      return privilage in user.privilages;
+      return privilege in user.privileges;
     }
 
-    var privilages = [].concat(privilage);
+    var privileges = [].concat(privilege);
 
-    for (var i = 0, l = privilages.length; i < l; ++i)
+    for (var i = 0, l = privileges.length; i < l; ++i)
     {
-      privilage = privilages[i];
+      privilege = privileges[i];
 
-      if (typeof privilage !== 'string' || privilage in user.privilages)
+      if (typeof privilege !== 'string' || privilege in user.privileges)
       {
         continue;
       }

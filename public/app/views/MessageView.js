@@ -134,9 +134,9 @@ function($, _, Backbone, user)
       });
     },
 
-    auth: function(privilages)
+    auth: function(privileges)
     {
-      if (user.isAllowedTo(privilages))
+      if (user.isAllowedTo(privileges))
       {
         return false;
       }

@@ -19,7 +19,7 @@ function($, _, Backbone, PageLayout, ListView)
 
     breadcrumbs: ['Użytkownicy'],
 
-    actions: [{href: '#users;add', text: 'Dodaj', privilages: 'manageUsers'}]
+    actions: [{href: '#users;add', text: 'Dodaj', privileges: 'manageUsers'}]
 
   });
 });
