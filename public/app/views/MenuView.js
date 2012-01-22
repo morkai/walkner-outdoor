@@ -70,6 +70,7 @@ function(require, $, _, Backbone, user, menuTpl)
       this.showLinkIfAllowedTo('zones', 'viewZones');
       this.showLinkIfAllowedTo('controllers', 'viewControllers');
       this.showLinkIfAllowedTo('users', 'viewUsers');
+      this.showLinkIfAllowedTo('diag', 'diag');
     },
 
     showLinkIfAllowedTo: function(link, privilage)

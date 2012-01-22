@@ -73,7 +73,7 @@ Zone.methods.start = function(done)
 
 Zone.methods.stop = function(done)
 {
-  controllerProcesses.stopZone(this, done);
+  controllerProcesses.stopZone(this.id, done);
 };
 
 Zone.methods.startProgram = function(programId, user, done)

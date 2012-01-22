@@ -38,6 +38,8 @@ app.post('/zones', auth('manageZones'), function(req, res, next)
       if (err) return next(err);
 
       res.send(zone, 201);
+
+      app.io.sockets.emit('zone added', zone);
     });
   });
 });
@@ -100,29 +102,54 @@ app.get('/zones/:id', auth('viewZones'), function(req, res, next)
   );
 });
 
-app.post('/zones/:id', auth('startStop'), function(req, res, next)
+app.post('/zones/:id', function(req, res, next)
 {
-  app.db.model('Zone').findById(req.params.id, function(err, zone)
+  var action           = req.body.action;
+  var actionPrivilages = {
+    'startProgram': 'startStop',
+    'stopProgram' : 'startStop',
+    'start'       : 'diag',
+    'stop'        : 'diag'
+  };
+  var actionPrivilage  = actionPrivilages[action];
+
+  if (!actionPrivilage)
   {
-    if (err) return next(err);
+    return res.send(400);
+  }
 
-    if (!zone) return res.send(404);
-
-    var user = req.session.user;
-
-    switch (req.body.action)
+  auth(actionPrivilage)(req, res, function()
+  {
+    app.db.model('Zone').findById(req.params.id, function(err, zone)
     {
-      case 'startProgram':
-        startProgram(req, res, next, zone, user);
-        break;
+      if (err) return next(err);
 
-      case 'stopProgram':
-        stopProgram(req, res, next, zone, user);
-        break;
+      if (!zone) return res.send(404);
 
-      default:
-        res.send(400);
-    }
+      var user = req.session.user;
+
+      switch (req.body.action)
+      {
+        case 'startProgram':
+          startProgram(req, res, next, zone, user);
+          break;
+
+        case 'stopProgram':
+          stopProgram(req, res, next, zone, user);
+          break;
+
+        case 'start':
+          startZone(res, next, zone);
+          break;
+
+        case 'stop':
+          stopZone(res, next, zone);
+          break;
+
+        default:
+          res.send(400);
+      }
+    });
   });
 });
 
@@ -153,6 +180,8 @@ app.put('/zones/:id', function(req, res, next)
       if (!count) return res.send(404);
 
       res.send(204);
+
+      app.io.sockets.emit('zone changed', {id: req.params.id, changes: data});
     });
   });
 });
@@ -164,6 +193,8 @@ app.del('/zones/:id', auth('manageZones'), function(req, res, next)
     if (err) return next(err);
 
     res.send(204);
+
+    app.io.sockets.emit('zone removed', req.params.id);
   });
 });
 
@@ -439,4 +470,60 @@ function stopProgram(req, res, next, zone, user)
       res.send();
     });
   }
+}
+
+function startZone(res, next, zone)
+{
+  zone.start(function(err)
+  {
+    if (err)
+    {
+      console.debug(
+        'Starting zone <%s> failed: %s', zone.name, err.message || err
+      );
+
+      if (err instanceof Error)
+      {
+        next(err);
+      }
+      else
+      {
+        res.send(err, 400);
+      }
+    }
+    else
+    {
+      console.debug('Started zone <%s>', zone.name);
+
+      res.send(201);
+    }
+  });
+}
+
+function stopZone(res, next, zone)
+{
+  zone.stop(function(err)
+  {
+    if (err)
+    {
+      console.debug(
+        'Stopping zone <%s> failed: %s', zone.name, err.message || err
+      );
+
+      if (err instanceof Error)
+      {
+        next(err);
+      }
+      else
+      {
+        res.send(err, 400);
+      }
+    }
+    else
+    {
+      console.debug('Stopped zone <%s>', zone.name);
+
+      res.send(201);
+    }
+  });
 }

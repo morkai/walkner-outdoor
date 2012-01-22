@@ -9,7 +9,8 @@ var ControllerProcess = function(controller)
   this.requests   = {};
   this.zones      = {};
   this.controller = {
-    startTime     : Date.now(),
+    startedAt     : Date.now(),
+    id            : controller.id,
     name          : controller.name,
     type          : controller.type,
     connectionInfo: controller.connectionInfo
@@ -22,7 +23,17 @@ _.extend(ControllerProcess.prototype, {
 
   startController: function(done)
   {
-    this.sendMessage('startController', this.controller.connectionInfo, done);
+    var controller = this.controller;
+
+    this.sendMessage('startController', controller.connectionInfo, function(err)
+    {
+      if (!err)
+      {
+        app.io.sockets.emit('controller started', controller.id);
+      }
+
+      done(err);
+    });
   },
 
   stopController: function(done)
@@ -33,7 +44,11 @@ _.extend(ControllerProcess.prototype, {
     {
       if (!err)
       {
+        var controllerId = self.controller.id;
+
         self.destroy();
+
+        app.io.sockets.emit('controller stopped', controllerId);
       }
 
       done(err);
@@ -62,7 +77,7 @@ _.extend(ControllerProcess.prototype, {
       }
 
       self.zones[zone.id] = _.extend({}, data, {
-        startTime      : Date.now(),
+        startedAt      : Date.now(),
         program        : null,
         onProgramFinish: null
       });
@@ -73,6 +88,7 @@ _.extend(ControllerProcess.prototype, {
 
   stopZone: function(zoneId, done)
   {
+    var self = this;
     var zone = this.zones[zoneId];
 
     if (!zone)
@@ -98,8 +114,6 @@ _.extend(ControllerProcess.prototype, {
     {
       stopZone();
     }
-
-    var self = this;
 
     function stopZone()
     {
@@ -280,6 +294,8 @@ _.extend(ControllerProcess.prototype, {
         finishState : 'error',
         errorMessage: 'Zamknięcie procesu sterownika.'
       });
+
+      app.io.sockets.emit('zone stopped', zone.id);
     }
 
     this.zones = {};
@@ -335,6 +351,16 @@ _.extend(ControllerProcess.prototype, {
 });
 
 _.extend(messageHandlers, {
+
+  zoneStarted: function(zoneId)
+  {
+    app.io.sockets.emit('zone started', zoneId);
+  },
+
+  zoneStopped: function(zoneId)
+  {
+    app.io.sockets.emit('zone stopped', zoneId);
+  },
 
   programFinished: function(data)
   {

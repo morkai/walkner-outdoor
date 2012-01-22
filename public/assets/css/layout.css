@@ -238,13 +238,3 @@ strong
 {
   display: none;
 }
-
-.diag h2
-{
-  font-size: 1.5em;
-  margin: 0 .75em;
-}
-.diag .properties
-{
-  display: inline-block;
-}

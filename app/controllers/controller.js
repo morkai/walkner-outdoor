@@ -87,9 +87,29 @@ _.extend(messageHandlers, {
     controller.impl.initialize(connectionInfo, res);
   },
 
-  stopController: function(_, res)
+  stopController: function(data, res)
   {
-    controller.impl.finalize(res);
+    step(
+      function stopZonesStep()
+      {
+        if (_.size(controller.zones) === 0)
+        {
+          return true;
+        }
+
+        var group = this.group();
+
+        _.each(controller.zones, function(zone)
+        {
+          stopZone(zone, 'Wyłączenie procesu sterownika.', group());
+        });
+      },
+      function finalizeControllerStep()
+      {
+        controller.impl.finalize(this);
+      },
+      res
+    );
   },
 
   startZone: function(zone, res)
@@ -113,6 +133,8 @@ _.extend(messageHandlers, {
     startInputMonitor(zone);
 
     res();
+
+    controller.sendMessage('zoneStarted', zone.id);
   },
 
   stopZone: function(zoneId, res)
@@ -124,12 +146,7 @@ _.extend(messageHandlers, {
       return res();
     }
 
-    stopInputMonitor(zone);
-    stopStateResetTimer(zone);
-
-    zone = null;
-
-    res();
+    stopZone(zone, 'Wyłączenie strefy.', res);
   },
 
   startProgram: function(req, res)
@@ -196,6 +213,26 @@ _.extend(messageHandlers, {
   }
 
 });
+
+function stopZone(zone, programStopReason, done)
+{
+  if (zone.program)
+  {
+    finishProgram(zone, 'error', programStopReason);
+  }
+
+  stopInputMonitor(zone);
+  stopStateResetTimer(zone);
+
+  var zoneId = zone.id;
+
+  delete controller.zones[zoneId];
+  zone = null;
+
+  controller.sendMessage('zoneStopped', zoneId);
+
+  done();
+}
 
 function startStateResetTimer(zone)
 {
@@ -388,6 +425,11 @@ function executeStep(zone, stepIndex, stepIteration)
 
 function finishProgram(zone, state, err)
 {
+  if (zone.program.timeout)
+  {
+    clearTimeout(zone.program.timeout);
+  }
+
   controller.sendMessage('programFinished', {
     zoneId      : zone.id,
     zoneName    : zone.name,

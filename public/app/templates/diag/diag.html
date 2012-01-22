@@ -1,0 +1,23 @@
+<h2>Serwer aplikacji</h2>
+<div class="content box">
+  <div class="property">
+    <span class="property-name">Czas uruchomienia:</span>
+    <span class="property-value"><%- startedAt %></span>
+  </div>
+  <div class="property" data-property="uptime">
+    <span class="property-name">Uptime:</span>
+    <span class="property-value" data-startTime="<%- startTime %>">-</span>
+  </div>
+</div>
+
+<h2>Uruchomione programy</h2>
+<p class="content box noProgramsMessage">Aktualnie nie ma uruchomionych żadnych programów.</p>
+<div class="programs"></div>
+
+<h2>Strefy</h2>
+<p class="content box noZonesMessage">Aktualnie nie ma żadnych stref.</p>
+<div class="zones"></div>
+
+<h2>Sterowniki</h2>
+<p class="content box noControllersMessage">Aktualnie nie ma żadnych sterowników.</p>
+<div class="controllers"></div>

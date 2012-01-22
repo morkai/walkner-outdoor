@@ -25,9 +25,9 @@ exports.startController = function(controller, done)
   });
 };
 
-exports.stopController = function(controller, done)
+exports.stopController = function(controllerId, done)
 {
-  var controllerProcess = controllerProcesses[controller.id];
+  var controllerProcess = controllerProcesses[controllerId];
 
   if (!controllerProcess)
   {
@@ -41,11 +41,11 @@ exports.stopController = function(controller, done)
       return done(err);
     }
 
-    delete controllerProcesses[controller.id];
+    delete controllerProcesses[controllerId];
 
     for (var zoneId in zoneToControllerMap)
     {
-      if (zoneToControllerMap[zoneId] === controller.id)
+      if (zoneToControllerMap[zoneId] === controllerId)
       {
         delete zoneToControllerMap[zoneId];
       }

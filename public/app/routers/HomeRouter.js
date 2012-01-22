@@ -8,7 +8,7 @@ define(
   'app/views/DashboardView',
   'app/views/LoginView',
   'app/views/LogoutView',
-  'app/views/DiagView'
+  'app/views/diag/DiagView'
 ],
 /**
  * @param {jQuery} jQuery
@@ -77,6 +77,11 @@ HomeRouter.prototype.logout = function()
 
 HomeRouter.prototype.diagnose = function()
 {
+  if (viewport.msg.auth('diag'))
+  {
+    return;
+  }
+
   viewport.msg.loading();
 
   $.ajax({

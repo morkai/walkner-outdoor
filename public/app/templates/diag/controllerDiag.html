@@ -1,0 +1,20 @@
+<div class="content controller" data-id="<%- id %>">
+  <div class="property">
+    <span class="property-name" data-property="name">Sterownik:</span>
+    <span class="property-value">
+      <a href="#controllers/<%- id %>"><%- name %></a>
+    </span>
+  </div>
+  <div class="property" data-property="startedAt">
+    <span class="property-name">Czas uruchomienia:</span>
+    <span class="property-value"><%- startedAt %></span>
+  </div>
+  <div class="property" data-property="uptime">
+    <span class="property-name">Uptime:</span>
+    <span class="property-value" data-startTime="<%- startTime %>">0</span>
+  </div>
+  <div class="actions">
+    <input class="green start action" type="button" value="Start">
+    <input class="red stop action" type="button" value="Stop">
+  </div>
+</div>

@@ -63,7 +63,7 @@ Controller.methods.start = function(done)
 
 Controller.methods.stop = function(done)
 {
-  controllerProcesses.stopController(this, done);
+  controllerProcesses.stopController(this.id, done);
 };
 
 mongoose.model('Controller', Controller);
