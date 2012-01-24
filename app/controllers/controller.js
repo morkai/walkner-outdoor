@@ -4,6 +4,8 @@ const RED_LED_ON_ERROR_FOR       = 30000;
 const STOP_BUTTON_CHANGE_TIMEOUT = 1000;
 const STOP_BUTTON_PRESSED_VALUE  = 0;
 const STOP_BUTTON_RELEASED_VALUE = 1;
+const REQUEST_TIMES_INTERVAL     = 1000;
+const PING_INTERVAL              = 1;
 
 var _    = require('underscore');
 var step = require('step');
@@ -22,6 +24,17 @@ _.extend(controller, {
   },
 
   isRunning: false,
+
+  requestTimes: {
+    timer: null,
+    total: 0,
+    count: 0,
+    last : 0,
+    min  : Number.MAX_VALUE,
+    max  : Number.MIN_VALUE
+  },
+
+  cancelPing: null,
 
   zones: {},
 
@@ -63,6 +76,48 @@ _.extend(controller, {
     });
 
     controller.isRunning = true;
+
+    process.nextTick(sendRequestTimes);
+  },
+
+  startPing: function(host)
+  {
+    if (controller.cancelPing)
+    {
+      controller.cancelPing();
+    }
+
+    var ping = require('../utils/ping');
+
+    controller.cancelPing = ping(host, PING_INTERVAL, function(results)
+    {
+      controller.sendMessage('pinged', results);
+    });
+  },
+
+  requestTimed: function(time)
+  {
+    var times = controller.requestTimes;
+
+    if (times.total === Number.MAX_VALUE)
+    {
+      times.total = 0;
+      times.count = 0;
+    }
+
+    times.total += time;
+    times.count += 1;
+    times.last   = time;
+
+    if (time < times.min)
+    {
+      times.min = time;
+    }
+
+    if (time > times.max)
+    {
+      times.max = time;
+    }
   },
 
   error: function(err)
@@ -107,6 +162,27 @@ _.extend(messageHandlers, {
       function finalizeControllerStep()
       {
         controller.impl.finalize(this);
+      },
+      function cleanUpStep()
+      {
+        if (controller.cancelPing)
+        {
+          controller.cancelPing();
+        }
+
+        if (controller.requestTimes.timer)
+        {
+          clearTimeout(controller.requestTimes.timer);
+        }
+
+        for (var p in controller)
+        {
+          delete controller[p];
+        }
+
+        controller = null;
+
+        return true;
       },
       res
     );
@@ -630,4 +706,26 @@ function startAssignedProgram(zone)
   controller.sendMessage('startAssignedProgram', {
     zoneId: zone.id
   });
+}
+
+function sendRequestTimes()
+{
+  if (!controller.isRunning)
+  {
+    return;
+  }
+
+  var times = controller.requestTimes;
+
+  if (times.count > 0)
+  {
+    controller.sendMessage('timed', {
+      last: Math.ceil(times.last),
+      avg : Math.ceil(times.total / times.count),
+      min : Math.ceil(times.min),
+      max : Math.ceil(times.max)
+    });
+  }
+
+  times.timer = setTimeout(sendRequestTimes, REQUEST_TIMES_INTERVAL);
 }

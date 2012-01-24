@@ -61,6 +61,8 @@ controller.run({
       }
     });
 
+    controller.startPing(connectionInfo.host);
+
     done();
   },
 
@@ -84,7 +86,7 @@ controller.run({
 
   setState: function(state, zone, done)
   {
-    master.executeRequest({
+    executeRequest({
       fn     : 5,
       unit   : zone.controllerInfo.stateUnit,
       address: zone.controllerInfo.stateOutput,
@@ -102,7 +104,7 @@ controller.run({
 
         for (var led in leds)
         {
-          master.executeRequest({
+          executeRequest({
             fn     : 5,
             unit   : zone.controllerInfo[led + 'LedUnit'],
             address: zone.controllerInfo[led + 'LedOutput'],
@@ -122,7 +124,7 @@ controller.run({
       {
         var next = this;
 
-        master.executeRequest({
+        executeRequest({
           fn      : 2,
           unit    : zone.controllerInfo[input + 'Unit'],
           address : zone.controllerInfo[input + 'Input'],
@@ -145,3 +147,18 @@ controller.run({
   }
 
 });
+
+function executeRequest(req)
+{
+  var startTime = Date.now();
+  var handler   = req.handler;
+
+  req.handler = function(err, data)
+  {
+    controller.requestTimed(Date.now() - startTime);
+
+    handler(err, data);
+  };
+
+  master.executeRequest(req);
+}

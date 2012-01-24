@@ -19,6 +19,17 @@ controller.run({
       uri = uri.substring(0, uri.length - 1);
     }
 
+    var matches = uri.match(
+      uri.indexOf('.') === - 1
+        ? /\[([a-fA-F0-9:]+)\]/
+        : /([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
+    );
+
+    if (matches)
+    {
+      controller.startPing(matches[1]);
+    }
+
     done();
   },
 
@@ -134,11 +145,16 @@ function setResource(resource, state, cb)
   execCmd(cmd, cb);
 }
 
-function execCmd(cmd, cb, count)
+function execCmd(cmd, cb, count, startTime)
 {
-  if (!count)
+  if (typeof count === 'undefined')
   {
     count = 0;
+  }
+
+  if (typeof startTime === 'undefined')
+  {
+    startTime = Date.now();
   }
 
   exec(cmd, function(err, stdout)
@@ -149,11 +165,13 @@ function execCmd(cmd, cb, count)
     {
       process.nextTick(function()
       {
-        execCmd(cmd, cb, count);
+        execCmd(cmd, cb, count, startTime);
       });
     }
     else
     {
+      controller.requestTimed(Date.now() - startTime);
+
       return cb(err, stdout);
     }
   });
