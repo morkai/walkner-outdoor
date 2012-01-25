@@ -17,6 +17,7 @@
   background: #AAA;
   box-shadow: 0 1px 3px #666;
   box-sizing: border-box;
+  -moz-box-sizing: border-box;
   height: 1.6em;
   left: 0;
   margin: .2em;
@@ -69,6 +70,7 @@
   background: linear-gradient(#FFF, #F1F1F1);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F1F1F1');
   box-sizing: border-box;
+  -moz-box-sizing: border-box;
   font-size: 1.5em;
   font-weight: bold;
   text-transform: uppercase;
@@ -131,6 +133,7 @@
 .zone-bar-value
 {
   box-sizing: border-box;
+  -moz-box-sizing: border-box;
   padding: .25em;
   position: absolute;
   top: 0;
@@ -172,7 +175,13 @@
 .programPicker h4
 {
   font-size: 1.5em;
-  background-image: -webkit-linear-gradient(white, #F1F1F1);
+  background: #F1F1F1;
+  background: -moz-linear-gradient(#FFF, #F1F1F1);
+  background: -webkit-linear-gradient(#FFF, #F1F1F1);
+  background: -o-linear-gradient(#FFF, #F1F1F1);
+  background: -ms-linear-gradient(#FFF, #F1F1F1);
+  background: linear-gradient(#FFF, #F1F1F1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FFFFFF', endColorstr = '#F1F1F1');
 }
 .programPicker .list
 {
@@ -195,6 +204,7 @@
   max-width: 420px;
   margin: 1em auto 0 auto;
   box-sizing: border-box;
+  -moz-box-sizing: border-box;
   line-height: 1.4;
 }
 .enterPinForm .pin

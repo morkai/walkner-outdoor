@@ -77,7 +77,13 @@ input[type="reset"]::-moz-focus-inner
   padding: 0.25em 0.5em;
   display: inline-block;
   vertical-align: middle;
-  background: -webkit-linear-gradient(#FFF, #DDD);
+  background: #DDD;
+  background-image: -webkit-linear-gradient(#FFF, #DDD);
+  background-image: -moz-linear-gradient(#FFF, #DDD);
+  background-image: -ms-linear-gradient(#FFF, #DDD);
+  background-image: -o-linear-gradient(#FFF, #DDD);
+  background-image: linear-gradient(#FFF, #DDD);
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#FFFFFF', EndColorStr='#DDDDDD')";
   border: 1px solid #AAA;
   border-top-color: #CCC;
   border-left-color: #CCC;
@@ -105,6 +111,7 @@ input[type="reset"]::-moz-focus-inner
   color: inherit;
   box-shadow: inset 2px 2px 4px #DDD;
   box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }
 .textarea
 {
@@ -164,7 +171,13 @@ input[type="reset"]::-moz-focus-inner
 }
 .button:active
 {
-  background: -webkit-linear-gradient(#DDD, #FFF);
+  background: #FFF;
+  background-image: -webkit-linear-gradient(#DDD, #FFF);
+  background-image: -moz-linear-gradient(#DDD, #FFF);
+  background-image: -ms-linear-gradient(#DDD, #FFF);
+  background-image: -o-linear-gradient(#DDD, #FFF);
+  background-image: linear-gradient(#DDD, #FFF);
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#DDDDDD', EndColorStr='#FFFFFF')";
   border-color: #AAA;
   border-right-color: #CCC;
   border-bottom-color: #CCC;
