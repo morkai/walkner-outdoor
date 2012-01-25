@@ -26,6 +26,30 @@ function(_, Backbone)
   });
 
   /**
+   * @param {Array.<Object>} steps
+   * @return {Number}
+   */
+  Program.countTotalTime = function(steps)
+  {
+    var totalTime = 0;
+
+    _.each(steps, function(step)
+    {
+      totalTime += (step.timeOn + step.timeOff) * step.iterations;
+    });
+
+    return totalTime;
+  };
+
+  /**
+   * @return {Number}
+   */
+  Program.prototype.countTotalTime = function()
+  {
+    return Program.countTotalTime(this.get('steps'));
+  };
+
+  /**
    * @param {Object} attrs
    * @return {?Array}
    */

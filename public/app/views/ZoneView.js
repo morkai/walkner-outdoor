@@ -6,7 +6,7 @@ define(
 
   'app/time',
   'app/user',
-  'app/models/Programs',
+  'app/models/Program',
   'app/views/viewport',
   'app/views/ProgramPickerView',
   'app/views/EnterPinFormView',
@@ -19,7 +19,7 @@ function(
   Backbone,
   time,
   user,
-  Programs,
+  Program,
   viewport,
   ProgramPickerView,
   EnterPinFormView,
@@ -132,7 +132,7 @@ function(
 
       if (typeof state.totalTime === 'undefined')
       {
-        state.totalTime = this.countTotalTime(state.programSteps);
+        state.totalTime = Program.countTotalTime(state.programSteps);
       }
 
       if (typeof state.startTime === 'undefined')
