@@ -89,32 +89,31 @@ app.io = io.listen(app, {
   log: false
 });
 
-app.configure('development', function()
-{
-
-});
-
-app.configure('production', function()
-{
-  app.io.enable('browser client minification');
-  app.io.enable('browser client etag');
-  app.io.enable('browser client gzip');
-});
-
 app.configure(function()
 {
+  app.set('views', __dirname + '/templates/');
+
   app.use(express.cookieParser());
   app.use(express.session({secret: '~`z@!#X!@: >#x21"4va'}));
   app.use(express.methodOverride());
   app.use(express.bodyParser());
   app.use(app.router);
-  app.use(express.static(__dirname + '/../public'));
-  app.set('views', __dirname + '/templates/');
 });
 
 app.configure('development', function()
 {
+  app.use(express.static(__dirname + '/../public'));
   app.use(express.errorHandler({dumpExceptions: true, showStack: true}));
+});
+
+app.configure('production', function()
+{
+  app.use(express.static(__dirname + '/../public-build'));
+  app.use(express.errorHandler());
+
+  app.io.enable('browser client minification');
+  app.io.enable('browser client etag');
+  app.io.enable('browser client gzip');
 });
 
 require('./routers');

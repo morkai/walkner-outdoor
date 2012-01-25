@@ -6,7 +6,7 @@ var limits = 'define("app/models/limits", '
 
 app.get('/', function(req, res)
 {
-  res.render('index.ejs', {
+  res.render(app.settings.env === 'production' ? 'index-min.ejs' : 'index.ejs', {
     layout: false,
     user  : JSON.stringify(req.session.user || guestUser)
   });
