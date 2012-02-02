@@ -370,7 +370,7 @@ function startProgram(req, res, next, zone, user)
       if (!user)
         return res.send('Niepoprawny PIN :(', 400);
 
-      if (!user.privileges.startStop)
+      if (!user.privileges || !user.privileges.startStop)
         return res.send('Nie masz uprawnień do uruchamiania stref :(', 401);
 
       return start(zone.program, {_id: user.id, name: user.name});
@@ -440,7 +440,7 @@ function stopProgram(req, res, next, zone, user)
     if (!user)
       return res.send('Niepoprawny PIN :(', 400);
 
-    if (!user.privileges.startStop)
+    if (!user.privileges || !user.privileges.startStop)
       return res.send('Nie masz uprawnień do zatrzymywania stref :(', 401);
 
     return stop({_id: user.id, name: user.name});
