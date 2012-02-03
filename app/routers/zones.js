@@ -173,28 +173,74 @@ app.put('/zones/:id', function(req, res, next)
 
   auth(privilege)(req, res, function()
   {
-    app.db.model('Zone').update({_id: req.params.id}, data, function(err, count)
+    var zoneId = req.params.id;
+
+    app.db.model('Zone').findById(zoneId, function(err, zone)
     {
-      if (err) return next(err);
+      if (err)
+      {
+        return next(err);
+      }
 
-      if (!count) return res.send(404);
+      if (!zone)
+      {
+        return res.send(404);
+      }
 
-      res.send(204);
+      if (!data.program && zone.isStarted())
+      {
+        return res.send('Nie można modyfikować uruchomionej strefy :(', 400);
+      }
 
-      app.io.sockets.emit('zone changed', {id: req.params.id, changes: data});
+      zone.set(req.body).save(function(err)
+      {
+        if (err)
+        {
+          return next(err);
+        }
+
+        res.send(204);
+
+        app.io.sockets.emit(
+          'zone changed', {id: zoneId, changes: data}
+        );
+      });
     });
   });
 });
 
 app.del('/zones/:id', auth('manageZones'), function(req, res, next)
 {
-  app.db.model('Zone').remove({_id: req.params.id}, function(err)
+  var zoneId = req.params.id;
+
+  app.db.model('Zone').findById(zoneId, function(err, zone)
   {
-    if (err) return next(err);
+    if (err)
+    {
+      return next(err);
+    }
 
-    res.send(204);
+    if (!zone)
+    {
+      return res.send(404);
+    }
 
-    app.io.sockets.emit('zone removed', req.params.id);
+    if (zone.isStarted())
+    {
+      return res.send('Nie można usuwać uruchomionej strefy :(', 400);
+    }
+
+    zone.remove(function(err)
+    {
+      if (err)
+      {
+        return next(err);
+      }
+
+      res.send(204);
+
+      app.io.sockets.emit('zone removed', zoneId);
+    });
   });
 });
 

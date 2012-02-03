@@ -42,13 +42,13 @@ function($, _, Backbone, PageLayout, DeleteView, viewport)
 
           Backbone.history.navigate('controllers', true);
         },
-        error: function()
+        error: function(controller, xhr)
         {
           viewport.closeDialog();
           viewport.msg.show({
             type: 'error',
             time: 5000,
-            text: 'Nie udało się usunąć sterownika :('
+            text: xhr.responseText || 'Nie udało się usunąć sterownika :('
           });
         }
       });

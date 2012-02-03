@@ -95,12 +95,12 @@ function(
             'controllers/' + controller.get('_id'), true
           );
         },
-        error: function()
+        error: function(controller, xhr)
         {
           viewport.msg.show({
             type: 'error',
             time: 5000,
-            text: 'Nie udało się zmodyfikować sterownika :('
+            text: xhr.responseText || 'Nie udało się zmodyfikować sterownika :('
           });
         }
       });

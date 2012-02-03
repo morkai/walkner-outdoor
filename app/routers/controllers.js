@@ -43,35 +43,75 @@ app.get('/controllers/:id', auth('viewControllers'), function(req, res, next)
 
 app.put('/controllers/:id', auth('manageControllers'), function(req, res, next)
 {
+  var controllerId = req.params.id;
+
   delete req.body._id;
 
-  var Controller = app.db.model('Controller');
-
-  Controller.update({_id: req.params.id}, req.body, function(err, count)
+  app.db.model('Controller').findById(controllerId, function(err, controller)
   {
-    if (err) return next(err);
+    if (err)
+    {
+      return next(err);
+    }
 
-    if (!count) return res.send(404);
+    if (!controller)
+    {
+      return res.send(404);
+    }
 
-    res.send(204);
+    if (controller.isStarted())
+    {
+      return res.send('Nie można modyfikować uruchomionego sterownika :(', 400);
+    }
 
-    app.io.sockets.emit(
-      'controller changed', {id: req.params.id, changes: req.body}
-    );
+    controller.set(req.body).save(function(err)
+    {
+      if (err)
+      {
+        return next(err);
+      }
+
+      res.send(204);
+
+      app.io.sockets.emit(
+        'controller changed', {id: controllerId, changes: req.body}
+      );
+    });
   });
 });
 
 app.del('/controllers/:id', auth('manageControllers'), function(req, res, next)
 {
-  var Controller = app.db.model('Controller');
+  var controllerId = req.params.id;
 
-  Controller.remove({_id: req.params.id}, function(err)
+  app.db.model('Controller').findById(controllerId, function(err, controller)
   {
-    if (err) return next(err);
+    if (err)
+    {
+      return next(err);
+    }
 
-    res.send(204);
+    if (!controller)
+    {
+      return res.send(404);
+    }
 
-    app.io.sockets.emit('controller removed', req.params.id);
+    if (controller.isStarted())
+    {
+      return res.send('Nie można usuwać uruchomionego sterownika :(', 400);
+    }
+
+    controller.remove(function(err)
+    {
+      if (err)
+      {
+        return next(err);
+      }
+
+      res.send(204);
+
+      app.io.sockets.emit('controller removed', controllerId);
+    });
   });
 });
 

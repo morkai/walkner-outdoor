@@ -42,13 +42,13 @@ function($, _, Backbone, PageLayout, DeleteView, viewport)
 
           Backbone.history.navigate('zones', true);
         },
-        error: function()
+        error: function(zone, xhr)
         {
           viewport.closeDialog();
           viewport.msg.show({
             type: 'error',
             time: 5000,
-            text: 'Nie udało się usunąć strefy :('
+            text: xhr.responseText || 'Nie udało się usunąć strefy :('
           });
         }
       });
