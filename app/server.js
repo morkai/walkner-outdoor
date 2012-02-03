@@ -53,6 +53,20 @@ step(
 
     return this();
   },
+  function markInterruptedHistoryEntries()
+  {
+    var next = this;
+
+    app.db.model('HistoryEntry').markInterruptedEntries(function(err, count)
+    {
+      if (count)
+      {
+        console.info('Marked %d history entries as interrupted.', count);
+      }
+
+      next();
+    });
+  },
   function startControllersStep()
   {
     console.debug('Starting controller processes...');

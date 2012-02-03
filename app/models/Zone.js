@@ -127,6 +127,8 @@ Zone.methods.startProgram = function(programId, user, done)
       done(null, historyEntry);
 
       app.io.sockets.emit('program started', historyEntry.toJSON());
+
+      historyEntry.save();
     });
   });
 };

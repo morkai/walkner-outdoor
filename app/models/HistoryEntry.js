@@ -67,6 +67,19 @@ function finish(id, state, data, cb)
   mongoose.model('HistoryEntry').update({_id: id}, data, cb || function() {});
 };
 
+HistoryEntry.statics.markInterruptedEntries = function(done)
+{
+  var condition = {finishState: {$exists: false}};
+  var options   = {multi: true};
+  var data      = {
+    finishState : 'error',
+    finishedAt  : new Date(),
+    errorMessage: 'Nagłe wyłączenie systemu.'
+  };
+
+  mongoose.model('HistoryEntry').update(condition, data, options, done);
+};
+
 HistoryEntry.statics.finished = function(id, error, cb)
 {
   var data = {};
