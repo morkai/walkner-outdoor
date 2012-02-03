@@ -1,5 +1,4 @@
-var auth                = require('../utils/middleware').auth;
-var controllerProcesses = require('../models/controllerProcesses');
+var auth = require('../utils/middleware').auth;
 
 app.get('/controllers', auth('viewControllers'), function(req, res, next)
 {
