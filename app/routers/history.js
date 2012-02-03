@@ -34,3 +34,30 @@ app.get('/history/:id', auth('viewHistory'), function(req, res, next)
     res.send(doc);
   });
 });
+
+app.del('/history', auth('purgeHistory'), function(req, res, next)
+{
+  var age = parseInt(req.body.age);
+
+  if (isNaN(age) || age === 0)
+  {
+    return res.send(400);
+  }
+
+  var msInDay = 24 * 3600 * 1000;
+  var timeAgo = Date.now() - age * msInDay;
+
+  var HistoryEntry = app.db.model('HistoryEntry');
+
+  HistoryEntry.remove({startedAt: {$lt: new Date(timeAgo)}}, function(err)
+  {
+    if (err)
+    {
+      next(err);
+    }
+    else
+    {
+      res.send();
+    }
+  });
+});

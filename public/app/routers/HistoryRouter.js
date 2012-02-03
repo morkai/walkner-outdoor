@@ -6,7 +6,8 @@ define(
   'app/models/HistoryEntry',
   'app/views/viewport',
   'app/views/history/HistoryListView',
-  'app/views/history/HistoryEntryView'
+  'app/views/history/HistoryEntryView',
+  'app/views/history/PurgeHistoryFormView'
 ],
 /**
  * @param {Backbone} Backbone
@@ -15,6 +16,7 @@ define(
  * @param {Viewport} viewport
  * @param {function(new:HistoryListView)} HistoryListView
  * @param {function(new:HistoryEntryView)} HistoryEntryView
+ * @param {function(new:PurgeHistoryFormView)} PurgeHistoryFormView
  */
 function(
   Backbone,
@@ -22,7 +24,8 @@ function(
   HistoryEntry,
   viewport,
   HistoryListView,
-  HistoryEntryView)
+  HistoryEntryView,
+  PurgeHistoryFormView)
 {
 
 /**
@@ -33,8 +36,9 @@ function(
  */
 var HistoryRouter = Backbone.Router.extend({
   routes: {
-    'history'    : 'list',
-    'history/:id': 'view'
+    'history'      : 'list',
+    'history/:id'  : 'view',
+    'history;purge': 'purge'
   }
 });
 
@@ -81,6 +85,16 @@ HistoryRouter.prototype.view = function(id)
       viewport.msg.loadingFailed();
     }
   });
+};
+
+HistoryRouter.prototype.purge = function()
+{
+  if (viewport.msg.auth('purgeHistory'))
+  {
+    return;
+  }
+
+  viewport.showView(new PurgeHistoryFormView());
 };
 
 return HistoryRouter;

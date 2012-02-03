@@ -6,11 +6,20 @@ define(
 
   'app/views/viewport',
   'app/views/PageLayout',
+  'app/views/history/PurgeHistoryFormView',
 
   'text!app/templates/history/list.html',
   'text!app/templates/history/listItem.html'
 ],
-function($, _, Backbone, viewport, PageLayout, listTpl, listItemTpl)
+function(
+  $,
+  _,
+  Backbone,
+  viewport,
+  PageLayout,
+  PurgeHistoryFormView,
+  listTpl,
+  listItemTpl)
 {
   var renderList     = _.template(listTpl);
   var renderListItem = _.template(listItemTpl);
@@ -24,6 +33,23 @@ function($, _, Backbone, viewport, PageLayout, listTpl, listItemTpl)
     className: 'history',
 
     breadcrumbs: ['Historia'],
+
+    actions: [
+      {
+        href      : '#history;purge',
+        text      : 'Wyczyść',
+        className : 'blue purge-history action',
+        privileges: 'purgeHistory',
+        handler   : function(e)
+        {
+          if (e.button !== 0) return;
+
+          viewport.showDialog(new PurgeHistoryFormView());
+
+          return false;
+        }
+      }
+    ],
 
     events: {
       'click .more': 'showMore'

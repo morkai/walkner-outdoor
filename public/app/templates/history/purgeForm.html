@@ -1,0 +1,9 @@
+<form class="purgeHistory form" method="post" action="/history">
+  <input type="hidden" name="_method" value="delete">
+  <input type="submit">
+  <p>Usuń z historii wpisy starsze niż: <input name="age" value="14" type="number" class="textline small" min="1" max="7300"> dni</p>
+  <ul class="actions">
+    <li><input class="red yes action" type="button" value="Usuń">
+    <li><a class="cancel" href="#history">Anuluj</a>
+  </ul>
+</form>
