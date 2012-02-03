@@ -3,9 +3,14 @@ var ControllerProcess = require('./ControllerProcess');
 var controllerProcesses = {};
 var zoneToControllerMap = {};
 
+exports.isControllerStarted = function(controllerId)
+{
+  return controllerId in controllerProcesses;
+};
+
 exports.startController = function(controller, done)
 {
-  if (controller.id in controllerProcesses)
+  if (exports.isControllerStarted(controller.id))
   {
     return done();
   }
@@ -55,11 +60,16 @@ exports.stopController = function(controllerId, done)
   });
 };
 
+exports.isZoneStarted = function(zoneId)
+{
+  return zoneId in zoneToControllerMap;
+};
+
 exports.startZone = function(zone, done)
 {
   var controllerId = (zone.controller || '').toString();
 
-  if (controllerId in zoneToControllerMap)
+  if (exports.isZoneStarted(zone.id))
   {
     return done();
   }

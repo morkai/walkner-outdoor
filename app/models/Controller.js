@@ -56,6 +56,11 @@ Controller.statics.startAll = function(done)
   });
 };
 
+Controller.methods.isStarted = function()
+{
+  return controllerProcesses.isControllerStarted(this.id);
+};
+
 Controller.methods.start = function(done)
 {
   controllerProcesses.startController(this, done);

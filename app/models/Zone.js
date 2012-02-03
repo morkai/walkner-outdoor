@@ -66,6 +66,11 @@ Zone.statics.startAll = function(done)
   });
 };
 
+Zone.methods.isStarted = function()
+{
+  return controllerProcesses.isZoneStarted(this.id);
+};
+
 Zone.methods.start = function(done)
 {
   controllerProcesses.startZone(this, done);
