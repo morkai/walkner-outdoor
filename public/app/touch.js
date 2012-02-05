@@ -163,7 +163,14 @@ function(require, $, viewport)
       VirtualKeyboard.show(currentEl, holderEl[0]);
     });
 
-    viewport.bind('change:view', function()
+    viewport.bind('dialog:show', function()
+    {
+      toggleEl.show();
+    });
+    viewport.bind('dialog:close', toggleToggleEl);
+    viewport.bind('change:view', toggleToggleEl);
+
+    function toggleToggleEl()
     {
       if ($(viewport.view.el).hasClass('dashboard'))
       {
@@ -180,7 +187,7 @@ function(require, $, viewport)
       {
         toggleEl.show();
       }
-    });
+    }
   }
 
   return {enabled: true}
