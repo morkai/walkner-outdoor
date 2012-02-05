@@ -100,15 +100,21 @@ function(
       var allProgramsHdHeight  = allProgramsBoxEl.find('h4').outerHeight(true);
       var allProgramsListEl    = allProgramsBoxEl.find('.list').height('auto');
       var allProgramsBoxHeight = allProgramsBoxEl.outerHeight(true);
+      var height               = window.innerHeight;
 
       if (window.innerWidth <= 1280)
       {
-        return;
-      }
+        height -= this.$('.assignedProgram').outerHeight(true);
+        height -= this.$('.recentPrograms').outerHeight(true);
+        height -= allProgramsHdHeight * 2;
 
-      if (window.innerHeight < allProgramsBoxHeight)
+        allProgramsListEl.height(height);
+      }
+      else if (height < allProgramsBoxHeight)
       {
-        allProgramsListEl.height(window.innerHeight - allProgramsHdHeight * 2);
+        height -= allProgramsHdHeight * 2;
+
+        allProgramsListEl.height(height);
       }
     },
 
