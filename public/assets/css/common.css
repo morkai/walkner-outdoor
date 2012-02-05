@@ -42,9 +42,20 @@ body
   z-index: 100;
   background: rgba(0, 0, 0, .5);
   text-align: center;
-  padding: 0 1em;
+  padding: 0;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
+}
+.touchEnabled .dialog > .cancel
+{
+  position: absolute;
+  top: .5em;
+  right: .5em;
+  font-size: 2em;
+}
+.dialog > div
+{
+  display: inline-block;
 }
 
 .action

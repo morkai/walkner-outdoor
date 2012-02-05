@@ -14,6 +14,10 @@ function(require, $, _, Backbone, Layout, MessageView)
 
     el: 'body',
 
+    events: {
+      'click .dialog .cancel': 'closeDialog'
+    },
+
     initialize: function(options)
     {
       _.bindAll(this, 'closeDialog', 'onEscPressCloseDialog');
@@ -27,6 +31,8 @@ function(require, $, _, Backbone, Layout, MessageView)
 
     destroy: function()
     {
+      $(document).off('keyup', this.onEscPressCloseDialog);
+
       _.destruct(this, 'msg', 'layout', 'view', 'dialog', 'dialogQueue');
     },
 
@@ -84,14 +90,6 @@ function(require, $, _, Backbone, Layout, MessageView)
 
       this.getDialogContainer().append(this.dialog.el).show();
 
-      var closeDialog = this.closeDialog;
-
-      $(this.dialog.el).on('click', '.cancel', function()
-      {
-        closeDialog();
-
-        return false;
-      });
       $(document).on('keyup', this.onEscPressCloseDialog);
 
       this.msg.trigger('change:view');
@@ -168,7 +166,7 @@ function(require, $, _, Backbone, Layout, MessageView)
       $(this.el).append(this.msg.render().el);
     },
 
-    closeDialog: function()
+    closeDialog: function(e)
     {
       if (!this.dialog)
       {
@@ -199,6 +197,11 @@ function(require, $, _, Backbone, Layout, MessageView)
       {
         $(document).off('keyup', this.onEscPressCloseDialog);
       }
+
+      if (e)
+      {
+        e.preventDefault();
+      }
     },
 
     getDialogContainer: function()
@@ -210,7 +213,14 @@ function(require, $, _, Backbone, Layout, MessageView)
         return container.first();
       }
 
-      return $('<div class="dialog"></div>').hide().appendTo(this.el);
+      var cancelEl = $('<button>X</button>')
+        .addClass('red cancel action')
+        .attr('title', 'Zamknij dialog');
+
+      return $('<div class="dialog"></div>')
+        .hide()
+        .append(cancelEl)
+        .appendTo(this.el);
     },
 
     onEscPressCloseDialog: function(e)

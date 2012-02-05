@@ -175,10 +175,6 @@ strong
 {
   margin-bottom: 1em;
 }
-.dialog .delete-confirm
-{
-  width: auto;
-}
 
 .content
 {
@@ -209,7 +205,7 @@ strong
 }
 #kbContainer
 {
-  z-index: 9999;
+  z-index: 300;
   position: fixed;
   bottom: 0;
   text-align: center;
