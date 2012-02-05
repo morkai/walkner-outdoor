@@ -199,7 +199,8 @@
 {
   margin-left: 0;
 }
-.programPicker .content
+.programPicker .content,
+.enterPinForm .content
 {
   max-width: 420px;
   margin: 1em auto 0 auto;

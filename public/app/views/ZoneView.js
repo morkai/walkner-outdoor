@@ -236,6 +236,16 @@ function(
 
       viewport.showDialog(this.enterPinFormView);
 
+      var programName = this.model.get('state').programName;
+      var zoneName    = this.model.get('name');
+
+      $(this.enterPinFormView.el).prepend(
+        '<p class="content">Jeżeli chcesz zatrzymać program<br><strong>&lt;' +
+        programName + '&gt;</strong><br>na strefie<br><strong>&lt;' +
+        zoneName + '&gt;</strong><br>to podaj swój PIN i wciśnij przycisk' +
+        ' <em>Stop</em>.</p>'
+      );
+
       var self = this;
 
       viewport.bind('dialog:close', function closeDialog()
