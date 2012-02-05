@@ -102,14 +102,22 @@ Konfiguracja limitów.
     W przypadku osiągnięcia limitu, przycisk dodawania nowego programu zostanie
     zablokowany.
 
+### mongod.conf
+
+Konfiguracja serwera bazy danych MongoDB. Opis poszczególnych opcji
+konfiguracyjnych znajduje się w
+[dokumentacji MongoDB](http://www.mongodb.org/display/DOCS/File+Based+Configuration).
+Szczególną uwagę należy zwrócić na ścieżkę do katalogu, w którym przechowywane
+mają być dane oraz ścieżkę do pliku z logami.
+
 ## Uruchomienie
 
 Jeżeli jeszcze nie uruchomione, startujemy MongoDB:
 
-    $ mongod --dbpath walkner-outdoor/var/data/
+    $ mongod -f walkner-outdoor/config/mongod.conf
 
-Dokładne informacje dot. uruchamiania MongoDB dostępne są
-[tutaj](http://www.mongodb.org/display/DOCS/Starting+and+Stopping+Mongo).
+Dokładne informacje dot. uruchamiania MongoDB dostępne są w
+[dokumentacji MongoDB](http://www.mongodb.org/display/DOCS/Starting+and+Stopping+Mongo).
 
 Uruchamiamy serwer aplikacji w trybie `development` lub `production`:
 
