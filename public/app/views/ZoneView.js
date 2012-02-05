@@ -235,17 +235,18 @@ function(
       this.enterPinFormView.render();
 
       viewport.showDialog(this.enterPinFormView);
-    },
 
-    onPinEnterStopZone: function(pin)
-    {
-      this.stopZone(pin);
+      var self = this;
+
+      viewport.bind('dialog:close', function closeDialog()
+      {
+        self.toggleActions();
+        viewport.unbind('dialog:close', closeDialog);
+      });
     },
 
     stopZone: function(pin)
     {
-      var self = this;
-
       $.ajax({
         url: '/zones/' + this.model.get('_id'),
         type: 'POST',
@@ -268,7 +269,6 @@ function(
         },
         complete: function()
         {
-          self.toggleActions();
           viewport.closeDialog();
         }
       });
