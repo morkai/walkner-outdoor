@@ -62,6 +62,7 @@ function(require, $, viewport)
         viewEl.scrollview({
           direction: 'y'
         });
+        viewEl.find('.ui-scrollview-view').css('overflow', 'visible');
       }
     });
 
