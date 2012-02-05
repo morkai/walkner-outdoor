@@ -81,12 +81,23 @@ function(
       var data   = formEl.toObject({skipEmpty: true}).user || {};
       var error;
 
-      if (data.pin !== '' && data.pin !== data.pin2)
+      if (!data.name)
+      {
+        error = 'Imię i nazwisko jest wymagane.';
+      }
+      else if (!data.email)
+      {
+        error = 'Adres e-mail jest wymagany.';
+      }
+      else if (!data.login)
+      {
+        error = 'Login jest wymagany.';
+      }
+      else if (data.pin !== '' && data.pin !== data.pin2)
       {
         error = 'Podane PINy muszą być identyczne.';
       }
-
-      if (data.password !== '' && data.password !== data.password2)
+      else if (data.password !== '' && data.password !== data.password2)
       {
         error = 'Podane hasła muszą być identyczne.';
       }
@@ -115,12 +126,12 @@ function(
             'users/' + user.get('_id'), true
           );
         },
-        error: function()
+        error: function(user, xhr)
         {
           viewport.msg.show({
             type: 'error',
             time: 5000,
-            text: 'Nie udało się zmodyfikować użytkownika :('
+            text: 'Nie udało się zmodyfikować użytkownika: ' + xhr.responseText
           });
         }
       });

@@ -25,9 +25,10 @@ app.post('/users', auth('manageUsers'), function(req, res, next)
 
   user.save(function(err)
   {
-    if (err) return next(err);
-
-    res.send(user, 201);
+    checkDuplicateError(err, res, next, function()
+    {
+      res.send(user, 201);
+    });
   });
 });
 
@@ -78,9 +79,10 @@ app.put('/users/:id', auth('manageUsers'), function(req, res, next)
 
     user.set(data).save(function(err)
     {
-      if (err) return next(err);
-
-      res.send(204);
+      checkDuplicateError(err, res, next, function()
+      {
+        res.send(204);
+      });
     });
   });
 });
@@ -96,3 +98,26 @@ app.del('/users/:id', auth('manageUsers'), function(req, res, next)
     res.send(204);
   });
 });
+
+function checkDuplicateError(err, res, errback, cb)
+{
+  if (err)
+  {
+    if (err.name === 'MongoError' && (err.code === 11000 || err.code === 11001))
+    {
+      var message = err.message.indexOf('$pin') === -1
+                  ? 'Podany login jest już zajęty :('
+                  : 'Podany PIN jest już zajęty :(';
+
+      return res.send(message, 400);
+    }
+    else
+    {
+      return errback(err);
+    }
+  }
+  else
+  {
+    cb();
+  }
+}
