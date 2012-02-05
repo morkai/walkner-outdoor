@@ -46,8 +46,13 @@ body
   box-sizing: border-box;
   -moz-box-sizing: border-box;
 }
+.dialog > .cancel
+{
+  display: none;
+}
 .touchEnabled .dialog > .cancel
 {
+  display: inline-block;
   position: absolute;
   top: .5em;
   right: .5em;
