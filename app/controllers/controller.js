@@ -2,13 +2,13 @@
  * A number of milliseconds between a reset of the zone's state (if no program
  * is running on a given zone, all of its outputs are set to 0).
  */
-const STATE_RESET_INTERVAL = 2000;
+const STATE_RESET_INTERVAL = 5000;
 
 /**
  * A number of milliseconds between the requests for input state.
  * Currently only stop button input is read.
  */
-const INPUT_MONITOR_INTERVAL = 50;
+const INPUT_MONITOR_INTERVAL = 250;
 
 /**
  * A number of milliseconds the red LED is turned on after the running
@@ -30,12 +30,12 @@ const STOP_BUTTON_RELEASED_VALUE = 1;
 /**
  * A number of milliseconds between a broadcasting of the request times.
  */
-const REQUEST_TIMES_INTERVAL = 1000;
+const REQUEST_TIMES_INTERVAL = 5000;
 
 /**
  * A number of seconds between a broadcasting of the ping results.
  */
-const PING_INTERVAL = 1;
+const PING_INTERVAL = 10;
 
 var _    = require('underscore');
 var step = require('step');
