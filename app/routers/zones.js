@@ -105,20 +105,20 @@ app.get('/zones/:id', auth('viewZones'), function(req, res, next)
 app.post('/zones/:id', function(req, res, next)
 {
   var action           = req.body.action;
-  var actionprivileges = {
+  var actionPrivileges = {
     'startProgram': 'startStop',
     'stopProgram' : 'startStop',
     'start'       : 'diag',
     'stop'        : 'diag'
   };
-  var actionprivilege  = actionprivileges[action];
+  var actionPrivilege  = actionPrivileges[action];
 
-  if (!actionprivilege)
+  if (!actionPrivilege)
   {
     return res.send(400);
   }
 
-  auth(actionprivilege)(req, res, function()
+  auth(actionPrivilege)(req, res, function()
   {
     app.db.model('Zone').findById(req.params.id, function(err, zone)
     {
@@ -396,7 +396,14 @@ function startProgram(req, res, next, zone, user)
 
   if (hasProgramId && !canPickProgram)
   {
-    return res.send(401);
+    if (programId === zone.program.toString())
+    {
+      return start(zone.program, user);
+    }
+    else
+    {
+      return res.send(401);
+    }
   }
 
   if (canPickProgram && !hasProgramId)
