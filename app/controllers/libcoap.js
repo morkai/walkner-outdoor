@@ -54,7 +54,7 @@ controller.run({
 
         if (!leds.hasOwnProperty('green'))
         {
-          next();
+          return next();
         }
 
         setResource(
@@ -71,7 +71,7 @@ controller.run({
 
         if (!leds.hasOwnProperty('red'))
         {
-          next();
+          return next();
         }
 
         setResource(
