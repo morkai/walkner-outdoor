@@ -8,6 +8,13 @@ var config = require(__dirname + '/../../config/libcoap');
 
 var uri = '';
 
+var defaultResources = {
+  stateResource     : '/io/state',
+  greenLedResource  : '/io/greenLed',
+  redLedResource    : '/io/redLed',
+  stopButtonResource: '/io/stopBut'
+};
+
 controller.run({
 
   initialize: function(connectionInfo, done)
@@ -42,7 +49,10 @@ controller.run({
 
   setState: function(state, zone, done)
   {
-    setResource(zone.controllerInfo.stateResource || '/io/state', state, done);
+    var stateResource = zone.controllerInfo.stateResource ||
+                        defaultResources.stateResource;
+
+    setResource(stateResource, state, done);
   },
 
   setLeds: function(leds, zone, done)
@@ -57,11 +67,10 @@ controller.run({
           return next();
         }
 
-        setResource(
-          zone.controllerInfo.greenLedResource || '/io/greenLed',
-          leds.green,
-          next
-        );
+        var greenLedResource = zone.controllerInfo.greenLedResource ||
+                               defaultResources.greenLedResource;
+
+        setResource(greenLedResource, leds.green, next);
       },
       function setRedLedStep(err)
       {
@@ -74,11 +83,10 @@ controller.run({
           return next();
         }
 
-        setResource(
-          zone.controllerInfo.redLedResource || '/io/redLed',
-          leds.red,
-          next
-        );
+        var redLedResource = zone.controllerInfo.redLedResource ||
+                             defaultResources.redLedResource;
+
+        setResource(redLedResource, leds.red, next);
       },
       function checkErrorStep(err)
       {
@@ -94,14 +102,15 @@ controller.run({
 
   getInput: function(input, zone, done)
   {
-    var resource = zone.controllerInfo[input + 'Resource'];
+    var inputResource = zone.controllerInfo[input + 'Resource'] ||
+                        defaultResources[input + 'Resource'];
 
-    if (!resource)
+    if (!inputResource)
     {
       return done('Unknown input: ' + input);
     }
 
-    getResource(zone.controllerInfo[input + 'Resource'], function(err, stdout)
+    getResource(inputResource, function(err, stdout)
     {
       if (err)
       {
