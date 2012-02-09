@@ -106,7 +106,7 @@ step(
     console.debug(
       'Express HTTP server listening on port %d', app.address().port
     );
-    console.info('Started!');
+    console.info('Started in `%s` environment!', app.settings.env);
 
     app.startTime = Date.now();
   }
