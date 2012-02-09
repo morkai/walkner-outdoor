@@ -37,16 +37,27 @@ step(
     console.debug('Starting...');
     console.debug('Connecting to MongoDB...');
 
-    mongoose.connect(mongooseConfig.uri, this);
+    var next = this;
+
+    function tryToConnect()
+    {
+      mongoose.connect(mongooseConfig.uri, function(err)
+      {
+        if (err)
+        {
+          setTimeout(tryToConnect, 250);
+        }
+        else
+        {
+          next();
+        }
+      });
+    }
+
+    tryToConnect();
   },
   function setUpModelsStep(err)
   {
-    if (err)
-    {
-      console.error('Could not connect to MongoDB: %s', err.message);
-      process.exit(1);
-    }
-
     console.debug('Connected to MongoDB!');
 
     require('./models');
@@ -85,6 +96,10 @@ step(
     console.debug('Started zones!');
 
     app.listen(expressConfig.port, this);
+  },
+  function startBrowser()
+  {
+    return this;
   },
   function startStep()
   {
