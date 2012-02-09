@@ -102,6 +102,14 @@ Konfiguracja limitów.
     W przypadku osiągnięcia limitu, przycisk dodawania nowego programu zostanie
     zablokowany.
 
+### browser.js
+
+Konfiguracja przeglądarki uruchamianej razem ze startem serwera
+w środowisku produkcyjnym.
+
+  * `cmd` - komenda otwierająca przeglądarkę internetową nakierowaną na
+    aplikację.
+
 ### mongod.conf
 
 Konfiguracja serwera bazy danych MongoDB. Opis poszczególnych opcji

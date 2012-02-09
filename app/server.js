@@ -99,13 +99,23 @@ step(
   },
   function startBrowser()
   {
-    return this;
-  },
-  function startStep()
-  {
     console.debug(
       'Express HTTP server listening on port %d', app.address().port
     );
+
+    if (app.settings.env === 'production')
+    {
+      var config = require('../config/browser.js');
+
+      console.debug('Starting the Internet browser.');
+
+      require('child_process').exec(config.cmd);
+    }
+
+    return true;
+  },
+  function startStep()
+  {
     console.info('Started in `%s` environment!', app.settings.env);
 
     app.startTime = Date.now();
