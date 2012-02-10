@@ -6,6 +6,7 @@
   <link rel="stylesheet" href="/assets/css/main.css">
 </head>
 <body>
+<script>window.USER = <%- user %></script>
 <!--[if lt IE 9]>
 <script src="/vendor/es5-shim/es5-shim.min.js"></script>
 <![endif]-->
@@ -13,6 +14,5 @@
 <script src="/vendor/underscore-min.js"></script>
 <script src="/vendor/backbone-min.js"></script>
 <script data-main="app/main" src="/vendor/require/require.js"></script>
-<script>window.USER = <%- user %></script>
 </body>
 </html>
