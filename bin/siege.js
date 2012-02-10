@@ -46,12 +46,14 @@ sockets.on('connection', function(socket)
     client.id = nextClientId.toString();
     client.interval = (parseFloat(client.interval) || 1) * 1000;
     client.startTime = Date.now();
+    client.lastResult = null;
     client.stats = {
       total: 0,
       failed: 0,
       success: 0,
       lastFail: null,
-      lastSuccess: null
+      lastSuccess: null,
+      log: []
     };
 
     clients[client.id] = client;
@@ -129,7 +131,12 @@ function handleFailure(client, err, stderr)
 {
   client.stats.total += 1;
   client.stats.failed += 1;
-  client.stats.lastFail = Date.now();
+
+  if (client.lastResult !== 'failed')
+  {
+    client.stats.lastFail = Date.now();
+    client.lastResult = 'failed';
+  }
 
   var log = {type: 'failed', text: err.message};
 
@@ -150,7 +157,12 @@ function handleSuccess(client, stdout)
 {
   client.stats.total += 1;
   client.stats.success += 1;
-  client.stats.lastSuccess = Date.now();
+
+  if (client.lastResult !== 'success')
+  {
+    client.stats.lastSuccess = Date.now();
+    client.lastResult = 'success';
+  }
 
   var log = {type: 'success', text: stdout.toString()};
 

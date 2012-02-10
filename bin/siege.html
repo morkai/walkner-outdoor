@@ -10,11 +10,21 @@
     input {
       font: inherit;
     }
+    em {
+      font-weight: bold;
+      font-style: normal;
+    }
     #client-tpl {
       display: none;
     }
+    .client {
+      background: #EEE;
+      padding: .5em;
+      margin: 1em 0;
+    }
     .client h1 {
       font-family: monospace;
+      margin-top: 0;
     }
     .clientArgs {
       font: 1em monospace;
@@ -37,12 +47,16 @@
     .log {
       list-style: none;
       margin-left: 0;
-      max-height: 200px;
+      max-height: 5em;
       overflow-y: auto;
       font-size: .8em;
       color: #808080;
       border: 1px solid #808080;
       padding: 0 .5em;
+      background: #FFF;
+    }
+    .expanded {
+      max-height: 20em;
     }
     .log li {
       padding: .5em;
@@ -62,6 +76,11 @@
     <p>$0 and $1 will be replaced with a path to the zero.bin and one.bin files respectively.</p>
   </fieldset>
 </form>
+<p id="global">
+  <em>Total:</em> <span class="total">0</span>
+  <em>Success:</em> <span class="success">0</span> (<span class="successPercent">0</span>%)
+  <em>Failed:</em> <span class="failed">0</span> (<span class="failedPercent">0</span>%)
+</p>
 <div id="client-tpl" class="client">
   <h1>
     coap-client <span class="args"></span>
@@ -69,10 +88,10 @@
     <input class="removeClient" type="button" value="Remove">
   </h1>
   <p>
-    Start time: <span class="startTime">-</span><br>
-    Total: <span class="total">0</span><br>
-    Success: <span class="success">0</span> (<span class="lastSuccess">-</span>)<br>
-    Failed: <span class="failed">0</span> (<span class="lastFail">-</span>)<br>
+    <em>Start time:</em> <span class="startTime">-</span>
+    <em>Total:</em> <span class="total">0</span>
+    <em>Success:</em> <span class="success">0</span> (<span class="lastSuccess" title="Last success before failure time">-</span>)
+    <em>Failed:</em> <span class="failed">0</span> (<span class="lastFail" title="Last failure before success time">-</span>)
   </p>
   <ol class="log"></ol>
 </div>
@@ -91,7 +110,7 @@ $(function()
     clientEl.attr('data-id', client.id);
 
     clientEl.find('.args').text(client.args);
-    clientEl.find('.startTime').text(new Date(client.startTime).toUTCString());
+    clientEl.find('.startTime').text(formatDate(new Date(client.startTime)));
 
     clientEl.appendTo(document.body);
 
@@ -138,6 +157,13 @@ $(function()
     });
   });
 
+  $(document.body).delegate('.log', 'dblclick', function()
+  {
+    $(this).toggleClass('expanded');
+  });
+
+  setTimeout(updateGlobalStats, 1000);
+
   function updateStats(client)
   {
     var clientEl = $('#client-' + client.id);
@@ -168,7 +194,7 @@ $(function()
 
         case 'lastSuccess':
         case 'lastFail':
-          el.text(new Date(val).toUTCString());
+          el.text(formatDate(new Date(val)));
           break;
 
         case 'log':
@@ -203,6 +229,42 @@ $(function()
           break;
       }
     }
+  }
+
+  function formatDate(date)
+  {
+    return date.getUTCFullYear() + '-' +
+      (date.getUTCMonth() + 1) + '-' +
+      date.getUTCDate() + ' ' +
+      date.getUTCHours() + ':' +
+      date.getUTCMinutes() + ':' +
+      date.getUTCSeconds();
+  }
+
+  function updateGlobalStats()
+  {
+    var globalEl = $('#global');
+
+    var total = 0;
+    var success = 0;
+    var failed = 0;
+
+    $('.client').each(function()
+    {
+      var clientEl = $(this);
+
+      total += parseInt(clientEl.find('.total').text());
+      success += parseInt(clientEl.find('.success').text());
+      failed += parseInt(clientEl.find('.failed').text());
+    });
+
+    globalEl.find('.total').text(total);
+    globalEl.find('.success').text(success);
+    globalEl.find('.successPercent').text(Math.round(success * 100 / total * 100) / 100);
+    globalEl.find('.failed').text(failed);
+    globalEl.find('.failedPercent').text(Math.round(failed * 100 / total * 100) / 100);
+
+    setTimeout(updateGlobalStats, 1000);
   }
 });
 </script>
