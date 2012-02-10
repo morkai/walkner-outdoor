@@ -32,11 +32,6 @@ const STOP_BUTTON_RELEASED_VALUE = 1;
  */
 const REQUEST_TIMES_INTERVAL = 5000;
 
-/**
- * A number of seconds between a broadcasting of the ping results.
- */
-const PING_INTERVAL = 10;
-
 var _    = require('underscore');
 var step = require('step');
 
@@ -63,8 +58,6 @@ _.extend(controller, {
     min  : Number.MAX_VALUE,
     max  : Number.MIN_VALUE
   },
-
-  cancelPing: null,
 
   zones: {},
 
@@ -108,21 +101,6 @@ _.extend(controller, {
     controller.isRunning = true;
 
     process.nextTick(sendRequestTimes);
-  },
-
-  startPing: function(host)
-  {
-    if (controller.cancelPing)
-    {
-      controller.cancelPing();
-    }
-
-    var ping = require('../utils/ping');
-
-    controller.cancelPing = ping(host, PING_INTERVAL, function(results)
-    {
-      controller.sendMessage('pinged', results);
-    });
   },
 
   requestTimed: function(time)
@@ -195,11 +173,6 @@ _.extend(messageHandlers, {
       },
       function cleanUpStep()
       {
-        if (controller.cancelPing)
-        {
-          controller.cancelPing();
-        }
-
         if (controller.requestTimes.timer)
         {
           clearTimeout(controller.requestTimes.timer);

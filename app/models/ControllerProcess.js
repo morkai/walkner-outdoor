@@ -436,14 +436,6 @@ _.extend(messageHandlers, {
     });
   },
 
-  pinged: function(results)
-  {
-    app.io.sockets.emit('controller pinged', {
-      controllerId: this.controller.id,
-      results     : results
-    });
-  },
-
   timed: function(results)
   {
     app.io.sockets.emit('controller timed', {

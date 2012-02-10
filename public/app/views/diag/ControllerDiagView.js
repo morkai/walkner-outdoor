@@ -66,7 +66,6 @@ function(
       {
         this.$('.property[data-property="startedAt"]').hide();
         this.$('.property[data-property="uptime"]').hide();
-        this.$('.property[data-property="ping"]').hide();
         this.$('.property[data-property="requestTime"]').hide();
 
         controllerEl.addClass('offline');
@@ -99,19 +98,6 @@ function(
       model.startedAt = '-';
 
       this.render();
-    },
-
-    pinged: function(results)
-    {
-      var value = '';
-
-      value += (results.last ? results.last : '?') + ' ';
-      value += '(avg=' + (results.avg ? results.avg : '?');
-      value += ' min=' + (results.min ? results.min : '?');
-      value += ' max=' + (results.max ? results.max : '?');
-      value += ' loss=' + results.loss + '%)';
-
-      this.$('.property[data-property="ping"] .property-value').text(value);
     },
 
     timed: function(results)

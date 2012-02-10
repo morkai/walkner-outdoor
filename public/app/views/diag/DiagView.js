@@ -40,7 +40,6 @@ function(
       'controller stopped': 'onControllerStop',
       'controller added'  : 'addController',
       'controller removed': 'removeController',
-      'controller pinged' : 'onControllerPing',
       'controller timed'  : 'onControllerTime',
       'zone started'      : 'onZoneStart',
       'zone stopped'      : 'onZoneStop',
@@ -295,18 +294,6 @@ function(
       }
 
       controllerView.stopped();
-    },
-
-    onControllerPing: function(data)
-    {
-      var controllerView = this.controllerViews[data.controllerId];
-
-      if (!controllerView)
-      {
-        return;
-      }
-
-      controllerView.pinged(data.results);
     },
 
     onControllerTime: function(data)

@@ -61,8 +61,6 @@ controller.run({
       }
     });
 
-    controller.startPing(connectionInfo.host);
-
     done();
   },
 

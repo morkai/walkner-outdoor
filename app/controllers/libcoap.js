@@ -26,17 +26,6 @@ controller.run({
       uri = uri.substring(0, uri.length - 1);
     }
 
-    var matches = uri.match(
-      uri.indexOf('.') === - 1
-        ? /\[([a-fA-F0-9:]+)\]/
-        : /([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/
-    );
-
-    if (matches)
-    {
-      controller.startPing(matches[1]);
-    }
-
     done();
   },
 
