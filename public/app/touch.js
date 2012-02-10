@@ -21,7 +21,7 @@ function(require, $, viewport)
 
   require([vk, sv], function()
   {
-    setTimeout(attachKeyboard, 500);
+    attachKeyboard();
     makeScrollable();
   });
 
@@ -89,13 +89,16 @@ function(require, $, viewport)
 
     containerEl.append(toggleEl).append(holderEl);
 
-    if ($(viewport.view.el).hasClass('dashboard'))
+    if (viewport.view)
     {
-      toggleEl.hide();
-    }
-    else
-    {
-      resizeView();
+      if ($(viewport.view.el).hasClass('dashboard'))
+      {
+        toggleEl.hide();
+      }
+      else
+      {
+        resizeView();
+      }
     }
 
     bodyEl.delegate(selector, 'focus', function()
