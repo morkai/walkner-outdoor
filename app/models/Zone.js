@@ -19,7 +19,11 @@ var Zone = module.exports = new mongoose.Schema({
   controller: {
     type: mongoose.SchemaTypes.ObjectId
   },
-  controllerInfo: {}
+  controllerInfo: {},
+  autostart: {
+    type: Boolean,
+    'default': false
+  }
 }, {
   strict: true
 });
@@ -29,9 +33,16 @@ Zone.statics.getStartedPrograms = function()
   return zoneStates;
 };
 
-Zone.statics.startAll = function(done)
+Zone.statics.startAll = function(autostartOnly, done)
 {
-  mongoose.model('Zone').find().run(function(err, zones)
+  var cond = {};
+
+  if (autostartOnly)
+  {
+    cond.autostart = true;
+  }
+
+  mongoose.model('Zone').find(cond).run(function(err, zones)
   {
     if (err)
     {

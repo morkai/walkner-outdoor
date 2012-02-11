@@ -56,7 +56,7 @@ step(
 
     tryToConnect();
   },
-  function setUpModelsStep(err)
+  function setUpModelsStep()
   {
     console.debug('Connected to MongoDB!');
 
@@ -82,16 +82,16 @@ step(
   {
     console.debug('Starting controller processes...');
 
-    app.db.model('Controller').startAll(this);
+    app.db.model('Controller').startAll(true, this);
   },
   function startZonesStep()
   {
     console.debug('Started controller processes!');
     console.debug('Starting zones...');
 
-    app.db.model('Zone').startAll(this);
+    app.db.model('Zone').startAll(true, this);
   },
-  function listenStep(err)
+  function listenStep()
   {
     console.debug('Started zones!');
 

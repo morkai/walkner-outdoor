@@ -4,5 +4,8 @@
     <li>
       <label for="controller-name">Nazwa<span class="required" title="Wymagane">*</span></label>
       <input id="controller-name" name="controller.name" class="full textline" type="text" autofocus value="<%= controller.name %>">
+    <li>
+      <input id="controller-autostart" name="controller.autostart" class="checkbox" type="checkbox" value="1" <%= controller.autostart ? 'checked' : '' %>>
+      <label for="controller-autostart">Uruchom przy starcie systemu</label>
   </ul>
 </form>

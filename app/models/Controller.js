@@ -12,14 +12,25 @@ var Controller = module.exports = new mongoose.Schema({
     required: true,
     enum    : ['modbus-tcp', 'libcoap']
   },
-  connectionInfo: {}
+  connectionInfo: {},
+  autostart: {
+    type: Boolean,
+    'default': false
+  }
 }, {
   strict: true
 });
 
-Controller.statics.startAll = function(done)
+Controller.statics.startAll = function(autostartOnly, done)
 {
-  mongoose.model('Controller').find().run(function(err, controllers)
+  var cond = {};
+
+  if (autostartOnly)
+  {
+    cond.autostart = true;
+  }
+
+  mongoose.model('Controller').find(cond).run(function(err, controllers)
   {
     if (err)
     {

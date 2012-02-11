@@ -7,6 +7,10 @@
     <span class="property-name">Typ:</span>
     <span class="property-value"><%- controller.typeText %></span>
   </div>
+  <div class="property">
+    <span class="property-name">Autostart:</span>
+    <span class="property-value"><%- controller.autostart ? 'Tak' : 'Nie' %></span>
+  </div>
   <% if (controller.type === 'modbus-tcp') { %>
   <div class="property">
     <span class="property-name">Host:</span>

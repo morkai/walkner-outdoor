@@ -4,6 +4,10 @@
     <span class="property-value"><%- zone.name %></span>
   </div>
   <div class="property">
+    <span class="property-name">Autostart:</span>
+    <span class="property-value"><%- zone.autostart ? 'Tak' : 'Nie' %></span>
+  </div>
+  <div class="property">
     <span class="property-name">Przypisany program:</span>
     <span class="property-value">
       <% if (zone.program._id) { %>
