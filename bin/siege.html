@@ -80,6 +80,7 @@
   <em>Total:</em> <span class="total">0</span>
   <em>Success:</em> <span class="success">0</span> (<span class="successPercent">0</span>%)
   <em>Failed:</em> <span class="failed">0</span> (<span class="failedPercent">0</span>%)
+  <em>Req/s:</em> <span class="rps">0</span>
 </p>
 <div id="client-tpl" class="client">
   <h1>
@@ -258,11 +259,15 @@ $(function()
       failed += parseInt(clientEl.find('.failed').text());
     });
 
-    globalEl.find('.total').text(total);
+    var totalEl = globalEl.find('.total');
+    var oldTotal = parseInt(totalEl.text());
+
+    totalEl.text(total);
     globalEl.find('.success').text(success);
     globalEl.find('.successPercent').text(Math.round(success * 100 / total * 100) / 100);
     globalEl.find('.failed').text(failed);
     globalEl.find('.failedPercent').text(Math.round(failed * 100 / total * 100) / 100);
+    globalEl.find('.rps').text(total - oldTotal);
 
     setTimeout(updateGlobalStats, 1000);
   }
