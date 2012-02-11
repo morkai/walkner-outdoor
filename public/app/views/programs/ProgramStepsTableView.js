@@ -18,7 +18,8 @@ function($, _, Backbone, Program, PageLayout, stepsTableTpl)
     events: {
       'click th'                  : 'selectLastFieldInColumn',
       'click .remove-program-step': 'removeProgramStep',
-      'click .add-program-step'   : 'addProgramStep'
+      'click .add-program-step'   : 'addProgramStep',
+      'blur .textline'            : 'changeTimeToSeconds'
     },
 
     initialize: function()
@@ -113,6 +114,35 @@ function($, _, Backbone, Program, PageLayout, stepsTableTpl)
       step.find('input').first().focus();
 
       this.nextStepIndex += 1;
+    },
+
+    changeTimeToSeconds: function(e)
+    {
+      var multipliers = {
+        g: 3600,
+        h: 3600,
+        m: 60,
+        s: 1
+      };
+
+      var input   = e.target;
+      var time    = input.value.trim();
+      var seconds = time;
+
+      if (/^[0-9]+\.?[0-9]*$/.test(time) === false)
+      {
+        var re = /([0-9\.]+) *(h|m|s)[a-z]*/ig;
+        var match;
+
+        seconds = 0;
+
+        while (match = re.exec(time))
+        {
+          seconds += match[1] * multipliers[match[2].toLowerCase()];
+        }
+      }
+
+      input.value = seconds;
     }
 
   });
