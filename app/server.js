@@ -9,10 +9,11 @@ require('fs').writeFile(
   __dirname + '/../var/pids/server.pid', process.pid
 );
 
-var express  = require('express');
-var io       = require('socket.io');
-var mongoose = require('mongoose');
-var step     = require('step');
+var express    = require('express');
+var MongoStore = require('connect-mongodb');
+var io         = require('socket.io');
+var mongoose   = require('mongoose');
+var step       = require('step');
 
 (function()
 {
@@ -133,7 +134,10 @@ app.configure(function()
   app.set('views', __dirname + '/templates/');
 
   app.use(express.cookieParser());
-  app.use(express.session({secret: '~`z@!#X!@: >#x21"4va'}));
+  app.use(express.session({
+    secret: '~`z@!#X!@: >#x21"4va',
+    store: new MongoStore({db: app.db.connection.db})
+  }));
   app.use(express.methodOverride());
   app.use(express.bodyParser());
   app.use(app.router);
