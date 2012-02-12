@@ -1,4 +1,4 @@
-define(function()
+define(['jQuery'], function($)
 {
   var underscore = _.noConflict();
 
@@ -50,8 +50,7 @@ define(function()
         var property = arguments[i];
         var instance = object[property];
 
-        if (underscore.isArray(instance) ||
-            Object.prototype.toString.call(instance) === '[object Object]')
+        if (underscore.isArray(instance) || $.isPlainObject(instance))
         {
           underscore.each(instance, destructInstance);
         }
