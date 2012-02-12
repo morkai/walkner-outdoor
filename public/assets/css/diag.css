@@ -41,3 +41,12 @@
 {
   display: inline-block;
 }
+.diag .app .property
+{
+  display: inline-block;
+  margin: 0 0 0 1em;
+}
+.diag .app .property:first-child
+{
+  margin-left: 0;
+}

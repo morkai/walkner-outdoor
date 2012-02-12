@@ -1,3 +1,4 @@
+var os                  = require('os');
 var _                   = require('underscore');
 var step                = require('step');
 var auth                = require('../utils/middleware').auth;
@@ -8,9 +9,37 @@ app.get('/diag', auth('diag'), function(req, res, next)
   var Controller = app.db.model('Controller');
   var Zone       = app.db.model('Zone');
 
-  var data = {startTime: app.startTime};
+  var data = {startTime: app.startTime, eth0: [], wlan0: []};
 
   step(
+    function getIpAddressesStep()
+    {
+      _.each(os.networkInterfaces(), function(addresses, iface)
+      {
+        if (iface === 'eth0' || iface.indexOf('Local') === 0)
+        {
+          _.each(addresses, function(address)
+          {
+            if (address.family === 'IPv4' && !address.interval)
+            {
+              data.eth0.push(address.address);
+            }
+          });
+        }
+        else if (iface === 'wlan0' || iface.indexOf('Wireless') === 0)
+        {
+          _.each(addresses, function(address)
+          {
+            if (address.family === 'IPv4' && !address.interval)
+            {
+              data.wlan0.push(address.address);
+            }
+          });
+        }
+      });
+
+      return true;
+    },
     function getAllControllersStep()
     {
       Controller.find().asc('name').run(this);

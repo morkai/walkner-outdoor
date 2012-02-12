@@ -1,5 +1,5 @@
 <h2>Serwer aplikacji</h2>
-<div class="content box">
+<div class="app content box">
   <div class="property">
     <span class="property-name">Czas uruchomienia:</span>
     <span class="property-value"><%- startedAt %></span>
@@ -7,6 +7,14 @@
   <div class="property" data-property="uptime">
     <span class="property-name">Uptime:</span>
     <span class="property-value" data-startTime="<%- startTime %>">-</span>
+  </div>
+  <div class="property" data-property="eth0">
+    <span class="property-name">IP (eth0):</span>
+    <span class="property-value"><%- eth0 || '-' %></span>
+  </div>
+  <div class="property" data-property="wlan0">
+    <span class="property-name">IP (wlan0):</span>
+    <span class="property-value"><%- wlan0 || '-' %></span>
   </div>
 </div>
 

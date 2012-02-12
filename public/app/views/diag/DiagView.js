@@ -92,7 +92,9 @@ function(
 
       this.el.innerHTML = renderDiag({
         startTime: startedAt.valueOf(),
-        startedAt: startedAt.format('LLLL')
+        startedAt: startedAt.format('LLLL'),
+        eth0: this.model.eth0.join(', '),
+        wlan0: this.model.wlan0.join(', ')
       });
 
       this.renderControllers();
