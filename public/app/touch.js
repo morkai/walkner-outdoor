@@ -1,6 +1,4 @@
-define(
-['require', 'jQuery', 'app/views/viewport'],
-function(require, $, viewport)
+define(['require', 'jQuery'], function(require, $)
 {
   var enableTouch = window.location.hostname === 'localhost' ||
                     window.location.hostname === '127.0.0.1';
@@ -19,11 +17,17 @@ function(require, $, viewport)
            '?vk_skin=air_large' +
            '&vk_layout=PL Polish (Programmers)';
 
-  require([vk, sv], function()
+  var viewport;
+
+  require(['app/views/viewport', vk, sv], function(vp)
   {
+    viewport = vp;
+
     attachKeyboard();
     makeScrollable();
   });
+
+  return {enabled: true};
 
   function resizeView()
   {
@@ -193,6 +197,4 @@ function(require, $, viewport)
       }
     }
   }
-
-  return {enabled: true}
 });
