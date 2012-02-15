@@ -1,0 +1,223 @@
+.activeZone {
+  margin: 1em;
+}
+.activeZone > div {
+  background: #F1F1F1;
+  background: -moz-linear-gradient(#FFF, #F1F1F1);
+  background: -webkit-linear-gradient(#FFF, #F1F1F1);
+  background: -ms-linear-gradient(#FFF, #F1F1F1);
+  background: linear-gradient(#FFF, #F1F1F1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F1F1F1');
+  padding: .5em;
+  position: relative;
+  box-shadow: 0 1px 3px #666;
+  border: 1px solid #D4D4D4;
+}
+.activeZone .state {
+  background: #000;
+  width: 2em;
+  height: 2em;
+  font-size: 2em;
+  display: inline-block;
+  box-shadow: 0 1px 3px #666;
+  margin-right: .25em;
+  -webkit-transition: all .2s ease-in-out;
+  -moz-transition: all .2s ease-in-out;
+  transition: all .2s ease-in-out;
+}
+.activeZone .state.highlight {
+  -webkit-transform: scale(1.2);
+}
+.activeZone h1 {
+  display: inline-block;
+  font-size: 3.5em;
+  text-transform: uppercase;
+  vertical-align: top;
+  text-shadow: 1px 1px 1px #FFF;
+  line-height: 1.15;
+}
+.activeZone .action {
+  height: 2em;
+  width: 5em;
+  position: absolute;
+  top: .25em;
+  right: .25em;
+  font-size: 2em;
+}
+.activeZone .actionMessage {
+  background: #FFF;
+  background: -moz-linear-gradient(#F1F1F1, #FFF);
+  background: -webkit-linear-gradient(#F1F1F1, #FFF);
+  background: -ms-linear-gradient(#F1F1F1, #FFF);
+  background: linear-gradient(#F1F1F1, #FFF);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F1F1F1', endColorstr='#FFFFFF');
+  border: 1px solid #FF3A3A;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  position: absolute;
+  top: .5em;
+  right: .5em;
+  padding: .25em;
+  width: 10em;
+  font-size: 1em;
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: center;
+  color: #FF3A3A;
+}
+.activeZone .info {
+  margin-top: .5em;
+  padding-top: .5em;
+  border-top: 1px dotted #D4D4D4;
+}
+.activeZone em {
+  font-weight: bold;
+  font-style: normal;
+}
+.disconnected .state {
+  background: #808080;
+  background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #808080 100%);
+  background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #808080 100%);
+  background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #808080 100%);
+  background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #808080 100%);
+}
+.connected .state {
+  background: #F0A000;
+  background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
+  background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
+  background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
+  background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
+}
+.programRunning .state {
+  background: #FFD700;
+  background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FFD700 100%);
+  background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FFD700 100%);
+  background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FFD700 100%);
+  background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #FFD700 100%);
+}
+.programFinished .state {
+  background: #5AAB25;
+  background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #5AAB25 100%);
+  background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #5AAB25 100%);
+  background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #5AAB25 100%);
+  background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #5AAB25 100%);
+}
+.programFinished .finalState {
+  color: #5AAB25;
+}
+.programStopped .state,
+.programErrored .state {
+  background: #FF3A3A;
+  background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FF3A3A 100%);
+  background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FF3A3A 100%);
+  background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FF3A3A 100%);
+  background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #FF3A3A 100%);
+}
+.programStopped .finalState,
+.programErrored .finalState {
+  color: #FF3A3A;
+}
+.progressBar {
+  background: #AAA;
+  border-top: 1px solid #989898;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-top: .5em;
+  padding: .25em;
+  position: relative;
+  text-align: center;
+}
+.progressValue {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  padding: .25em;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: #5AAB25;
+  background-image: linear-gradient(top, #7EC44F, #5AAB25);
+  background-image: -ms-linear-gradient(top, #7EC44F, #5AAB25);
+  background-image: -moz-linear-gradient(top, #7EC44F, #5AAB25);
+  background-image: -webkit-linear-gradient(top, #7EC44F, #5AAB25);
+  filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#7EC44F', EndColorStr='#5AAB25')";
+}
+.timeToEnd {
+  color: #FFF;
+  position: relative;
+  z-index: 1;
+}
+.programPicker {
+  width: 100%;
+}
+.programPicker h3,
+.programPicker h4 {
+  padding: .5em;
+  margin: 0;
+}
+.programPicker h3 {
+  font-size: 1.7em;
+  background-color: #FFF;
+}
+.programPicker h4 {
+  font-size: 1.5em;
+  background: #F1F1F1;
+  background: -moz-linear-gradient(#FFF, #F1F1F1);
+  background: -webkit-linear-gradient(#FFF, #F1F1F1);
+  background: -ms-linear-gradient(#FFF, #F1F1F1);
+  background: linear-gradient(#FFF, #F1F1F1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FFFFFF', endColorstr = '#F1F1F1');
+}
+.programPicker .list {
+  margin: 0;
+  overflow-y: auto;
+}
+.programPicker .box {
+  vertical-align: top;
+  display: inline-block;
+  margin-left: .9em;
+  width: 30%;
+}
+.programPicker .box:first-child {
+  margin-left: 0;
+}
+.programPicker .content,
+.enterPinForm .content {
+  max-width: 420px;
+  margin: 1em auto 0 auto;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  line-height: 1.4;
+}
+.enterPinForm .pin {
+  font-size: 64px;
+  font-family: Consolas, monospace;
+  width: 252px;
+  height: 84px;
+  text-align: center;
+  padding: 0;
+  margin: 0;
+}
+.enterPinForm .button,
+.enterPinForm .action {
+  font-family: Consolas, monospace;
+  width: 84px;
+  height: 84px;
+  padding: 0;
+  margin: 0;
+}
+.enterPinForm .key {
+  font-size: 50px;
+  vertical-align: top;
+}
+.enterPinForm .action {
+  font-size: 28px;
+  margin: 0;
+}
+@media all and (max-width: 1280px) {
+  .programPicker .box
+  {
+    display: block;
+    width: 100%;
+    margin-left: 0;
+  }
+}
