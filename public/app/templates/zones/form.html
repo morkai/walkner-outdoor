@@ -3,7 +3,7 @@
   <ul class="fields">
     <li>
       <label for="zone-name">Nazwa<span class="required" title="Wymagane">*</span></label>
-      <input id="zone-name" name="zone.name" class="full textline" type="text" autofocus value="<%= zone.name %>">
+      <input id="zone-name" name="zone.name" class="full textline" type="text" autofocus value="<%= zone.name %>" maxlength="25">
     <li>
       <input id="zone-autostart" name="zone.autostart" class="checkbox" type="checkbox" value="1" <%= zone.autostart ? 'checked' : '' %>>
       <label for="zone-autostart">Uruchom przy starcie systemu</label>
