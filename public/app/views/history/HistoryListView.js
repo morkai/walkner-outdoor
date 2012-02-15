@@ -44,22 +44,30 @@ function(
     title: 'Historia',
     className: 'history',
     breadcrumbs: ['Historia'],
-    actions: [
-      {
-        href: '#history;purge',
-        text: 'Wyczyść',
-        className: 'blue purge-history action',
-        privileges: 'purgeHistory',
-        handler: function(e)
+    actions: function()
+    {
+      var onPurge = this.onPurge;
+
+      return [
         {
-          if (e.button !== 0) return;
+          href: '#history;purge',
+          text: 'Wyczyść',
+          className: 'blue purge-history action',
+          privileges: 'purgeHistory',
+          handler: function(e)
+          {
+            if (e.button !== 0)
+            {
+              return;
+            }
 
-          viewport.showDialog(new PurgeHistoryFormView());
+            viewport.showDialog(new PurgeHistoryFormView({onPurge: onPurge}));
 
-          return false;
+            return false;
+          }
         }
-      }
-    ],
+      ];
+    },
     events: {
       'click .more': 'showMore'
     }
@@ -67,6 +75,8 @@ function(
 
   HistoryListView.prototype.initialize = function(options)
   {
+    _.bindAll(this, 'onPurge');
+
     this.currentPage = options.page || 1;
   };
 
@@ -77,7 +87,7 @@ function(
       showMoreButton: this.collection.length >= 10
     });
 
-    this.appendCollection();
+    this.appendCollection(false);
 
     return this;
   };
@@ -130,6 +140,34 @@ function(
         viewport.msg.hide();
 
         self.appendCollection(true);
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  /**
+   * @private
+   */
+  HistoryListView.prototype.onPurge = function()
+  {
+    viewport.msg.loading();
+
+    this.currentPage = 0;
+
+    var self = this;
+
+    this.collection.fetch({
+      data: {
+        fields: ['zoneName', 'programName', 'finishedAt', 'finishState']
+      },
+      success: function()
+      {
+        viewport.msg.hide();
+
+        self.render();
       },
       error: function()
       {

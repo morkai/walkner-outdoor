@@ -47,6 +47,11 @@ function(
     }
   });
 
+  PurgeHistoryFormView.prototype.initialize = function(options)
+  {
+    this.onPurge = options.onPurge;
+  };
+
   PurgeHistoryFormView.prototype.destroy = function()
   {
     this.remove();
@@ -66,16 +71,18 @@ function(
   {
     var age = parseInt(this.$('input[name="age"]').val());
 
-    if (isNaN(age) || age === 0)
+    if (isNaN(age))
     {
       viewport.msg.show({
         type: 'error',
         time: 3000,
-        text: 'Liczba dni musi być liczbą większą od 0 :('
+        text: 'Podana wartość musi być liczbą :('
       });
     }
     else
     {
+      var purgeHistoryFormView = this;
+
       $.ajax({
         type: 'DELETE',
         url: '/history',
@@ -87,6 +94,11 @@ function(
             time: 2000,
             text: 'Historia została wyczyszczona pomyślnie!'
           });
+
+          if (_.isFunction(purgeHistoryFormView.onPurge))
+          {
+            purgeHistoryFormView.onPurge();
+          }
         },
         error: function(xhr)
         {

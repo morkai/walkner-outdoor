@@ -48,7 +48,7 @@ app.del('/history', auth('purgeHistory'), function(req, res, next)
 {
   var age = parseInt(req.body.age);
 
-  if (isNaN(age) || age === 0)
+  if (isNaN(age))
   {
     return res.send(400);
   }
