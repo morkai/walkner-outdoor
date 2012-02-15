@@ -173,14 +173,19 @@ define(['require', 'jQuery'], function(require, $)
 
     viewport.bind('dialog:show', function()
     {
-      toggleEl.show();
+      if ($(viewport.dialog.el).find(selector).length)
+      {
+        toggleEl.show();
+      }
     });
     viewport.bind('dialog:close', toggleToggleEl);
     viewport.bind('change:view', toggleToggleEl);
 
     function toggleToggleEl()
     {
-      if ($(viewport.view.el).hasClass('activeZones'))
+      var viewEl = $(viewport.view.el);
+
+      if (viewEl.hasClass('activeZones') || !viewEl.find(selector).length)
       {
         if (VirtualKeyboard.isOpen())
         {
