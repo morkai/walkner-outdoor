@@ -61,6 +61,11 @@ Konfiguracja sterownika opartego na _libcoap_.
   * `maxRetries` - ile razy dane żądanie ma zostać ponownie wysłane zanim
     zostanie ono uznane za zakończone błędem.
 
+  * `disconnectTimeout` - liczba milisekund, po upływie których połączenie ze
+    sterownikiem jest uważane za utracone. Odliczanie czasu zaczyna się przy
+    każdym nieudanym żądaniu, aż do upływu tego czasu lub pomyślnym wykonaniu
+    innego żądania.
+
   * `coapClientPath` - absolutna ścieżka do pliku wykonywalnego `coap-client`.
 
   * `stateFilesDir` - absolutna ścieżka do folderu z plikami `one.bin`
