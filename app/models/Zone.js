@@ -1,17 +1,11 @@
-var _         = require('underscore');
-var step      = require('step');
-var mongoose  = require('mongoose');
+var mongoose = require('mongoose');
 var controllerProcesses = require('./controllerProcesses');
-
-var zoneStates = {};
-
-const RED_LED_ON_ERROR_FOR = 30000;
 
 var Zone = module.exports = new mongoose.Schema({
   name: {
-    type    : String,
+    type: String,
     required: true,
-    trim    : true
+    trim: true
   },
   program: {
     type: mongoose.SchemaTypes.ObjectId
@@ -27,11 +21,6 @@ var Zone = module.exports = new mongoose.Schema({
 }, {
   strict: true
 });
-
-Zone.statics.getStartedPrograms = function()
-{
-  return zoneStates;
-};
 
 Zone.statics.startAll = function(autostartOnly, done)
 {
@@ -79,7 +68,7 @@ Zone.statics.startAll = function(autostartOnly, done)
 
 Zone.methods.isStarted = function()
 {
-  return controllerProcesses.isZoneStarted(this.id);
+  return controllerProcesses.isZoneStarted(this._id);
 };
 
 Zone.methods.start = function(done)
@@ -89,7 +78,7 @@ Zone.methods.start = function(done)
 
 Zone.methods.stop = function(done)
 {
-  controllerProcesses.stopZone(this.id, done);
+  controllerProcesses.stopZone(this._id, done);
 };
 
 Zone.methods.startProgram = function(programId, user, done)
@@ -113,140 +102,13 @@ Zone.methods.startProgram = function(programId, user, done)
       return done('Wybrany program nie ma zdefiniowanych żadnych kroków.');
     }
 
-    controllerProcesses.startProgram(program, zone.id, user, onProgramFinish, function(err)
-    {
-      var HistoryEntry = mongoose.model('HistoryEntry');
-      var historyEntry = new HistoryEntry({
-        zoneId       : zone.id,
-        zoneName     : zone.name,
-        programId    : program.id,
-        programName  : program.name,
-        programSteps : program.steps,
-        infinite     : program.infinite,
-        startUserId  : user ? user.id : null,
-        startUserName: user ? user.name : null,
-        startedAt    : new Date()
-      });
-
-      if (err)
-      {
-        return done(err, historyEntry);
-      }
-
-      zoneStates[zone.id] = historyEntry;
-
-      done(null, historyEntry);
-
-      app.io.sockets.emit('program started', historyEntry.toJSON());
-
-      historyEntry.save();
-    });
+    controllerProcesses.startProgram(program, zone._id, user, done);
   });
 };
 
 Zone.methods.stopProgram = function(user, done)
 {
-  var zone         = this;
-  var historyEntry = zoneStates[zone.id];
-
-  if (!historyEntry)
-  {
-    return done();
-  }
-
-  controllerProcesses.stopProgram(zone.id, function(err)
-  {
-    if (err)
-    {
-      return done(err);
-    }
-
-    done();
-
-    historyEntry.set({
-      finishState : 'stop',
-      finishedAt  : new Date(),
-      stopUserId  : user ? user.id : null,
-      stopUserName: user ? user.name : null
-    });
-    historyEntry.save();
-
-    app.io.sockets.emit('program stopped', historyEntry.toJSON());
-
-    delete zoneStates[zone.id];
-  });
+  controllerProcesses.stopProgram(this._id, user, done);
 };
-
-Zone.methods.toObject = function(options)
-{
-  var object = mongoose.Document.prototype.toObject.call(this, options);
-
-  if ('state' in this.fields)
-  {
-    var state = zoneStates[object._id];
-
-    if (state)
-    {
-      object.state = state ? state.toJSON() : null;
-    }
-  }
-
-  return object;
-};
-
-function onProgramFinish(data)
-{
-  var zoneId       = data.zoneId;
-  var historyEntry = zoneStates[zoneId];
-
-  if (!historyEntry)
-  {
-    return console.error(
-      'Unexpected program <%s> just finished on zone <%s> with state <%s>',
-      data.programName,
-      data.zoneName,
-      data.finishState
-    );
-  }
-
-  historyEntry.set({
-    finishedAt  : data.finishedAt,
-    finishState : data.finishState,
-    errorMessage: data.errorMessage
-  });
-
-  app.io.sockets.emit('program stopped', historyEntry.toJSON());
-
-  historyEntry.save();
-
-  console.debug(
-    'Finished program <%s> on zone <%s> with state <%s>',
-    data.programName,
-    data.zoneName,
-    data.finishState
-  );
-
-  if (data.finishState === 'error')
-  {
-    var historyEntryId = historyEntry.id;
-
-    setTimeout(
-      function()
-      {
-        var historyEntry = zoneStates[zoneId];
-
-        if (historyEntry && historyEntry.id === historyEntryId)
-        {
-          delete zoneStates[zoneId];
-        }
-      },
-      RED_LED_ON_ERROR_FOR
-    );
-  }
-  else
-  {
-    delete zoneStates[data.zoneId];
-  }
-}
 
 mongoose.model('Zone', Zone);

@@ -3,7 +3,7 @@
   <h4>Przypisany program</h4>
   <ol class="list">
     <li>
-      <a class="program" href="#programs/<%- assignedProgram.id %>" data-id="<%- assignedProgram.id %>"><%- assignedProgram.name %></a>
+      <a class="program" href="#programs/<%- assignedProgram._id %>" data-id="<%- assignedProgram._id %>"><%- assignedProgram.name %></a>
     </li>
   </ol>
 </div>
@@ -15,7 +15,7 @@
   <ol class="list">
     <% _.each(recentPrograms, function(program) { %>
     <li>
-      <a class="program" href="#programs/<%- program.id %>" data-id="<%- program.id %>"><%- program.name %></a>
+      <a class="program" href="#programs/<%- program._id %>" data-id="<%- program._id %>"><%- program.name %></a>
     </li>
     <% }) %>
   </ol>
@@ -28,7 +28,7 @@
   <ol class="list">
     <% _.each(allPrograms, function(program) { %>
     <li>
-      <a class="program" href="#programs/<%- program.id %>" data-id="<%- program.id %>"><%- program.name %></a>
+      <a class="program" href="#programs/<%- program._id %>" data-id="<%- program._id %>"><%- program.name %></a>
     </li>
     <% }) %>
   </ol>

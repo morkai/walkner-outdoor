@@ -8,6 +8,10 @@
     <span class="property-value"><%- program.infinite ? 'Tak' : 'Nie' %></span>
   </div>
   <div class="property">
+    <span class="property-name">Czas trwania:</span>
+    <span class="property-value"><%- program.duration %></span>
+  </div>
+  <div class="property">
     <span class="property-name">Kroki:</span>
     <% if (program.steps.length) { %>
     <canvas class="program-plot" width=1 height=1></canvas>

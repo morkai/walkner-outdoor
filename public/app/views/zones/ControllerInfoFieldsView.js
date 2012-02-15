@@ -8,6 +8,13 @@ define(
 
   'text!app/templates/zones/controllerInfoFields.html'
 ],
+/**
+ * @param {jQuery} $
+ * @param {Underscore} _
+ * @param {Backbone} Backbone
+ * @param {function(new:Controllers)} Controllers
+ * @param {String} controllerInfoFieldsTpl
+ */
 function(
   $,
   _,
@@ -15,102 +22,113 @@ function(
   Controllers,
   controllerInfoFieldsTpl)
 {
-  var renderControllerInfoFields = _.template(controllerInfoFieldsTpl);
-
-  return Backbone.View.extend({
-
+  /**
+   * @class ControllerInfoFieldsView
+   * @constructor
+   * @extends Backbone.View
+   * @param {Object} [options]
+   */
+  var ControllerInfoFieldsView = Backbone.View.extend({
+    template: _.template(controllerInfoFieldsTpl),
     events: {
-      'change select[name="zone.controller"]': 'onControllerChangeToggleControllerInfo'
-    },
+      'change select[name="zone.controller"]': 'onControllerChangeToggleInfo'
+    }
+  });
 
-    initialize: function()
+  ControllerInfoFieldsView.prototype.destroy = function()
+  {
+    this.remove();
+  };
+
+  ControllerInfoFieldsView.prototype.render = function()
+  {
+    $(this.el).append(this.template({zone: this.model}));
+
+    var self = this;
+
+    this.renderControllerOptions(function()
     {
+      _.defer(function() { self.toggleControllerInfo(); });
+    });
 
-    },
+    return this;
+  };
 
-    destroy: function()
-    {
-      this.remove();
-    },
+  /**
+   * @private
+   * @param {Function} done
+   */
+  ControllerInfoFieldsView.prototype.renderControllerOptions = function(done)
+  {
+    var self     = this;
+    var selectEl = this.$('select[name="zone.controller"]');
 
-    render: function()
-    {
-      $(this.el).append(renderControllerInfoFields({zone: this.model}));
-
-      var self = this;
-
-      this.renderControllerOptions(function()
+    new Controllers().fetch({
+      data: {
+        fields: ['name', 'type']
+      },
+      success: function(controllers)
       {
-        _.defer(function() { self.toggleControllerInfo(); });
-      });
+        var selectedController = self.model.controller._id;
 
-      return this;
-    },
-
-    renderControllerOptions: function(done)
-    {
-      var self     = this;
-      var selectEl = this.$('select[name="zone.controller"]');
-
-      new Controllers().fetch({
-        data: {
-          fields: ['name', 'type']
-        },
-        success: function(controllers)
+        controllers.each(function(controller)
         {
-          var selectedController = self.model.controller._id;
+          $('<option></option>')
+            .attr({
+              value: controller.id,
+              selected: controller.id == selectedController,
+              'data-type': controller.get('type')
+            })
+            .text(controller.get('name'))
+            .appendTo(selectEl);
+        });
 
-          controllers.each(function(controller)
-          {
-            $('<option></option>')
-              .attr({
-                value      : controller.get('_id'),
-                selected   : controller.get('_id') == selectedController,
-                'data-type': controller.get('type')
-              })
-              .text(controller.get('name'))
-              .appendTo(selectEl);
-          });
-
-          _.defer(function()
-          {
-            selectEl.chosen({no_results_text: "Brak wyników dla"});
-            done();
-          });
-        },
-        error: function()
+        _.defer(function()
         {
           selectEl.chosen({no_results_text: "Brak wyników dla"});
           done();
-        }
-      });
-    },
-
-    toggleControllerInfo: function(focus)
-    {
-      var selectEl       = this.$('select[name="zone.controller"]')[0];
-      var optionEl       = $(selectEl[selectEl.selectedIndex]);
-      var controllerType = optionEl.attr('data-type');
-
-      this.$('.controller-info:visible').hide();
-
-      var newTypeFieldSet = this.$(
-        '.controller-info[data-type="' + controllerType + '"]'
-      ).show();
-
-      if (focus)
-      {
-        _.defer(function()
-        {
-          newTypeFieldSet.find('input').first().click().focus();
         });
+      },
+      error: function()
+      {
+        selectEl.chosen({no_results_text: "Brak wyników dla"});
+        done();
       }
-    },
+    });
+  };
 
-    onControllerChangeToggleControllerInfo: function()
+  /**
+   * @private
+   * @param {Boolean} focus
+   */
+  ControllerInfoFieldsView.prototype.toggleControllerInfo = function(focus)
+  {
+    var selectEl = this.$('select[name="zone.controller"]')[0];
+    var optionEl = $(selectEl[selectEl.selectedIndex]);
+    var controllerType = optionEl.attr('data-type');
+
+    this.$('.controller-info:visible').hide();
+
+    var newTypeFieldSet = this.$(
+      '.controller-info[data-type="' + controllerType + '"]'
+    ).show();
+
+    if (focus)
     {
-      this.toggleControllerInfo(true);
+      _.defer(function()
+      {
+        newTypeFieldSet.find('input').first().click().focus();
+      });
     }
+  };
 
-  });
+  /**
+   * @private
+   */
+  ControllerInfoFieldsView.prototype.onControllerChangeToggleInfo = function()
+  {
+    this.toggleControllerInfo(true);
+  };
+
+  return ControllerInfoFieldsView;
 });

@@ -1,14 +1,14 @@
-<div class="content zone" data-id="<%- id %>">
+<div class="content zone" data-id="<%- _id %>">
   <div class="property">
     <span class="property-name">Strefa:</span>
     <span class="property-value">
-      <a href="#zones/<%- id %>"><%- name %></a>
+      <a href="#zones/<%- _id %>"><%- name %></a>
     </span>
   </div>
   <div class="property">
     <span class="property-name">Sterownik:</span>
     <span class="property-value">
-      <a href="#controllers/<%- controller.id %>"><%- controller.name %></a>
+      <a href="#controllers/<%- controller._id %>"><%- controller.name %></a>
     </span>
   </div>
   <div class="property" data-property="startedAt">
@@ -21,7 +21,7 @@
   </div>
   <div class="property" data-property="program">
     <span class="property-name">Uruchomiony program:</span>
-    <a class="property-value" href="#programs/<%- program.id %>"><%- program.name %></a>
+    <a class="property-value" href="#programs/<%- program._id %>"><%- program.name %></a>
   </div>
   <div class="actions">
     <input class="green start action" type="button" value="Start">

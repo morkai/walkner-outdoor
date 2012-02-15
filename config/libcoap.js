@@ -3,7 +3,14 @@ var normalize = require('path').normalize;
 /**
  * How many times to retry the command before giving up.
  */
-exports.maxRetries = 3;
+exports.maxRetries = 2;
+
+/**
+ * Assume the connection if after the specified number of milliseconds no
+ * successful request was made.
+ * Timer starts after each failed request.
+ */
+exports.disconnectTimeout = 10000;
 
 /**
  * Path to `coap-client` executable.

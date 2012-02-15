@@ -1,4 +1,4 @@
-var mongoose            = require('mongoose');
+var mongoose = require('mongoose');
 var controllerProcesses = require('./controllerProcesses');
 
 var Step = new mongoose.Schema({
@@ -22,6 +22,15 @@ Step.virtual('totalTime').get(function()
 {
   return (this.get('timeOn') + this.get('timeOff')) * this.get('iterations');
 });
+
+Step.methods.toObject = function(options)
+{
+  var obj = mongoose.Document.prototype.toObject.call(this, options);
+
+  delete obj._id;
+
+  return obj;
+};
 
 var Program = module.exports = new mongoose.Schema({
   name: {
@@ -48,5 +57,17 @@ Program.virtual('totalTime').get(function()
 
   return totalTime;
 });
+
+Program.methods.toObject = function(options)
+{
+  var obj = mongoose.Document.prototype.toObject.call(this, options);
+
+  if (obj.steps)
+  {
+    obj.totalTime = this.get('totalTime');
+  }
+
+  return obj;
+};
 
 mongoose.model('Program', Program);

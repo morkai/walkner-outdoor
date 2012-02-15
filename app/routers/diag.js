@@ -1,13 +1,13 @@
-var os                  = require('os');
-var _                   = require('underscore');
-var step                = require('step');
-var auth                = require('../utils/middleware').auth;
+var os = require('os');
+var _ = require('underscore');
+var step = require('step');
+var auth = require('../utils/middleware').auth;
 var controllerProcesses = require('../models/controllerProcesses');
 
 app.get('/diag', auth('diag'), function(req, res, next)
 {
   var Controller = app.db.model('Controller');
-  var Zone       = app.db.model('Zone');
+  var Zone = app.db.model('Zone');
 
   var data = {startTime: app.startTime, eth0: [], wlan0: []};
 
@@ -52,15 +52,15 @@ app.get('/diag', auth('diag'), function(req, res, next)
       }
 
       var startedControllers = controllerProcesses.getStartedControllers();
-      var controllers        = data.controllers = [];
+      var controllers = data.controllers = [];
 
       allControllers.forEach(function(controller)
       {
-        var online = controller.id in startedControllers;
+        var online = controller._id in startedControllers;
 
         if (online)
         {
-          controller = startedControllers[controller.id];
+          controller = startedControllers[controller._id];
         }
         else
         {
@@ -91,17 +91,17 @@ app.get('/diag', auth('diag'), function(req, res, next)
       }
 
       var startedZones = controllerProcesses.getStartedZones();
-      var zones        = data.zones = [];
+      var zones = data.zones = [];
 
       allZones.forEach(function(zone)
       {
-        var online = zone.id in startedZones;
+        var online = zone._id in startedZones;
 
         if (online)
         {
           var controllerId = zone.controller;
 
-          zone            = startedZones[zone.id];
+          zone = startedZones[zone._id];
           zone.controller = controllerId;
         }
         else
@@ -123,14 +123,7 @@ app.get('/diag', auth('diag'), function(req, res, next)
         throw err;
       }
 
-      var programs = data.programs = [];
-
-      _.each(Zone.getStartedPrograms(), function(historyEntry)
-      {
-        var historyEntry = historyEntry.toJSON();
-
-        programs.push(historyEntry);
-      });
+      data.programs = controllerProcesses.getStartedPrograms();
 
       return true;
     },

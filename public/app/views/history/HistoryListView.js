@@ -11,6 +11,16 @@ define(
   'text!app/templates/history/list.html',
   'text!app/templates/history/listItem.html'
 ],
+/**
+ * @param {jQuery} $
+ * @param {Underscore} _
+ * @param {Backbone} Backbone
+ * @param {Viewport} viewport
+ * @param {function(new:PageLayout)} PageLayout
+ * @param {function(new:PurgeHistoryFormView)} PurgeHistoryFormView
+ * @param {String} listTpl
+ * @param {String} listItemTpl
+ */
 function(
   $,
   _,
@@ -21,26 +31,26 @@ function(
   listTpl,
   listItemTpl)
 {
-  var renderList     = _.template(listTpl);
-  var renderListItem = _.template(listItemTpl);
-
-  return Backbone.View.extend({
-
+  /**
+   * @class HistoryListView
+   * @constructor
+   * @extends Backbone.View
+   * @param {Object} [options]
+   */
+  var HistoryListView = Backbone.View.extend({
+    listTemplate: _.template(listTpl),
+    listItemTemplate: _.template(listItemTpl),
     layout: PageLayout,
-
     title: 'Historia',
-
     className: 'history',
-
     breadcrumbs: ['Historia'],
-
     actions: [
       {
-        href      : '#history;purge',
-        text      : 'Wyczyść',
-        className : 'blue purge-history action',
+        href: '#history;purge',
+        text: 'Wyczyść',
+        className: 'blue purge-history action',
         privileges: 'purgeHistory',
-        handler   : function(e)
+        handler: function(e)
         {
           if (e.button !== 0) return;
 
@@ -50,76 +60,83 @@ function(
         }
       }
     ],
-
     events: {
       'click .more': 'showMore'
-    },
-
-    initialize: function(options)
-    {
-      this.currentPage = options.page || 1;
-    },
-
-    render: function()
-    {
-      this.el.innerHTML = renderList({
-        showList      : this.collection.length > 0,
-        showMoreButton: this.collection.length >= 10
-      });
-
-      this.appendCollection();
-
-      return this;
-    },
-
-    appendCollection: function(scrollToFirst)
-    {
-      var listEl = this.$('.list');
-      var lastEl = listEl.children().last();
-
-      this.collection.map(function(model)
-      {
-        listEl.append(renderListItem({item: model.toTemplateData()}));
-      });
-
-      if (this.collection.length > 0)
-      {
-        if (scrollToFirst)
-        {
-          window.scrollTo(0, lastEl.next().position().top);
-        }
-      }
-      else
-      {
-        this.$('.more').fadeOut();
-      }
-    },
-
-    showMore: function()
-    {
-      viewport.msg.loading();
-
-      this.currentPage += 1;
-
-      var self = this;
-
-      this.collection.fetch({
-        data: {
-          page  : this.currentPage,
-          fields: ['zoneName', 'programName', 'finishedAt', 'finishState']
-        },
-        success: function(collection)
-        {
-          viewport.msg.hide();
-
-          self.appendCollection(true);
-        },
-        error: function()
-        {
-          viewport.msg.loadingFailed();
-        }
-      });
     }
-
   });
+
+  HistoryListView.prototype.initialize = function(options)
+  {
+    this.currentPage = options.page || 1;
+  };
+
+  HistoryListView.prototype.render = function()
+  {
+    this.el.innerHTML = this.listTemplate({
+      showList: this.collection.length > 0,
+      showMoreButton: this.collection.length >= 10
+    });
+
+    this.appendCollection();
+
+    return this;
+  };
+
+  /**
+   * @private
+   * @param {Boolean} scrollToFirst
+   */
+  HistoryListView.prototype.appendCollection = function(scrollToFirst)
+  {
+    var listEl = this.$('.list');
+    var lastEl = listEl.children().last();
+
+    this.collection.map(function(model)
+    {
+      listEl.append(this.listItemTemplate({item: model.toTemplateData()}));
+    }, this);
+
+    if (this.collection.length > 0)
+    {
+      if (scrollToFirst)
+      {
+        window.scrollTo(0, lastEl.next().position().top);
+      }
+    }
+    else
+    {
+      this.$('.more').fadeOut();
+    }
+  };
+
+  /**
+   * @private
+   */
+  HistoryListView.prototype.showMore = function()
+  {
+    viewport.msg.loading();
+
+    this.currentPage += 1;
+
+    var self = this;
+
+    this.collection.fetch({
+      data: {
+        page: this.currentPage,
+        fields: ['zoneName', 'programName', 'finishedAt', 'finishState']
+      },
+      success: function(collection)
+      {
+        viewport.msg.hide();
+
+        self.appendCollection(true);
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  return HistoryListView;
 });

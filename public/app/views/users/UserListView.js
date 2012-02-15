@@ -7,19 +7,28 @@ define(
   'app/views/PageLayout',
   'app/views/ListView'
 ],
+/**
+ * @param {jQuery} $
+ * @param {Underscore} _
+ * @param {Backbone} Backbone
+ * @param {function(new:PageLayout)} PageLayout
+ * @param {function(new:ListView)} ListView
+ */
 function($, _, Backbone, PageLayout, ListView)
 {
-  return ListView.extend({
-
+  /**
+   * @class UserListView
+   * @constructor
+   * @extends ListView
+   * @param {Object} [options]
+   */
+  var UserListView = ListView.extend({
     layout: PageLayout,
-
     title: 'Użytkownicy',
-
     className: 'users',
-
     breadcrumbs: ['Użytkownicy'],
-
     actions: [{href: '#users;add', text: 'Dodaj', privileges: 'manageUsers'}]
-
   });
+
+  return UserListView;
 });

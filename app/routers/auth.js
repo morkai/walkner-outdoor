@@ -13,7 +13,10 @@ app.post('/login', function(req, res, next)
 
     return req.session.regenerate(function(err)
     {
-      if (err) return next(err);
+      if (err)
+      {
+        return next(err);
+      }
 
       req.session.user = config.superUser;
 
@@ -32,9 +35,15 @@ app.post('/login', function(req, res, next)
 
   User.findOne({login: credentials.login}, function(err, user)
   {
-    if (err) return next(err);
+    if (err)
+    {
+      return next(err);
+    }
 
-    if (!user) return res.send(401);
+    if (!user)
+    {
+      return res.send(401);
+    }
 
     var client = User.hashPassword(
       credentials.password, user.passwordSalt
@@ -47,9 +56,12 @@ app.post('/login', function(req, res, next)
 
     req.session.regenerate(function(err)
     {
-      if (err) return next(err);
+      if (err)
+      {
+        return next(err);
+      }
 
-      req.session.user          = user.toJSON();
+      req.session.user = user.toJSON();
       req.session.user.loggedIn = true;
 
       if (req.is('json'))
@@ -68,7 +80,10 @@ app.post('/logout', function(req, res, next)
 {
   req.session.destroy(function(err)
   {
-    if (err) return next(err);
+    if (err)
+    {
+      return next(err);
+    }
 
     if (req.is('json'))
     {

@@ -21,17 +21,17 @@
     <% if (mutable) { %>
     <tr class="program-step-template">
       <td class="program-step-number">
-      <td><input name="program.steps[].timeOn" class="full textline time" type="text" value="" min="0" max="60000">
-      <td><input name="program.steps[].timeOff" class="full textline time" type="text" value="" min="0" max="60000">
-      <td><input name="program.steps[].iterations" class="full textline" type="text" value="" min="0" max="999">
+      <td><input name="program.steps[].timeOn" class="full textline time timeOn" type="text" value="">
+      <td><input name="program.steps[].timeOff" class="full textline time timeOff" type="text" value="">
+      <td><input name="program.steps[].iterations" class="full textline iterations" type="text" value="">
       <td><input class="remove-program-step button" type="button" value="Usuń krok">
     <% } %>
     <% _.each(steps, function(step, i) { %>
     <tr>
       <td class="program-step-number"><%- i + 1 %>.
-      <td><input name="program.steps[<%- i %>].timeOn" class="full textline time" type="text" value="<%- step.timeOn %>" min="0" max="60000" <%- mutable ? '' : 'readonly' %>>
-      <td><input name="program.steps[<%- i %>].timeOff" class="full textline time" type="text" value="<%- step.timeOff %>" min="0" max="60000" <%- mutable ? '' : 'readonly' %>>
-      <td><input name="program.steps[<%- i %>].iterations" class="full textline" type="text" value="<%- step.iterations %>" min="0" max="999" <%- mutable ? '' : 'readonly' %>>
+      <td><input name="program.steps[<%- i %>].timeOn" class="full textline time timeOn" type="text" value="<%- step.timeOn %>" <%- mutable ? '' : 'readonly' %>>
+      <td><input name="program.steps[<%- i %>].timeOff" class="full textline time timeOff" type="text" value="<%- step.timeOff %>" <%- mutable ? '' : 'readonly' %>>
+      <td><input name="program.steps[<%- i %>].iterations" class="full textline iterations" type="text" value="<%- step.iterations %>" <%- mutable ? '' : 'readonly' %>>
       <% if (mutable) { %>
       <td><input class="remove-program-step button" type="button" value="Usuń krok">
       <% } %>

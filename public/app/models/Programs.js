@@ -19,7 +19,7 @@ function(Backbone, Program)
    */
   var Programs = Backbone.Collection.extend({
     model: Program,
-    url  : '/programs'
+    url: '/programs'
   });
 
   return Programs;

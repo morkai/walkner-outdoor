@@ -1,18 +1,29 @@
-var _      = require('underscore');
-var step   = require('step');
+var _ = require('underscore');
+var step = require('step');
 var limits = require('../../config/limits');
-var auth   = require('../utils/middleware').auth;
+var auth = require('../utils/middleware').auth;
+var controllerProcesses = require('../models/controllerProcesses');
 
-app.get('/zones', function(req, res, next)
+app.get('/zones', auth('viewZones'), function(req, res, next)
 {
   var Zone = app.db.model('Zone');
 
   Zone.find({}, req.query.fields).asc('name').run(function(err, docs)
   {
-    if (err) return next(err);
+    if (err)
+    {
+      return next(err);
+    }
 
     res.send(docs);
   });
+});
+
+app.get('/activeZones', function(req, res)
+{
+  var activeZones = controllerProcesses.getStartedZones();
+
+  res.send(_.values(activeZones));
 });
 
 app.post('/zones', auth('manageZones'), function(req, res, next)
@@ -21,7 +32,10 @@ app.post('/zones', auth('manageZones'), function(req, res, next)
 
   Zone.count(function(err, count)
   {
-    if (err) return next(err);
+    if (err)
+    {
+      return next(err);
+    }
 
     if (count >= limits.maxZones)
     {
@@ -35,7 +49,10 @@ app.post('/zones', auth('manageZones'), function(req, res, next)
 
     zone.save(function(err)
     {
-      if (err) return next(err);
+      if (err)
+      {
+        return next(err);
+      }
 
       res.send(zone, 201);
 
@@ -53,9 +70,15 @@ app.get('/zones/:id', auth('viewZones'), function(req, res, next)
     },
     function findControllerStep(err, zone)
     {
-      if (err) throw err;
+      if (err)
+      {
+        throw err;
+      }
 
-      if (!zone) throw 404;
+      if (!zone)
+      {
+        throw 404;
+      }
 
       var zone = zone.toJSON();
       var next = this;
@@ -66,7 +89,7 @@ app.get('/zones/:id', auth('viewZones'), function(req, res, next)
       }
 
       var controllerId = zone.controller;
-      var fields       = {name: 1, type: 1};
+      var fields = {name: 1, type: 1};
 
       app.db.model('Controller').findById(controllerId, fields).run(
         function(err, controller) { next(err, zone, controller); }
@@ -74,7 +97,10 @@ app.get('/zones/:id', auth('viewZones'), function(req, res, next)
     },
     function findProgramStep(err, zone, controller)
     {
-      if (err) throw err;
+      if (err)
+      {
+        throw err;
+      }
 
       zone.controller = controller ? controller.toJSON() : null;
 
@@ -91,9 +117,15 @@ app.get('/zones/:id', auth('viewZones'), function(req, res, next)
     },
     function sendResponseStep(err, zone, program)
     {
-      if (err === 404) return res.send(404);
+      if (err === 404)
+      {
+        return res.send(404);
+      }
 
-      if (err) return next(err);
+      if (err)
+      {
+        return next(err);
+      }
 
       zone.program = program ? program.toJSON() : null;
 
@@ -104,14 +136,14 @@ app.get('/zones/:id', auth('viewZones'), function(req, res, next)
 
 app.post('/zones/:id', function(req, res, next)
 {
-  var action           = req.body.action;
+  var action = req.body.action;
   var actionPrivileges = {
     'startProgram': 'startStop',
-    'stopProgram' : 'startStop',
-    'start'       : 'diag',
-    'stop'        : 'diag'
+    'stopProgram': 'startStop',
+    'start': 'diag',
+    'stop': 'diag'
   };
-  var actionPrivilege  = actionPrivileges[action];
+  var actionPrivilege = actionPrivileges[action];
 
   if (!actionPrivilege)
   {
@@ -122,9 +154,15 @@ app.post('/zones/:id', function(req, res, next)
   {
     app.db.model('Zone').findById(req.params.id, function(err, zone)
     {
-      if (err) return next(err);
+      if (err)
+      {
+        return next(err);
+      }
 
-      if (!zone) return res.send(404);
+      if (!zone)
+      {
+        return res.send(404);
+      }
 
       var user = req.session.user;
 
@@ -202,8 +240,13 @@ app.put('/zones/:id', function(req, res, next)
         res.send(204);
 
         app.io.sockets.emit(
-          'zone changed', {id: zoneId, changes: data}
+          'zone changed', {_id: zoneId, changes: data}
         );
+
+        if (data.program)
+        {
+          emitNewZoneProgram(zoneId, data.program);
+        }
       });
     });
   });
@@ -249,16 +292,23 @@ app.get('/zones/:id/programs', function(req, res, nextHandler)
   step(
     function findZoneStep()
     {
-      app.db.model('Zone').findById(req.params.id, {name: 1, program: 1})
-                          .run(this);
+      app.db.model('Zone')
+        .findById(req.params.id, {name: 1, program: 1})
+        .run(this);
     },
     function findAssignedProgramStep(err, zone)
     {
       var nextStep = this;
 
-      if (err) return nextStep(err);
+      if (err)
+      {
+        return nextStep(err);
+      }
 
-      if (!zone) return nextStep(404);
+      if (!zone)
+      {
+        return nextStep(404);
+      }
 
       app.db.model('Program').findById(zone.program, {name: 1}).run(
         function(err, program) { nextStep(err, zone, program); }
@@ -268,15 +318,16 @@ app.get('/zones/:id/programs', function(req, res, nextHandler)
     {
       var nextStep = this;
 
-      if (err) return nextStep(err);
+      if (err)
+      {
+        return nextStep(err);
+      }
 
-      var data = {
-        zone: {id: zone.id, name: zone.name}
-      };
+      var data = {zone: {_id: zone._id, name: zone.name}};
 
       if (program)
       {
-        data.assignedProgram = {id: program.id, name: program.name};
+        data.assignedProgram = {_id: program._id, name: program.name};
       }
 
       var user = req.session.user;
@@ -311,37 +362,44 @@ function attachPickProgramData(data, done)
     {
       var nextStep = this;
 
-      if (err) return nextStep(err);
+      if (err)
+      {
+        return nextStep(err);
+      }
 
       var HistoryEntry = app.db.model('HistoryEntry');
-      var criteria     = {
-        zoneId     : data.zone.id,
+      var criteria = {
+        zoneId: data.zone._id,
         finishState: 'finish'
       };
-      var fields       = {programId: 1, programName: 1};
+      var fields = {programId: 1, programName: 1};
 
-      HistoryEntry.find(criteria, fields)
-                  .desc('finishedAt')
-                  .limit(10)
-                  .run(function(err, historyEntries)
-                  {
-                    nextStep(err, allPrograms, historyEntries);
-                  });
+      HistoryEntry
+        .find(criteria, fields)
+        .desc('finishedAt')
+        .limit(10)
+        .run(function(err, historyEntries)
+        {
+          nextStep(err, allPrograms, historyEntries);
+        });
     },
     function cleanUpListsStep(err, allPrograms, recentHistoryEntries)
     {
       var nextStep = this;
 
-      if (err) return nextStep(err);
+      if (err)
+      {
+        return nextStep(err);
+      }
 
       var allProgramIds = {};
 
       data.allPrograms = allPrograms.map(function(program)
       {
-        allProgramIds[program.id] = true;
+        allProgramIds[program._id] = true;
 
         return {
-          id  : program.id,
+          _id: program._id,
           name: program.name
         };
       });
@@ -357,7 +415,7 @@ function attachPickProgramData(data, done)
         }
 
         var historyEntry = recentHistoryEntries[i];
-        var programId    = historyEntry.programId;
+        var programId = historyEntry.programId;
 
         if (!allProgramIds[programId])
         {
@@ -372,7 +430,7 @@ function attachPickProgramData(data, done)
         recentProgramIds[programId] = 1;
 
         data.recentPrograms.push({
-          id  : programId,
+          _id: programId,
           name: historyEntry.programName
         });
       }
@@ -389,10 +447,10 @@ function attachPickProgramData(data, done)
 function startProgram(req, res, next, zone, user)
 {
   var canPickProgram = user.privileges.hasOwnProperty('pickProgram');
-  var pin            = req.body.pin;
-  var programId      = req.body.program;
-  var hasPin         = _.isString(pin);
-  var hasProgramId   = _.isString(programId);
+  var pin = req.body.pin;
+  var programId = req.body.program;
+  var hasPin = _.isString(pin);
+  var hasProgramId = _.isString(programId);
 
   if (hasProgramId && !canPickProgram)
   {
@@ -418,15 +476,21 @@ function startProgram(req, res, next, zone, user)
     User.findOne({pin: pin}, {name: 1, privileges: 1}).run(function(err, user)
     {
       if (err)
+      {
         return next(err);
+      }
 
       if (!user)
+      {
         return res.send('Niepoprawny PIN :(', 400);
+      }
 
       if (!user.privileges || !user.privileges.startStop)
+      {
         return res.send('Nie masz uprawnień do uruchamiania stref :(', 401);
+      }
 
-      return start(zone.program, {_id: user.id, name: user.name});
+      return start(zone.program, {_id: user._id, name: user.name});
     });
   }
   else if (!canPickProgram)
@@ -460,9 +524,15 @@ function startProgram(req, res, next, zone, user)
         );
       }
 
-      if (err instanceof Error) return next(err);
+      if (err instanceof Error)
+      {
+        return next(err);
+      }
 
-      if (err) return res.send(err, 500);
+      if (err)
+      {
+        return res.send(err, 500);
+      }
 
       res.send();
     });
@@ -488,15 +558,21 @@ function stopProgram(req, res, next, zone, user)
   User.findOne({pin: pin}, {name: 1, privileges: 1}).run(function(err, user)
   {
     if (err)
+    {
       return next(err);
+    }
 
     if (!user)
+    {
       return res.send('Niepoprawny PIN :(', 400);
+    }
 
     if (!user.privileges || !user.privileges.startStop)
+    {
       return res.send('Nie masz uprawnień do zatrzymywania stref :(', 401);
+    }
 
-    return stop({_id: user.id, name: user.name});
+    return stop({_id: user._id, name: user.name});
   });
 
   function stop(user)
@@ -516,9 +592,15 @@ function stopProgram(req, res, next, zone, user)
         console.debug('Stopped program on zone <%s>', zone.get('name'));
       }
 
-      if (err instanceof Error) return next(err);
+      if (err instanceof Error)
+      {
+        return next(err);
+      }
 
-      if (err) return res.send(err, 500);
+      if (err)
+      {
+        return res.send(err, 500);
+      }
 
       res.send();
     });
@@ -578,5 +660,25 @@ function stopZone(res, next, zone)
 
       res.send(201);
     }
+  });
+}
+
+function emitNewZoneProgram(zoneId, programId)
+{
+  var activeZone = controllerProcesses.getStartedZone(zoneId);
+
+  if (!activeZone)
+  {
+    return;
+  }
+
+  app.db.model('Program').findById(programId, function(err, program)
+  {
+    if (err)
+    {
+      return;
+    }
+
+    activeZone.programmed(program);
   });
 }

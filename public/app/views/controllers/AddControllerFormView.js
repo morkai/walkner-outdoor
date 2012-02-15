@@ -11,6 +11,16 @@ define(
 
   'text!app/templates/controllers/form.html'
 ],
+/**
+ * @param {jQuery} $
+ * @param {Underscore} _
+ * @param {Backbone} Backbone
+ * @param {function(new:Controller)} Controller
+ * @param {Viewport} viewport
+ * @param {function(new:PageLayout)} PageLayout
+ * @param {function(new:ConnectionInfoFieldsView)} ConnectionInfoFieldsView
+ * @param {String} formTpl
+ */
 function(
   $,
   _,
@@ -21,12 +31,15 @@ function(
   ConnectionInfoFieldsView,
   formTpl)
 {
-  var renderForm = _.template(formTpl);
-
-  return Backbone.View.extend({
-
+  /**
+   * @class AddControllerFormView
+   * @extends Backbone.View
+   * @constructor
+   * @param {Object} [options]
+   */
+  var AddControllerFormView = Backbone.View.extend({
+    template: _.template(formTpl),
     layout: PageLayout,
-
     breadcrumbs: function()
     {
       return [
@@ -34,7 +47,6 @@ function(
         'Nowy sterownik'
       ];
     },
-
     actions: function()
     {
       return [{
@@ -43,70 +55,75 @@ function(
         handler  : this.submitForm
       }];
     },
-
     events: {
       'submit .form' : 'submitForm'
-    },
-
-    initialize: function()
-    {
-      _.bindAll(this, 'submitForm');
-    },
-
-    destroy: function()
-    {
-      this.remove();
-    },
-
-    render: function()
-    {
-      var controller = this.model.toTemplateData();
-
-      this.el.innerHTML = renderForm({
-        action    : '/controllers',
-        controller: controller
-      });
-
-      new ConnectionInfoFieldsView({
-        el   : this.$('ul.fields')[0],
-        model: controller
-      }).render();
-
-      return this;
-    },
-
-    submitForm: function(e)
-    {
-      var formEl = this.$('form.controller');
-      var data   = formEl.toObject({skipEmpty: false}).controller;
-
-      var controller = new Controller();
-
-      controller.save(data, {
-        success: function()
-        {
-          viewport.msg.show({
-            type: 'success',
-            time: 5000,
-            text: 'Nowy sterownik został dodany!'
-          });
-
-          Backbone.history.navigate(
-            'controllers/' + controller.get('_id'), true
-          );
-        },
-        error: function()
-        {
-          viewport.msg.show({
-            type: 'error',
-            time: 5000,
-            text: 'Nie udało się zapisać nowego sterownika :('
-          });
-        }
-      });
-
-      return false;
     }
-
   });
+
+  AddControllerFormView.prototype.initialize = function()
+  {
+    _.bindAll(this, 'submitForm');
+  };
+
+  AddControllerFormView.prototype.destroy = function()
+  {
+    this.remove();
+  };
+
+  AddControllerFormView.prototype.render = function()
+  {
+    var controller = this.model.toTemplateData();
+
+    this.el.innerHTML = this.template({
+      action: '/controllers',
+      controller: controller
+    });
+
+    new ConnectionInfoFieldsView({
+      el: this.$('ul.fields')[0],
+      model: controller
+    }).render();
+
+    return this;
+  };
+
+  /**
+   * @private
+   * @param {Object} e
+   * @return {Boolean}
+   */
+  AddControllerFormView.prototype.submitForm = function(e)
+  {
+    var formEl = this.$('form.controller');
+    var data = formEl.toObject({skipEmpty: false}).controller;
+
+    var controller = new Controller();
+
+    controller.save(data, {
+      success: function()
+      {
+        viewport.msg.show({
+          type: 'success',
+          time: 5000,
+          text: 'Nowy sterownik został dodany!'
+        });
+
+        Backbone.history.navigate(
+          'controllers/' + controller.id, true
+        );
+      },
+      error: function()
+      {
+        viewport.msg.show({
+          type: 'error',
+          time: 5000,
+          text: 'Nie udało się zapisać nowego sterownika :('
+        });
+      }
+    });
+
+    return false;
+  };
+
+  return AddControllerFormView;
 });

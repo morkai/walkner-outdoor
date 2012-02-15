@@ -36,142 +36,140 @@ function(
   DeleteZoneView,
   ProgramZoneView)
 {
-
-/**
- * @class ZonesRouter
- * @constructor
- * @extends Backbone.Router
- * @param {Object} [options]
- */
-var ZonesRouter = Backbone.Router.extend({
-  routes: {
-    'zones'            : 'list',
-    'zones;add'        : 'add',
-    'zones/:id'        : 'view',
-    'zones/:id;edit'   : 'edit',
-    'zones/:id;delete' : 'del',
-    'zones/:id;program': 'program'
-  }
-});
-
-ZonesRouter.prototype.list = function()
-{
-  if (viewport.msg.auth('viewZones'))
-  {
-    return;
-  }
-
-  viewport.msg.loading();
-
-  new Zones().fetch({
-    data: {
-      fields: ['name']
-    },
-    success: function(collection)
-    {
-      viewport.showView(new ZoneListView({collection: collection}));
-    },
-    error: function()
-    {
-      viewport.msg.loadingFailed();
+  /**
+   * @class ZonesRouter
+   * @constructor
+   * @extends Backbone.Router
+   * @param {Object} [options]
+   */
+  var ZonesRouter = Backbone.Router.extend({
+    routes: {
+      'zones': 'list',
+      'zones;add': 'add',
+      'zones/:id': 'view',
+      'zones/:id;edit': 'edit',
+      'zones/:id;delete': 'del',
+      'zones/:id;program': 'program'
     }
   });
-};
 
-ZonesRouter.prototype.add = function()
-{
-  if (viewport.msg.auth('manageZones'))
+  ZonesRouter.prototype.list = function()
   {
-    return;
-  }
-
-  viewport.showView(new AddZoneFormView({model: new Zone()}));
-};
-
-ZonesRouter.prototype.view = function(id)
-{
-  if (viewport.msg.auth('viewZones'))
-  {
-    return;
-  }
-
-  viewport.msg.loading();
-
-  new Zone({_id: id}).fetch({
-    success: function(model)
+    if (viewport.msg.auth('viewZones'))
     {
-      viewport.showView(new ZoneDetailsView({model: model}));
-    },
-    error: function()
-    {
-      viewport.msg.loadingFailed();
+      return;
     }
-  });
-};
 
-ZonesRouter.prototype.edit = function(id)
-{
-  if (viewport.msg.auth('manageZones'))
+    viewport.msg.loading();
+
+    new Zones().fetch({
+      data: {
+        fields: ['name']
+      },
+      success: function(collection)
+      {
+        viewport.showView(new ZoneListView({collection: collection}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  ZonesRouter.prototype.add = function()
   {
-    return;
-  }
-
-  viewport.msg.loading();
-
-  new Zone({_id: id}).fetch({
-    success: function(model)
+    if (viewport.msg.auth('manageZones'))
     {
-      viewport.showView(new EditZoneFormView({model: model}));
-    },
-    error: function()
-    {
-      viewport.msg.loadingFailed();
+      return;
     }
-  });
-};
 
-ZonesRouter.prototype.del = function(id)
-{
-  if (viewport.msg.auth('manageZones'))
+    viewport.showView(new AddZoneFormView({model: new Zone()}));
+  };
+
+  ZonesRouter.prototype.view = function(id)
   {
-    return;
-  }
-
-  viewport.msg.loading();
-
-  new Zone({_id: id}).fetch({
-    success: function(model)
+    if (viewport.msg.auth('viewZones'))
     {
-      viewport.showView(new DeleteZoneView({model: model}));
-    },
-    error: function()
-    {
-      viewport.msg.loadingFailed();
+      return;
     }
-  });
-};
 
-ZonesRouter.prototype.program = function(id)
-{
-  if (viewport.msg.auth('assignPrograms'))
+    viewport.msg.loading();
+
+    new Zone({_id: id}).fetch({
+      success: function(model)
+      {
+        viewport.showView(new ZoneDetailsView({model: model}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  ZonesRouter.prototype.edit = function(id)
   {
-    return;
-  }
-
-  viewport.msg.loading();
-
-  new Zone({_id: id}).fetch({
-    success: function(model)
+    if (viewport.msg.auth('manageZones'))
     {
-      viewport.showView(new ProgramZoneView({model: model}));
-    },
-    error: function()
-    {
-      viewport.msg.loadingFailed();
+      return;
     }
-  });
-};
 
-return ZonesRouter;
+    viewport.msg.loading();
 
+    new Zone({_id: id}).fetch({
+      success: function(model)
+      {
+        viewport.showView(new EditZoneFormView({model: model}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  ZonesRouter.prototype.del = function(id)
+  {
+    if (viewport.msg.auth('manageZones'))
+    {
+      return;
+    }
+
+    viewport.msg.loading();
+
+    new Zone({_id: id}).fetch({
+      success: function(model)
+      {
+        viewport.showView(new DeleteZoneView({model: model}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  ZonesRouter.prototype.program = function(id)
+  {
+    if (viewport.msg.auth('assignPrograms'))
+    {
+      return;
+    }
+
+    viewport.msg.loading();
+
+    new Zone({_id: id}).fetch({
+      success: function(model)
+      {
+        viewport.showView(new ProgramZoneView({model: model}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  return ZonesRouter;
 });

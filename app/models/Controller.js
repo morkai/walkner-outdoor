@@ -1,16 +1,16 @@
-var mongoose            = require('mongoose');
+var mongoose = require('mongoose');
 var controllerProcesses = require('./controllerProcesses');
 
 var Controller = module.exports = new mongoose.Schema({
   name: {
-    type    : String,
+    type: String,
     required: true,
-    trim    : true
+    trim: true
   },
   type: {
-    type    : String,
+    type: String,
     required: true,
-    enum    : ['modbus-tcp', 'libcoap']
+    enum: ['modbus-tcp', 'libcoap']
   },
   connectionInfo: {},
   autostart: {
@@ -69,7 +69,7 @@ Controller.statics.startAll = function(autostartOnly, done)
 
 Controller.methods.isStarted = function()
 {
-  return controllerProcesses.isControllerStarted(this.id);
+  return controllerProcesses.isControllerStarted(this._id);
 };
 
 Controller.methods.start = function(done)
@@ -79,7 +79,7 @@ Controller.methods.start = function(done)
 
 Controller.methods.stop = function(done)
 {
-  controllerProcesses.stopController(this.id, done);
+  controllerProcesses.stopController(this._id, done);
 };
 
 mongoose.model('Controller', Controller);

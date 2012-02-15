@@ -34,7 +34,7 @@ define(['require', 'jQuery'], function(require, $)
     var viewEl   = $(viewport.view.el);
     var layoutEl = $(viewport.layout.el);
 
-    if (viewEl.hasClass('dashboard'))
+    if (viewEl.hasClass('activeZones'))
     {
       return;
     }
@@ -95,7 +95,7 @@ define(['require', 'jQuery'], function(require, $)
 
     if (viewport.view)
     {
-      if ($(viewport.view.el).hasClass('dashboard'))
+      if ($(viewport.view.el).hasClass('activeZones'))
       {
         toggleEl.hide();
       }
@@ -180,7 +180,7 @@ define(['require', 'jQuery'], function(require, $)
 
     function toggleToggleEl()
     {
-      if ($(viewport.view.el).hasClass('dashboard'))
+      if ($(viewport.view.el).hasClass('activeZones'))
       {
         if (VirtualKeyboard.isOpen())
         {

@@ -1,14 +1,14 @@
 var guestUser = require('../../config/auth').guestUser;
 
 var limits = 'define("app/models/limits", '
-           + JSON.stringify(require(__dirname + '/../../config/limits'))
-           + ');';
+  + JSON.stringify(require(__dirname + '/../../config/limits'))
+  + ');';
 
 app.get('/', function(req, res)
 {
   res.render(app.settings.env === 'production' ? 'index-min.ejs' : 'index.ejs', {
     layout: false,
-    user  : JSON.stringify(req.session.user || guestUser)
+    user: JSON.stringify(req.session.user || guestUser)
   });
 });
 

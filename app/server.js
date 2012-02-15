@@ -9,11 +9,11 @@ require('fs').writeFile(
   __dirname + '/../var/pids/server.pid', process.pid
 );
 
-var express    = require('express');
+var express = require('express');
 var MongoStore = require('connect-mongodb');
-var io         = require('socket.io');
-var mongoose   = require('mongoose');
-var step       = require('step');
+var io = require('socket.io');
+var mongoose = require('mongoose');
+var step = require('step');
 
 (function()
 {
@@ -27,7 +27,7 @@ var step       = require('step');
   };
 })();
 
-var expressConfig  = require('../config/express');
+var expressConfig = require('../config/express');
 var mongooseConfig = require('../config/mongoose');
 
 app = express.createServer();

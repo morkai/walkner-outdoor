@@ -27,76 +27,74 @@ function(
   HistoryEntryView,
   PurgeHistoryFormView)
 {
-
-/**
- * @class HistoryRouter
- * @constructor
- * @extends Backbone.Router
- * @param {Object} [options]
- */
-var HistoryRouter = Backbone.Router.extend({
-  routes: {
-    'history'      : 'list',
-    'history/:id'  : 'view',
-    'history;purge': 'purge'
-  }
-});
-
-HistoryRouter.prototype.list = function()
-{
-  if (viewport.msg.auth('viewHistory'))
-  {
-    return;
-  }
-
-  viewport.msg.loading();
-
-  new History().fetch({
-    data: {
-      fields: ['zoneName', 'programName', 'finishedAt', 'finishState']
-    },
-    success: function(collection)
-    {
-      viewport.showView(new HistoryListView({collection: collection}));
-    },
-    error: function()
-    {
-      viewport.msg.loadingFailed();
+  /**
+   * @class HistoryRouter
+   * @constructor
+   * @extends Backbone.Router
+   * @param {Object} [options]
+   */
+  var HistoryRouter = Backbone.Router.extend({
+    routes: {
+      'history': 'list',
+      'history/:id': 'view',
+      'history;purge': 'purge'
     }
   });
-};
 
-HistoryRouter.prototype.view = function(id)
-{
-  if (viewport.msg.auth('viewHistory'))
+  HistoryRouter.prototype.list = function()
   {
-    return;
-  }
-
-  viewport.msg.loading();
-
-  new HistoryEntry({_id: id}).fetch({
-    success: function(model)
+    if (viewport.msg.auth('viewHistory'))
     {
-      viewport.showView(new HistoryEntryView({model: model}));
-    },
-    error: function()
-    {
-      viewport.msg.loadingFailed();
+      return;
     }
-  });
-};
 
-HistoryRouter.prototype.purge = function()
-{
-  if (viewport.msg.auth('purgeHistory'))
+    viewport.msg.loading();
+
+    new History().fetch({
+      data: {
+        fields: ['zoneName', 'programName', 'finishedAt', 'finishState']
+      },
+      success: function(collection)
+      {
+        viewport.showView(new HistoryListView({collection: collection}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
+
+  HistoryRouter.prototype.view = function(id)
   {
-    return;
-  }
+    if (viewport.msg.auth('viewHistory'))
+    {
+      return;
+    }
 
-  viewport.showView(new PurgeHistoryFormView());
-};
+    viewport.msg.loading();
 
-return HistoryRouter;
+    new HistoryEntry({_id: id}).fetch({
+      success: function(model)
+      {
+        viewport.showView(new HistoryEntryView({model: model}));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
+  };
 
+  HistoryRouter.prototype.purge = function()
+  {
+    if (viewport.msg.auth('purgeHistory'))
+    {
+      return;
+    }
+
+    viewport.showView(new PurgeHistoryFormView());
+  };
+
+  return HistoryRouter;
 });

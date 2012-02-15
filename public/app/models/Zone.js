@@ -22,12 +22,12 @@ function(_, Backbone, Controller, Program)
    * @param {Object} [options]
    */
   var Zone = Backbone.Model.extend({
-    urlRoot : '/zones',
+    urlRoot: '/zones',
     defaults: {
-      name          : '',
-      controller    : null,
+      name: '',
+      controller: null,
       controllerInfo: null,
-      state         : null
+      state: null
     }
   });
 
@@ -70,27 +70,27 @@ function(_, Backbone, Controller, Program)
       {
         case 'modbus-tcp':
           data.controllerInfo = _.defaults(data.controllerInfo || {}, {
-            stateOutput   : 0,
-            stateUnit     : 0,
+            stateOutput: 0,
+            stateUnit: 0,
             greenLedOutput: 1,
-            greenLedUnit  : 0,
-            redLedOutput  : 2,
-            redLedUnit    : 0
+            greenLedUnit: 0,
+            redLedOutput: 2,
+            redLedUnit: 0
           });
           break;
 
         case 'libcoap':
           data.controllerInfo = _.defaults(data.controllerInfo || {}, {
-            stateResource   : '/io/state',
+            stateResource: '/io/state',
             greenLedResource: '/io/greenLed',
-            redLedResource  : '/io/redLed'
+            redLedResource: '/io/redLed'
           });
           break;
       }
     }
     else
     {
-      data.controller     = {};
+      data.controller = {};
       data.controllerInfo = {};
     }
 

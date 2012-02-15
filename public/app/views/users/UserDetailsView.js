@@ -4,20 +4,32 @@ define(
   'Underscore',
   'Backbone',
 
-  'app/views/PageLayout',
   'app/views/viewport',
+  'app/views/PageLayout',
   'app/views/users/DeleteUserView',
 
   'text!app/templates/users/details.html'
 ],
-function($, _, Backbone, PageLayout, viewport, DeleteUserView, detailsTpl)
+/**
+ * @param {jQuery} $
+ * @param {Underscore} _
+ * @param {Backbone} Backbone
+ * @param {Viewport} viewport
+ * @param {function(new:PageLayout)} PageLayout
+ * @param {function(new:DeleteUserView)} DeleteUserView
+ * @param {String} detailsTpl
+ */
+function($, _, Backbone, viewport, PageLayout, DeleteUserView, detailsTpl)
 {
-  var renderDetails = _.template(detailsTpl);
-
-  return Backbone.View.extend({
-
+  /**
+   * @class UserDetailsView
+   * @constructor
+   * @extends Backbone.View
+   * @param {Object} [options]
+   */
+  var UserDetailsView = Backbone.View.extend({
+    template: _.template(detailsTpl),
     layout: PageLayout,
-
     breadcrumbs: function()
     {
       return [
@@ -28,21 +40,24 @@ function($, _, Backbone, PageLayout, viewport, DeleteUserView, detailsTpl)
     actions: function()
     {
       var model = this.model;
-      var id    = model.get('_id');
+      var id = model.id;
 
       return [
         {
-          href      : '#users/' + id + ';edit',
-          text      : 'Edytuj',
+          href: '#users/' + id + ';edit',
+          text: 'Edytuj',
           privileges: 'manageUsers'
         },
         {
-          href      : '#users/' + id + ';delete',
-          text      : 'Usuń',
+          href: '#users/' + id + ';delete',
+          text: 'Usuń',
           privileges: 'manageUsers',
-          handler   : function(e)
+          handler: function(e)
           {
-            if (e.button !== 0) return;
+            if (e.button !== 0)
+            {
+              return;
+            }
 
             viewport.showDialog(new DeleteUserView({model: model}));
 
@@ -50,21 +65,22 @@ function($, _, Backbone, PageLayout, viewport, DeleteUserView, detailsTpl)
           }
         }
       ];
-    },
-
-    destroy: function()
-    {
-      this.remove();
-    },
-
-    render: function()
-    {
-      this.el.innerHTML = renderDetails({
-        user: this.model.toTemplateData()
-      });
-
-      return this;
     }
-
   });
+
+  UserDetailsView.prototype.destroy = function()
+  {
+    this.remove();
+  };
+
+  UserDetailsView.prototype.render = function()
+  {
+    this.el.innerHTML = this.template({
+      user: this.model.toTemplateData()
+    });
+
+    return this;
+  };
+
+  return UserDetailsView;
 });

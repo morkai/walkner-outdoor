@@ -41,10 +41,10 @@ function(
    */
   var UsersRouter = Backbone.Router.extend({
     routes: {
-      'users'           : 'list',
-      'users;add'       : 'add',
-      'users/:id'       : 'view',
-      'users/:id;edit'  : 'edit',
+      'users': 'list',
+      'users;add': 'add',
+      'users/:id': 'view',
+      'users/:id;edit': 'edit',
       'users/:id;delete': 'del'
     }
   });

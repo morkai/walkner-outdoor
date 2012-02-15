@@ -1,0 +1,12 @@
+<div class="state" title="Wykonywanie programu..."></div>
+<h1>
+  <span data-property="name" title="Strefa"><%- name %></span>:
+  <span title="Wykonywany program">
+    <a class="programPreview" href="#programs/<%- program._id %>" data-programProperty="program"><%- program.name %></a>
+  </span>
+</h1>
+<input class="stopProgram action red" type="button" value="Stop">
+<div class="progressBar">
+  <p class="timeToEnd">&nbsp;</p>
+  <div class="progressValue">&nbsp;</div>
+</div>

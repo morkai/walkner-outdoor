@@ -5,8 +5,8 @@ define(['jQuery'], function($)
   function destructInstance(instance)
   {
     if (instance !== null &&
-        typeof instance === 'object' &&
-        typeof instance.destroy === 'function')
+      typeof instance === 'object' &&
+      typeof instance.destroy === 'function')
     {
       instance.destroy();
     }

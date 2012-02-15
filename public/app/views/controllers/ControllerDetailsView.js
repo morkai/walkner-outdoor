@@ -4,20 +4,32 @@ define(
   'Underscore',
   'Backbone',
 
-  'app/views/PageLayout',
   'app/views/viewport',
+  'app/views/PageLayout',
   'app/views/controllers/DeleteControllerView',
 
   'text!app/templates/controllers/details.html'
 ],
-function($, _, Backbone, PageLayout, viewport, DeleteControllerView, detailsTpl)
+/**
+ * @param {jQuery} $
+ * @param {Underscore} _
+ * @param {Backbone} Backbone
+ * @param {Viewport} viewport
+ * @param {function(new:PageLayout)} PageLayout
+ * @param {function(new:ListView)} DeleteControllerView
+ * @param {String} detailsTpl
+ */
+function($, _, Backbone, viewport, PageLayout, DeleteControllerView, detailsTpl)
 {
-  var renderDetails = _.template(detailsTpl);
-
-  return Backbone.View.extend({
-
+  /**
+   * @class ControllerDetailsView
+   * @extends Backbone.View
+   * @constructor
+   * @param {Object} [options]
+   */
+  var ControllerDetailsView = Backbone.View.extend({
+    template: _.template(detailsTpl),
     layout: PageLayout,
-
     breadcrumbs: function()
     {
       return [
@@ -28,21 +40,24 @@ function($, _, Backbone, PageLayout, viewport, DeleteControllerView, detailsTpl)
     actions: function()
     {
       var model = this.model;
-      var id    = model.get('_id');
+      var id = model.id;
 
       return [
         {
-          href      : '#controllers/' + id + ';edit',
-          text      : 'Edytuj',
+          href: '#controllers/' + id + ';edit',
+          text: 'Edytuj',
           privileges: 'manageControllers'
         },
         {
-          href      : '#controllers/' + id + ';delete',
-          text      : 'Usuń',
+          href: '#controllers/' + id + ';delete',
+          text: 'Usuń',
           privileges: 'manageControllers',
-          handler   : function(e)
+          handler: function(e)
           {
-            if (e.button !== 0) return;
+            if (e.button !== 0)
+            {
+              return;
+            }
 
             viewport.showDialog(new DeleteControllerView({model: model}));
 
@@ -50,21 +65,22 @@ function($, _, Backbone, PageLayout, viewport, DeleteControllerView, detailsTpl)
           }
         }
       ];
-    },
-
-    destroy: function()
-    {
-      this.remove();
-    },
-
-    render: function()
-    {
-      this.el.innerHTML = renderDetails({
-        controller: this.model.toTemplateData()
-      });
-
-      return this;
     }
-
   });
+
+  ControllerDetailsView.prototype.destroy = function()
+  {
+    this.remove();
+  };
+
+  ControllerDetailsView.prototype.render = function()
+  {
+    this.el.innerHTML = this.template({
+      controller: this.model.toTemplateData()
+    });
+
+    return this;
+  };
+
+  return ControllerDetailsView;
 });

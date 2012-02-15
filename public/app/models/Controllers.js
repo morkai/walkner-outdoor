@@ -19,7 +19,7 @@ function(Backbone, Controller)
    */
   var Controllers = Backbone.Collection.extend({
     model: Controller,
-    url  : '/controllers'
+    url: '/controllers'
   });
 
   return Controllers;

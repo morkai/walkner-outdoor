@@ -10,16 +10,27 @@ define(
 
   'text!app/templates/zones/details.html'
 ],
+/**
+ * @param {jQuery} $
+ * @param {Underscore} _
+ * @param {Backbone} Backbone
+ * @param {Viewport} viewport
+ * @param {function(new:PageLayout)} PageLayout
+ * @param {function(new:DeleteZoneView)} DeleteZoneView
+ * @param {String} detailsTpl
+ */
 function($, _, Backbone, viewport, PageLayout, DeleteZoneView, detailsTpl)
 {
-  var renderDetails = _.template(detailsTpl);
-
-  return Backbone.View.extend({
-
+  /**
+   * @class ZoneDetailsView
+   * @constructor
+   * @extends Backbone.View
+   * @param {Object} [options]
+   */
+  var ZoneDetailsView = Backbone.View.extend({
+    template: _.template(detailsTpl),
     layout: PageLayout,
-
     className: 'zone-details',
-
     breadcrumbs: function()
     {
       return [
@@ -27,30 +38,32 @@ function($, _, Backbone, viewport, PageLayout, DeleteZoneView, detailsTpl)
         this.model.get('name')
       ];
     },
-
     actions: function()
     {
       var model = this.model;
-      var id    = model.get('_id');
+      var id = model.id;
 
       return [
         {
-          href      : '#zones/' + id + ';program',
-          text      : 'Programuj',
+          href: '#zones/' + id + ';program',
+          text: 'Programuj',
           privileges: 'assignPrograms'
         },
         {
-          href      : '#zones/' + id + ';edit',
-          text      : 'Edytuj',
+          href: '#zones/' + id + ';edit',
+          text: 'Edytuj',
           privileges: 'manageZones'
         },
         {
-          href      : '#zones/' + id + ';delete',
-          text      : 'Usuń',
+          href: '#zones/' + id + ';delete',
+          text: 'Usuń',
           privileges: 'manageZones',
-          handler   : function(e)
+          handler: function(e)
           {
-            if (e.button !== 0) return;
+            if (e.button !== 0)
+            {
+              return;
+            }
 
             viewport.showDialog(new DeleteZoneView({model: model}));
 
@@ -58,21 +71,22 @@ function($, _, Backbone, viewport, PageLayout, DeleteZoneView, detailsTpl)
           }
         }
       ];
-    },
-
-    destroy: function()
-    {
-      this.remove();
-    },
-
-    render: function()
-    {
-      this.el.innerHTML = renderDetails({
-        zone: this.model.toTemplateData()
-      });
-
-      return this;
     }
-
   });
+
+  ZoneDetailsView.prototype.destroy = function()
+  {
+    this.remove();
+  };
+
+  ZoneDetailsView.prototype.render = function()
+  {
+    this.el.innerHTML = this.template({
+      zone: this.model.toTemplateData()
+    });
+
+    return this;
+  };
+
+  return ZoneDetailsView;
 });

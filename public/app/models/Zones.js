@@ -19,7 +19,7 @@ function(Backbone, Zone)
    */
   var Zones = Backbone.Collection.extend({
     model: Zone,
-    url  : '/zones'
+    url: '/zones'
   });
 
   return Zones;

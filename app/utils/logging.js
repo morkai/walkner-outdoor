@@ -1,13 +1,13 @@
 var config = require('../../config/logging');
 
 var logLevels = process.env.NODE_ENV === 'production'
-              ? config.productionLevels
-              : config.developmentLevels;
+  ? config.productionLevels
+  : config.developmentLevels;
 
 var _console = {
   debug: console.log,
-  info : console.info,
-  warn : console.warn,
+  info: console.info,
+  warn: console.warn,
   error: console.error
 };
 
@@ -32,7 +32,7 @@ function decorateLog(level)
 
   args.shift();
 
-  var date   = getDateString();
+  var date = getDateString();
   var string = padR(level, 5, ' ') + ' [' + date + '] ' + args.shift();
 
   args.unshift(string);

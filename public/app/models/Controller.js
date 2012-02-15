@@ -8,6 +8,7 @@ define(
 /**
  * @param {Underscore} _
  * @param {Backbone} Backbone
+ * @param {Object} controllerTypes
  */
 function(_, Backbone, controllerTypes)
 {

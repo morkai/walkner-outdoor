@@ -1,0 +1,29 @@
+<div class="state" title="Zatrzymano wykonywanie programu :("></div>
+<h1>
+  <span data-property="name" title="Strefa"><%- name %></span>:
+  <span title="Zatrzymany program">
+    <a class="programPreview" href="#programs/<%- program._id %>" data-programProperty="program"><%- program.name %></a>
+  </span>
+</h1>
+<p class="actionMessage">
+  Wymagany<br>
+  ręczny<br>
+  reset
+</p>
+<p class="info">
+  Program <em><%- program.name %></em> uruchomiony
+  <% if (program.startUser) { %>
+  przez <em><%- program.startUser.name %></em>
+  <% } else { %>
+  <em>ręcznie</em>
+  <% } %>
+  o godz. <em><%- moment(program.startTime).format('HH:mm:ss') %></em>
+  został <span class="finalState">zatrzymany</span>
+  <% if (program.stopUser) { %>
+  przez <em><%- program.stopUser.name %></em>
+  <% } else { %>
+  <em>ręcznie</em>
+  <% } %>
+  po <em><%- program.duration %></em>
+  o godz. <em><%- moment(program.stopTime).format('HH:mm:ss') %></em>.
+</p>

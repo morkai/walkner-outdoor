@@ -8,6 +8,13 @@ define(
 
   'text!app/templates/diag/programDiag.html'
 ],
+/**
+ * @param {jQuery} $
+ * @param {Underscore} _
+ * @param {Backbone} Backbone
+ * @param {Viewport} viewport
+ * @param {String} programDiagTpl
+ */
 function(
   $,
   _,
@@ -15,69 +22,70 @@ function(
   viewport,
   programDiagTpl)
 {
-  var renderProgramDiag = _.template(programDiagTpl);
-
-  return Backbone.View.extend({
-
+  /**
+   * @class ProgramDiagView
+   * @constructor
+   * @extends Backbone.View
+   * @param {Object} [options]
+   */
+  var ProgramDiagView = Backbone.View.extend({
+    template: _.template(programDiagTpl),
     className: 'box',
-
     events: {
       'click .stop': 'stopProgram'
-    },
-
-    initialize: function()
-    {
-      var model = this.model;
-
-      if (model._id)
-      {
-        model.id = model._id;
-      }
-
-      var startedAt = moment(model.startedAt);
-
-      model.startTime = startedAt.valueOf();
-      model.startedAt = startedAt.format('LLLL');
-    },
-
-    destroy: function()
-    {
-      $(this.el).remove();
-      this.el = null;
-    },
-
-    render: function()
-    {
-      this.el.innerHTML = renderProgramDiag(this.model);
-
-      return this;
-    },
-
-    stopProgram: function(e)
-    {
-      var stopEl = this.$('.stop');
-
-      stopEl.attr('disabled', true);
-
-      $.ajax({
-        url: '/zones/' + this.model.zoneId,
-        type: 'POST',
-        data: {action: 'stopProgram'},
-        error: function(xhr)
-        {
-          viewport.msg.show({
-            type: 'error',
-            time: 2000,
-            text: 'Nie udało się zatrzymać programu: ' +
-                  (xhr.responseText || xhr.statusText)
-          });
-        },
-        complete: function()
-        {
-          stopEl.attr('disabled', false);
-        }
-      });
     }
-
   });
+
+  ProgramDiagView.prototype.initialize = function()
+  {
+    var model = this.model;
+
+    var startedAt = moment(model.startedAt);
+
+    model.startTime = startedAt.valueOf();
+    model.startedAt = startedAt.format('LLLL');
+  };
+
+  ProgramDiagView.prototype.destroy = function()
+  {
+    this.remove();
+  };
+
+  ProgramDiagView.prototype.render = function()
+  {
+    this.el.innerHTML = this.template(this.model);
+
+    return this;
+  };
+
+  /**
+   * @private
+   */
+  ProgramDiagView.prototype.stopProgram = function()
+  {
+    var stopEl = this.$('.stop');
+
+    stopEl.attr('disabled', true);
+
+    $.ajax({
+      url: '/zones/' + this.model.zoneId,
+      type: 'POST',
+      data: {action: 'stopProgram'},
+      error: function(xhr)
+      {
+        viewport.msg.show({
+          type: 'error',
+          time: 2000,
+          text: 'Nie udało się zatrzymać programu: ' +
+            (xhr.responseText || xhr.statusText)
+        });
+      },
+      complete: function()
+      {
+        stopEl.attr('disabled', false);
+      }
+    });
+  };
+
+  return ProgramDiagView;
 });

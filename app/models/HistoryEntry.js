@@ -1,27 +1,27 @@
-var _        = require('underscore');
+var _ = require('underscore');
 var mongoose = require('mongoose');
 
 var HistoryEntry = module.exports = new mongoose.Schema({
   zoneId: {
-    type    : mongoose.SchemaTypes.ObjectId,
+    type: mongoose.SchemaTypes.ObjectId,
     required: true
   },
   zoneName: {
-    type    : String,
+    type: String,
     required: true,
-    trim    : true
+    trim: true
   },
   programId: {
-    type    : mongoose.SchemaTypes.ObjectId,
+    type: mongoose.SchemaTypes.ObjectId,
     required: true
   },
   programName: {
-    type    : String,
+    type: String,
     required: true,
-    trim    : true
+    trim: true
   },
   programSteps: {
-    type    : [{}],
+    type: [{}],
     required: true
   },
   infinite: {
@@ -42,15 +42,15 @@ var HistoryEntry = module.exports = new mongoose.Schema({
     trim: true
   },
   startedAt: {
-    type    : Date,
+    type: Date,
     required: true
   },
   finishedAt: {
     type: Date
   },
   finishState: {
-    type    : String,
-    enum    : ['finish', 'stop', 'error']
+    type: String,
+    enum: ['finish', 'stop', 'error']
   },
   errorMessage: {
     type: String
@@ -61,7 +61,7 @@ var HistoryEntry = module.exports = new mongoose.Schema({
 
 function finish(id, state, data, cb)
 {
-  data.finishedAt  = new Date();
+  data.finishedAt = new Date();
   data.finishState = state;
 
   mongoose.model('HistoryEntry').update({_id: id}, data, cb || function() {});
@@ -70,10 +70,10 @@ function finish(id, state, data, cb)
 HistoryEntry.statics.markInterruptedEntries = function(done)
 {
   var condition = {finishState: {$exists: false}};
-  var options   = {multi: true};
-  var data      = {
-    finishState : 'error',
-    finishedAt  : new Date(),
+  var options = {multi: true};
+  var data = {
+    finishState: 'error',
+    finishedAt: new Date(),
     errorMessage: 'Nagłe wyłączenie systemu.'
   };
 
@@ -102,7 +102,7 @@ HistoryEntry.statics.stopped = function(id, user, cb)
 
   if (user)
   {
-    data.stopUserId   = user._id;
+    data.stopUserId = user._id;
     data.stopUserName = user.name;
   }
 

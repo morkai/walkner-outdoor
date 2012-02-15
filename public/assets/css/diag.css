@@ -1,52 +1,41 @@
-.diag
-{
+.diag {
   font-size: .8em;
   margin-top: 1em;
 }
-.diag h2
-{
+.diag h2 {
   font-size: 1.5em;
   margin: 0 .75em;
 }
-.diag .box
-{
+.diag .box {
   display: inline-block;
   vertical-align: top;
 }
-.diag .content
-{
+.diag .content {
   position: relative;
   margin-right: 0;
 }
-.diag .offline
-{
+.diag .offline {
   border: 1px solid #F00;
 }
-.diag .online
-{
+.diag .online {
   border: 1px solid #0F0;
 }
-.diag .actions
-{
+.diag .actions {
   margin-top: .5em;
   font-size: 1.5em;
   text-align: center;
 }
-.diag .action
-{
+.diag .action {
   display: none;
 }
 .diag .online .stop,
-.diag .offline .start
-{
+.diag .offline .start {
   display: inline-block;
 }
-.diag .app .property
-{
+.diag .app .property {
   display: inline-block;
   margin: 0 0 0 1em;
 }
-.diag .app .property:first-child
-{
+.diag .app .property:first-child {
   margin-left: 0;
 }

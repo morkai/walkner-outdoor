@@ -41,10 +41,10 @@ function(
    */
   var ControllersRouter = Backbone.Router.extend({
     routes: {
-      'controllers'           : 'list',
-      'controllers;add'       : 'add',
-      'controllers/:id'       : 'view',
-      'controllers/:id;edit'  : 'edit',
+      'controllers': 'list',
+      'controllers;add': 'add',
+      'controllers/:id': 'view',
+      'controllers/:id;edit': 'edit',
       'controllers/:id;delete': 'del'
     }
   });

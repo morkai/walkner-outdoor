@@ -1,0 +1,19 @@
+<div class="state" title="Gotowy do pracy :)"></div>
+<h1>
+  <span data-property="name" title="Strefa"><%- name %></span>:
+  <span class="assignedProgram" title="Przypisany program">
+    <% if (assignedProgram) { %>
+    <a class="programPreview" href="#programs/<%- assignedProgram._id %>" data-programProperty="assignedProgram">
+      <%- assignedProgram.name %>
+    </a>
+    <% } else { %>
+    -
+    <% } %>
+  </span>
+</h1>
+<p class="actionMessage">
+  Wymagany<br>
+  ręczny<br>
+  reset
+</p>
+<input class="startProgram action blue" type="button" value="Start">

@@ -19,7 +19,7 @@ function(Backbone, HistoryEntry)
    */
   var History = Backbone.Collection.extend({
     model: HistoryEntry,
-    url  : '/history'
+    url: '/history'
   });
 
   return History;

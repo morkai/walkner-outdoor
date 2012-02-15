@@ -10,6 +10,15 @@ define(
 
   'text!app/templates/users/form.html'
 ],
+/**
+ * @param {jQuery} $
+ * @param {Underscore} _
+ * @param {Backbone} Backbone
+ * @param {function(new:User)} User
+ * @param {Viewport} viewport
+ * @param {function(new:PageLayout)} PageLayout
+ * @param {String} formTpl
+ */
 function(
   $,
   _,
@@ -19,12 +28,15 @@ function(
   PageLayout,
   formTpl)
 {
-  var renderForm = _.template(formTpl);
-
-  return Backbone.View.extend({
-
+  /**
+   * @class AddUserFormView
+   * @constructor
+   * @extends Backbone.View
+   * @param {Object} [options]
+   */
+  var AddUserFormView = Backbone.View.extend({
+    template: _.template(formTpl),
     layout: PageLayout,
-
     breadcrumbs: function()
     {
       return [
@@ -32,106 +44,108 @@ function(
         'Nowy użytkownik'
       ];
     },
-
     actions: function()
     {
       return [{
-        text     : 'Zapisz',
+        text: 'Zapisz',
         className: 'blue save action',
-        handler  : this.submitForm
+        handler: this.submitForm
       }];
     },
-
     events: {
-      'submit .form' : 'submitForm'
-    },
+      'submit .form': 'submitForm'
+    }
+  });
 
-    initialize: function()
+  AddUserFormView.prototype.initialize = function()
+  {
+    _.bindAll(this, 'submitForm');
+  };
+
+  AddUserFormView.prototype.destroy = function()
+  {
+    this.remove();
+  };
+
+  AddUserFormView.prototype.render = function()
+  {
+    var user = this.model.toTemplateData();
+
+    this.el.innerHTML = this.template({
+      action: '/users',
+      user: user
+    });
+
+    return this;
+  };
+
+  /**
+   * @private
+   */
+  AddUserFormView.prototype.submitForm = function()
+  {
+    var formEl = this.$('form.user');
+    var data = formEl.toObject({skipEmpty: true}).user || {};
+    var error;
+
+    if (!data.name)
     {
-      _.bindAll(this, 'submitForm');
-    },
-
-    destroy: function()
+      error = 'Imię i nazwisko jest wymagane.';
+    }
+    else if (!data.email)
     {
-      this.remove();
-    },
-
-    render: function()
+      error = 'Adres e-mail jest wymagany.';
+    }
+    else if (!data.login)
     {
-      var user = this.model.toTemplateData();
-
-      this.el.innerHTML = renderForm({
-        action: '/users',
-        user  : user
-      });
-
-      return this;
-    },
-
-    submitForm: function(e)
+      error = 'Login jest wymagany.';
+    }
+    else if (data.pin !== '' && data.pin !== data.pin2)
     {
-      var formEl = this.$('form.user');
-      var data   = formEl.toObject({skipEmpty: true}).user || {};
-      var error;
+      error = 'Podane PINy muszą być identyczne.';
+    }
+    else if (data.password !== data.password2)
+    {
+      error = 'Podane hasła muszą być identyczne.';
+    }
 
-      if (!data.name)
-      {
-        error = 'Imię i nazwisko jest wymagane.';
-      }
-      else if (!data.email)
-      {
-        error = 'Adres e-mail jest wymagany.';
-      }
-      else if (!data.login)
-      {
-        error = 'Login jest wymagany.';
-      }
-      else if (data.pin !== '' && data.pin !== data.pin2)
-      {
-        error = 'Podane PINy muszą być identyczne.';
-      }
-      else if (data.password !== data.password2)
-      {
-        error = 'Podane hasła muszą być identyczne.';
-      }
-
-      if (error)
-      {
-        viewport.msg.show({
-          type: 'error',
-          time: 2000,
-          text: error
-        });
-
-        return false;
-      }
-
-      this.model.save(data, {
-        success: function(user)
-        {
-          viewport.msg.show({
-            type: 'success',
-            time: 5000,
-            text: 'Nowy użytkownik został dodany!'
-          });
-
-          Backbone.history.navigate(
-            'users/' + user.get('_id'), true
-          );
-        },
-        error: function(user, xhr)
-        {
-          viewport.msg.show({
-            type: 'error',
-            time: 5000,
-            text: 'Nie udało się zapisać nowego użytkownika:<br>' +
-                  xhr.responseText
-          });
-        }
+    if (error)
+    {
+      viewport.msg.show({
+        type: 'error',
+        time: 2000,
+        text: error
       });
 
       return false;
     }
 
-  });
+    this.model.save(data, {
+      success: function(user)
+      {
+        viewport.msg.show({
+          type: 'success',
+          time: 5000,
+          text: 'Nowy użytkownik został dodany!'
+        });
+
+        Backbone.history.navigate(
+          'users/' + user.id, true
+        );
+      },
+      error: function(user, xhr)
+      {
+        viewport.msg.show({
+          type: 'error',
+          time: 5000,
+          text: 'Nie udało się zapisać nowego użytkownika:<br>'
+            + xhr.responseText
+        });
+      }
+    });
+
+    return false;
+  };
+
+  return AddUserFormView;
 });

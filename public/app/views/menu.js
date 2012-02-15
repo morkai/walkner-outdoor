@@ -1,11 +1,11 @@
 define(
 [
-  'jQuery',
-  'Underscore',
-
   'app/views/MenuView'
 ],
-function($, _, MenuView)
+/**
+ * @param {function(new:MenuView)} MenuView
+ */
+function(MenuView)
 {
   return new MenuView();
 });

@@ -17,13 +17,63 @@ function(_, Backbone)
    * @param {Object} [options]
    */
   var Program = Backbone.Model.extend({
-    urlRoot : '/programs',
+    urlRoot: '/programs',
     defaults: {
-      name    : '',
+      name: '',
       infinite: false,
-      steps   : []
+      steps: [],
+      totalTime: 0
     }
   });
+
+  /**
+   * @param {Number} startTimeOrTime
+   * @param {Number} stopTime
+   * @return {String}
+   */
+  Program.calcDuration = function(startTimeOrTime, stopTime)
+  {
+    var time;
+
+    if (arguments.length === 1)
+    {
+      time = startTimeOrTime;
+    }
+    else
+    {
+      time = (stopTime - startTimeOrTime) / 1000;
+    }
+
+    var duration = '';
+    var hours = Math.floor(time / 3600);
+
+    if (hours > 0)
+    {
+      duration += ' ' + hours + ' h';
+      time = time % 3600;
+    }
+
+    var minutes = Math.floor(time / 60);
+
+    if (minutes > 0)
+    {
+      duration += ' ' + minutes + ' min';
+      time = time % 60;
+    }
+
+    var seconds = time;
+
+    if (seconds >= 1)
+    {
+      duration += ' ' + Math.round(seconds) + ' s';
+    }
+    else if (seconds > 0 && duration === '')
+    {
+      duration += ' ' + seconds * 1000 + ' ms';
+    }
+
+    return duration.substr(1);
+  };
 
   /**
    * @param {Array.<Object>} steps
@@ -85,8 +135,8 @@ function(_, Backbone)
           _.each(value, function(step)
           {
             step = {
-              timeOn    : parseInt(step.timeOn) || 0,
-              timeOff   : parseInt(step.timeOff) || 0,
+              timeOn: parseInt(step.timeOn) || 0,
+              timeOff: parseInt(step.timeOff) || 0,
               iterations: parseInt(step.iterations) || 0
             };
 
@@ -114,11 +164,13 @@ function(_, Backbone)
     for (var i = data.steps.length; i < minSteps; ++i)
     {
       data.steps.push({
-        timeOn    : '',
-        timeOff   : '',
+        timeOn: '',
+        timeOff: '',
         iterations: ''
       });
     }
+
+    data.duration = Program.calcDuration(data.totalTime);
 
     return data;
   };

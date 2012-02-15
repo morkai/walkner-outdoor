@@ -1,36 +1,36 @@
 var createHash = require('crypto').createHash;
-var _          = require('underscore');
-var mongoose   = require('mongoose');
+var _ = require('underscore');
+var mongoose = require('mongoose');
 
 var User = module.exports = new mongoose.Schema({
   name: {
-    type    : String,
+    type: String,
     required: true,
-    trim    : true
+    trim: true
   },
   email: {
-    type     : String,
-    required : true,
-    trim     : true,
+    type: String,
+    required: true,
+    trim: true,
     lowercase: true
   },
   login: {
-    type    : String,
+    type: String,
     required: true,
-    trim    : true,
-    unique  : true
+    trim: true,
+    unique: true
   },
   passwordSalt: {
-    type    : String,
+    type: String,
     required: true
   },
   password: {
-    type    : String,
+    type: String,
     required: true,
-    trim    : true
+    trim: true
   },
   pin: {
-    type  : Number,
+    type: Number,
     unique: true
   },
   privileges: {
@@ -44,14 +44,16 @@ User.statics.hashPassword = function(password, salt)
 {
   if (!salt)
   {
-    salt = createHash('sha1').update(Date.now().toString())
-                             .update(Math.random().toString())
-                             .digest('hex');
+    salt = createHash('sha1')
+      .update(Date.now().toString())
+      .update(Math.random().toString())
+      .digest('hex');
   }
 
-  var hash = createHash('sha256').update(salt)
-                                 .update(password)
-                                 .digest('hex');
+  var hash = createHash('sha256')
+    .update(salt)
+    .update(password)
+    .digest('hex');
 
   return {
     salt: salt,

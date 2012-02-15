@@ -10,12 +10,14 @@ exports.isControllerStarted = function(controllerId)
 
 exports.startController = function(controller, done)
 {
-  if (exports.isControllerStarted(controller.id))
+  if (exports.isControllerStarted(controller._id))
   {
     return done();
   }
 
   var controllerProcess = new ControllerProcess(controller);
+
+  controllerProcess.onCrash = onControllerProcessCrash;
 
   controllerProcess.startController(function(err)
   {
@@ -24,11 +26,16 @@ exports.startController = function(controller, done)
       return done(err);
     }
 
-    controllerProcesses[controller.id] = controllerProcess;
+    controllerProcesses[controller._id] = controllerProcess;
 
     done();
   });
 };
+
+function onControllerProcessCrash(controllerId)
+{
+  delete controllerProcesses[controllerId];
+}
 
 exports.stopController = function(controllerId, done)
 {
@@ -50,7 +57,7 @@ exports.stopController = function(controllerId, done)
 
     for (var zoneId in zoneToControllerMap)
     {
-      if (zoneToControllerMap[zoneId] === controllerId)
+      if (zoneToControllerMap[zoneId] === controllerId.toString())
       {
         delete zoneToControllerMap[zoneId];
       }
@@ -69,7 +76,7 @@ exports.startZone = function(zone, done)
 {
   var controllerId = (zone.controller || '').toString();
 
-  if (exports.isZoneStarted(zone.id))
+  if (exports.isZoneStarted(zone._id))
   {
     return done();
   }
@@ -88,7 +95,7 @@ exports.startZone = function(zone, done)
       return done(err);
     }
 
-    zoneToControllerMap[zone.id] = controllerId;
+    zoneToControllerMap[zone._id] = controllerId;
 
     done();
   });
@@ -118,7 +125,7 @@ exports.stopZone = function(zoneId, done)
   });
 };
 
-exports.startProgram = function(program, zoneId, user, onFinish, done)
+exports.startProgram = function(program, zoneId, user, done)
 {
   var controllerId = zoneToControllerMap[zoneId];
 
@@ -129,10 +136,10 @@ exports.startProgram = function(program, zoneId, user, onFinish, done)
 
   var controllerProcess = controllerProcesses[controllerId];
 
-  controllerProcess.startProgram(program, zoneId, user, onFinish, done);
+  controllerProcess.startProgram(program, zoneId, user, done);
 };
 
-exports.stopProgram = function(zoneId, done)
+exports.stopProgram = function(zoneId, user, done)
 {
   var controllerId = zoneToControllerMap[zoneId];
 
@@ -143,7 +150,7 @@ exports.stopProgram = function(zoneId, done)
 
   var controllerProcess = controllerProcesses[controllerId];
 
-  controllerProcess.stopProgram(zoneId, done);
+  controllerProcess.stopProgram(zoneId, user, done);
 };
 
 exports.getStartedControllers = function()
@@ -152,10 +159,40 @@ exports.getStartedControllers = function()
 
   for (var controllerId in controllerProcesses)
   {
-    controllers[controllerId] = controllerProcesses[controllerId].controller;
+    var controllerProcess = controllerProcesses[controllerId];
+
+    if (!controllerProcess)
+    {
+      delete controllerProcesses[controllerId];
+      continue;
+    }
+
+    controllers[controllerId] = controllerProcess.controller;
   }
 
   return controllers;
+};
+
+exports.getStartedZone = function(zoneId)
+{
+  var controllerId = zoneToControllerMap[zoneId];
+  var controllerProcess = controllerProcesses[controllerId];
+
+  if (!controllerProcess)
+  {
+    delete controllerProcesses[controllerId];
+    return null;
+  }
+
+  var activeZone = controllerProcess.zones[zoneId];
+
+  if (!activeZone)
+  {
+    delete controllerProcess.zones[zoneId];
+    return null;
+  }
+
+  return activeZone;
 };
 
 exports.getStartedZones = function()
@@ -164,10 +201,60 @@ exports.getStartedZones = function()
 
   for (var zoneId in zoneToControllerMap)
   {
-    var controllerProcess = controllerProcesses[zoneToControllerMap[zoneId]];
+    var controllerId = zoneToControllerMap[zoneId];
+    var controllerProcess = controllerProcesses[controllerId];
 
-    zones[zoneId] = controllerProcess.zones[zoneId];
+    if (!controllerProcess)
+    {
+      delete controllerProcesses[controllerId];
+      continue;
+    }
+
+    var activeZone = controllerProcess.zones[zoneId];
+
+    if (!activeZone)
+    {
+      delete controllerProcess.zones[zoneId];
+      continue;
+    }
+
+    zones[zoneId] = activeZone.toJSON();
+    zones[zoneId].controller = controllerId;
   }
 
   return zones;
+};
+
+exports.getStartedPrograms = function()
+{
+  var historyEntries = [];
+
+  for (var zoneId in zoneToControllerMap)
+  {
+    var controllerId = zoneToControllerMap[zoneId];
+    var controllerProcess = controllerProcesses[controllerId];
+
+    if (!controllerProcess)
+    {
+      delete controllerProcesses[controllerId];
+      continue;
+    }
+
+    var activeZone = controllerProcess.zones[zoneId];
+
+    if (!activeZone)
+    {
+      delete controllerProcess.zones[zoneId];
+      continue;
+    }
+
+    if (activeZone.state !== 'programRunning' || !activeZone.historyEntry)
+    {
+      continue;
+    }
+
+    historyEntries.push(activeZone.historyEntry.toJSON());
+  }
+
+  return historyEntries;
 };

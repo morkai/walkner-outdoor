@@ -2,11 +2,18 @@ define(function()
 {
   var user = window && window.USER ? window.USER : {};
 
+  /**
+   * @return {Boolean}
+   */
   user.isLoggedIn = function()
   {
     return user.loggedIn === true;
   };
 
+  /**
+   * @param {String|Array.<String>} privilege
+   * @return {Boolean}
+   */
   user.isAllowedTo = function(privilege)
   {
     if (!user.privileges)

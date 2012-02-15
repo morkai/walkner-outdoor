@@ -17,15 +17,15 @@ function(_, Backbone)
    * @param {Object} [options]
    */
   var User = Backbone.Model.extend({
-    urlRoot : '/users',
+    urlRoot: '/users',
     defaults: {
-      name      : '',
-      email     : '',
-      login     : '',
-      password  : '',
-      password2 : '',
-      pin       : '',
-      pin2      : '',
+      name: '',
+      email: '',
+      login: '',
+      password: '',
+      password2: '',
+      pin: '',
+      pin2: '',
       privileges: {}
     }
   });
