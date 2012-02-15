@@ -34,3 +34,6 @@ table.program-steps {
 .program-steps tr:last-child td {
   padding-bottom: 0;
 }
+.program-steps.mutable tr:last-child td {
+  padding-bottom: .5em;
+}
