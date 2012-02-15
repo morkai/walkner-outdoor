@@ -4,8 +4,8 @@ define(
   'Underscore',
   'Backbone',
 
-  'app/views/PageLayout',
   'app/views/viewport',
+  'app/views/PageLayout',
 
   'text!app/templates/history/purgeForm.html'
 ],
