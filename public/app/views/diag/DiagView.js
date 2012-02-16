@@ -273,8 +273,6 @@ function(
 
     if (data.state === 'programRunning')
     {
-      console.log(data);
-
       this.addProgram({
         _id: data.historyEntry,
         zoneId: data._id,

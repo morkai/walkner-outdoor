@@ -200,7 +200,6 @@ function(
    */
   ActiveZonesView.prototype.onZoneStart = function(activeZone)
   {
-    console.log('zone started', activeZone._id);
     this.collection.add(activeZone);
   };
 
@@ -210,7 +209,6 @@ function(
    */
   ActiveZonesView.prototype.onZoneStop = function(zoneId)
   {
-    console.log('zone stopped', zoneId);
     var activeZone = this.collection.get(zoneId);
 
     if (activeZone)
