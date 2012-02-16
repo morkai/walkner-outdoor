@@ -295,10 +295,11 @@ function(
       }
     });
 
+    stepsEl.find('.focused').removeClass('focused');
     stepsEl
       .eq(progress.stepIndex)
       .find(progress.state === 'on' ? '.timeOn' : '.timeOff')
-        .focus();
+        .addClass('focused');
   };
 
   /**

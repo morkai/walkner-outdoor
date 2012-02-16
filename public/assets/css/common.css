@@ -236,3 +236,6 @@ body {
 .dialog .properties {
   text-align: left;
 }
+.focused {
+  outline: 3px solid #F50;
+}
