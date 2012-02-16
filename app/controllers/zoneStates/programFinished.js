@@ -9,7 +9,9 @@ exports.enter = function(oldState, options, done)
   this.inputChangeListener = onInputChange;
 
   this.setLeds({red: false});
-  this.blinkLed('green', false);
+
+  this.cancelProgramFinishedLedBlinking = this.blinkLed('green', false);
+
   this.finishProgram();
 
   done();
@@ -19,7 +21,8 @@ exports.leave = function(newState, options, done)
 {
   this.inputChangeListener = null;
 
-  this.stopLedBlinking();
+  this.cancelProgramFinishedLedBlinking();
+  delete this.cancelProgramFinishedLedBlinking;
 
   done();
 };

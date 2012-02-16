@@ -7,13 +7,13 @@ exports.validLeaveStates = [
 
 exports.enter = function(oldState, options, done)
 {
-  this.setState(false);
-  this.setLeds({green: false});
-  this.blinkLed('red', false);
-
+  this.inputChangeListener = onInputChange;
   this.doesNeedReset = false;
 
-  this.inputChangeListener = onInputChange;
+  this.setState(false);
+  this.setLeds({green: false});
+
+  this.cancelConnectedLedBlinking = this.blinkLed('red', false);
 
   this.startInputMonitor();
 
@@ -22,12 +22,11 @@ exports.enter = function(oldState, options, done)
 
 exports.leave = function(newState, options, done)
 {
-  this.stopLedBlinking();
-
-  delete this.stopButtonChangeCount;
   this.inputChangeListener = null;
-
   this.doesNeedReset = false;
+
+  this.cancelConnectedLedBlinking();
+  delete this.cancelConnectedLedBlinking;
 
   done();
 };

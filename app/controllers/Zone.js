@@ -126,9 +126,17 @@ Zone.prototype.setLeds = function(leds, done)
 /**
  * @param {String} led
  * @param {Boolean} nextState
+ * @param {String} [timer]
  */
-Zone.prototype.blinkLed = function(led, nextState)
+Zone.prototype.blinkLed = function(led, nextState, timer)
 {
+  if (typeof timer === 'undefined')
+  {
+    timer = Math.random().toString();
+
+    this.timers[timer] = null;
+  }
+
   var zone = this;
   var leds = {};
 
@@ -136,49 +144,79 @@ Zone.prototype.blinkLed = function(led, nextState)
 
   zone.setLeds(leds, function(err)
   {
+    if (!(timer in zone.timers))
+    {
+      return;
+    }
+
     if (!err)
     {
       nextState = !nextState;
     }
 
-    zone.timers.blinkLeds = setTimeout(
+    zone.timers[timer] = setTimeout(
       function()
       {
-        zone.blinkLed(led, nextState);
+        if (timer in zone.timers)
+        {
+          zone.blinkLed(led, nextState, timer);
+        }
       },
       BLINK_FREQUENCY
     );
   });
+
+  return function()
+  {
+    clearTimeout(zone.timers[timer]);
+    delete zone.timers[timer];
+  };
 };
 
 /**
  * @param {Boolean} nextState
+ * @param {String} [timer]
  */
-Zone.prototype.blinkLeds = function(nextState)
+Zone.prototype.blinkLeds = function(nextState, timer)
 {
+  if (typeof timer === 'undefined')
+  {
+    timer = Math.random().toString();
+
+    this.timers[timer] = null;
+  }
+
   var zone = this;
 
   zone.setLeds({green: nextState, red: !nextState}, function(err)
   {
+    if (!(timer in zone.timers))
+    {
+      return;
+    }
+
     if (!err)
     {
       nextState = !nextState;
     }
 
-    zone.timers.blinkLeds = setTimeout(
+    zone.timers[timer] = setTimeout(
       function()
       {
-        zone.blinkLeds(nextState);
+        if (timer in zone.timers)
+        {
+          zone.blinkLeds(nextState, timer);
+        }
       },
       BLINK_FREQUENCY
     );
   });
-};
 
-Zone.prototype.stopLedBlinking = function()
-{
-  clearTimeout(this.timers.blinkLeds);
-  delete this.timers.blinkLeds;
+  return function()
+  {
+    clearTimeout(zone.timers[timer]);
+    delete zone.timers[timer];
+  };
 };
 
 Zone.prototype.startInputMonitor = function()
@@ -190,7 +228,14 @@ Zone.prototype.startInputMonitor = function()
     zone.getInput('stopButton', function()
     {
       zone.timers.inputMonitor = setTimeout(
-        getStopButtonInput, INPUT_MONITOR_INTERVAL
+        function()
+        {
+          if (zone.timers.inputMonitor)
+          {
+            getStopButtonInput();
+          }
+        },
+        INPUT_MONITOR_INTERVAL
       );
     });
   }
