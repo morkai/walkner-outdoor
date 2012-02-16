@@ -5,15 +5,16 @@ process.on('uncaughtException', function(err)
   console.error('Uncaught exception:\n%s', err.stack);
 });
 
-require('fs').writeFile(
-  __dirname + '/../var/pids/server.pid', process.pid
-);
+const PID_FILE = __dirname + '/../var/pids/server.pid';
 
+var fs = require('fs');
 var express = require('express');
 var MongoStore = require('connect-mongodb');
 var io = require('socket.io');
 var mongoose = require('mongoose');
 var step = require('step');
+
+fs.unlink(PID_FILE, function() {});
 
 (function()
 {
@@ -117,6 +118,8 @@ step(
   },
   function startStep()
   {
+    fs.writeFile(PID_FILE, process.pid);
+
     console.info('Started in `%s` environment!', app.settings.env);
 
     app.startTime = Date.now();
