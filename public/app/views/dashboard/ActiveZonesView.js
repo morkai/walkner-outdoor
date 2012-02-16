@@ -46,7 +46,7 @@ function(
       'zone state changed': 'zoneStateChanged',
       'zone started': 'onZoneStart',
       'zone stopped': 'onZoneStop',
-      'connect': 'refresh'
+      'reconnect': 'refresh'
     }
   });
 
