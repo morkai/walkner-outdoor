@@ -127,6 +127,7 @@ Zone.prototype.setLeds = function(leds, done)
  * @param {String} led
  * @param {Boolean} nextState
  * @param {String} [timer]
+ * @return {Function} Cancel function.
  */
 Zone.prototype.blinkLed = function(led, nextState, timer)
 {
@@ -176,6 +177,7 @@ Zone.prototype.blinkLed = function(led, nextState, timer)
 /**
  * @param {Boolean} nextState
  * @param {String} [timer]
+ * @return {Function} Cancel function.
  */
 Zone.prototype.blinkLeds = function(nextState, timer)
 {
@@ -216,6 +218,37 @@ Zone.prototype.blinkLeds = function(nextState, timer)
   {
     clearTimeout(zone.timers[timer]);
     delete zone.timers[timer];
+  };
+};
+
+/**
+ * Keep setting the zone state to OFF util the request succeeds or is canceled.
+ *
+ * @return {Function} Cancel function.
+ */
+Zone.prototype.turnOff = function()
+{
+  var cancelled = false;
+  var zone = this;
+
+  function turnOff()
+  {
+    zone.setState(false, function(err)
+    {
+      if (cancelled || !err)
+      {
+        return;
+      }
+
+      turnOff();
+    });
+  }
+
+  turnOff();
+
+  return function()
+  {
+    cancelled = true;
   };
 };
 

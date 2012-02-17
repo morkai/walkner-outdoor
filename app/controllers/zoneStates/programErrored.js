@@ -8,8 +8,7 @@ exports.enter = function(oldState, options, done)
 {
   this.inputChangeListener = onInputChange;
 
-  this.setState(false);
-
+  this.cancelProgramErroredStateReset = this.turnOff();
   this.cancelProgramErroredLedBlinking = this.blinkLeds(false);
 
   this.finishProgram(options.error.message || options.error);
@@ -20,6 +19,9 @@ exports.enter = function(oldState, options, done)
 exports.leave = function(newState, options, done)
 {
   this.inputChangeListener = null;
+
+  this.cancelProgramErroredStateReset();
+  delete this.cancelProgramErroredStateReset;
 
   this.cancelProgramErroredLedBlinking();
   delete this.cancelProgramErroredLedBlinking;
