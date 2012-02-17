@@ -118,7 +118,7 @@ function(
 
     viewport.showDialog(this.enterPinFormView);
 
-    var programName = this.model.get('state').programName;
+    var programName = this.model.get('program').name;
     var zoneName = this.model.get('name');
 
     $(this.enterPinFormView.el).prepend(
