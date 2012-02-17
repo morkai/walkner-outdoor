@@ -115,6 +115,7 @@ Zone.prototype.getInput = function(input, done)
 };
 
 /**
+ * @param {Object.<String, Boolean>}
  * @param {Boolean} newState
  * @param {?Function} [done]
  */
@@ -245,6 +246,39 @@ Zone.prototype.turnOff = function()
   }
 
   turnOff();
+
+  return function()
+  {
+    cancelled = true;
+  };
+};
+
+/**
+ * Keep setting the specified LED's state util the request succeeds
+ * or is canceled.
+ *
+ * @param {Object.<String, Boolean>} leds
+ * @return {Function} Cancel function.
+ */
+Zone.prototype.forceLeds = function(leds)
+{
+  var cancelled = false;
+  var zone = this;
+
+  function forceLeds()
+  {
+    zone.setLeds(leds, function(err)
+    {
+      if (cancelled || !err)
+      {
+        return;
+      }
+
+      forceLeds();
+    });
+  }
+
+  forceLeds();
 
   return function()
   {

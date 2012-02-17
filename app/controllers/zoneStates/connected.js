@@ -10,9 +10,8 @@ exports.enter = function(oldState, options, done)
   this.inputChangeListener = onInputChange;
   this.doesNeedReset = false;
 
-  this.setState(false);
-  this.setLeds({green: false});
-
+  this.cancelConnectedStateReset = this.turnOff();
+  this.cancelConnectedGreenLedReset = this.forceLeds({green: false});
   this.cancelConnectedLedBlinking = this.blinkLed('red', false);
 
   this.startInputMonitor();
@@ -24,6 +23,12 @@ exports.leave = function(newState, options, done)
 {
   this.inputChangeListener = null;
   this.doesNeedReset = false;
+
+  this.cancelConnectedStateReset();
+  delete this.cancelConnectedStateReset;
+
+  this.cancelConnectedGreenLedReset();
+  delete this.cancelConnectedGreenLedReset;
 
   this.cancelConnectedLedBlinking();
   delete this.cancelConnectedLedBlinking;
