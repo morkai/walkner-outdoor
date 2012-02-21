@@ -177,7 +177,7 @@ function($, _, Backbone, Program, PageLayout, stepsTableTpl)
       }
     }
 
-    input.value = seconds;
+    input.value = seconds === 0 ? '' : seconds;
   };
 
   return ProgramStepsTableView;
