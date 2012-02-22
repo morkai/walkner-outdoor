@@ -5,6 +5,7 @@
   background: #F1F1F1;
   background: -moz-linear-gradient(#FFF, #F1F1F1);
   background: -webkit-linear-gradient(#FFF, #F1F1F1);
+  background: -o-linear-gradient(#FFF, #F1F1F1);
   background: -ms-linear-gradient(#FFF, #F1F1F1);
   background: linear-gradient(#FFF, #F1F1F1);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F1F1F1');
@@ -23,10 +24,16 @@
   margin-right: .25em;
   -webkit-transition: all .2s ease-in-out;
   -moz-transition: all .2s ease-in-out;
+  -ms-transition: all .2s ease-in-out;
+  -o-transition: all .2s ease-in-out;
   transition: all .2s ease-in-out;
 }
 .activeZone .state.highlight {
   -webkit-transform: scale(1.2);
+  -moz-transform: scale(1.2);
+  -ms-transform: scale(1.2);
+  -o-transform: scale(1.2);
+  transform: scale(1.2);
 }
 .activeZone h1 {
   display: inline-block;
@@ -48,6 +55,7 @@
   background: #FFF;
   background: -moz-linear-gradient(#F1F1F1, #FFF);
   background: -webkit-linear-gradient(#F1F1F1, #FFF);
+  background: -o-linear-gradient(#F1F1F1, #FFF);
   background: -ms-linear-gradient(#F1F1F1, #FFF);
   background: linear-gradient(#F1F1F1, #FFF);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#F1F1F1', endColorstr='#FFFFFF');
@@ -78,20 +86,23 @@
   background: #808080;
   background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #808080 100%);
   background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #808080 100%);
+  background: -o-radial-gradient(center, ellipse cover, #FEFCEA 0%, #808080 100%);
   background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #808080 100%);
   background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #808080 100%);
 }
 .connected .state {
-  background: #F0A000;
-  background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
-  background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
-  background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
-  background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
+  background: #007FFF;
+  background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #007FFF 100%);
+  background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #007FFF 100%);
+  background: -o-radial-gradient(center, ellipse cover, #FEFCEA 0%, #007FFF 100%);
+  background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #007FFF 100%);
+  background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #007FFF 100%);
 }
 .programRunning .state {
   background: #FFD700;
   background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FFD700 100%);
   background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FFD700 100%);
+  background: -o-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FFD700 100%);
   background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FFD700 100%);
   background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #FFD700 100%);
 }
@@ -99,21 +110,32 @@
   background: #5AAB25;
   background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #5AAB25 100%);
   background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #5AAB25 100%);
+  background: -o-radial-gradient(center, ellipse cover, #FEFCEA 0%, #5AAB25 100%);
   background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #5AAB25 100%);
   background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #5AAB25 100%);
 }
 .programFinished .finalState {
   color: #5AAB25;
 }
-.programStopped .state,
+.programStopped .state {
+  background: #F0A000;
+  background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
+  background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
+  background: -o-radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
+  background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
+  background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #F0A000 100%);
+}
+.programStopped .finalState {
+  color: #F0A000;
+}
 .programErrored .state {
   background: #FF3A3A;
   background: -moz-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FF3A3A 100%);
   background: -webkit-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FF3A3A 100%);
+  background: -o-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FF3A3A 100%);
   background: -ms-radial-gradient(center, ellipse cover, #FEFCEA 0%, #FF3A3A 100%);
   background: radial-gradient(center, ellipse cover, #FEFCEA 0%, #FF3A3A 100%);
 }
-.programStopped .finalState,
 .programErrored .finalState {
   color: #FF3A3A;
 }
@@ -139,6 +161,7 @@
   background-image: -ms-linear-gradient(top, #7EC44F, #5AAB25);
   background-image: -moz-linear-gradient(top, #7EC44F, #5AAB25);
   background-image: -webkit-linear-gradient(top, #7EC44F, #5AAB25);
+  background-image: -o-linear-gradient(top, #7EC44F, #5AAB25);
   filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#7EC44F', EndColorStr='#5AAB25')";
 }
 .timeToEnd {
@@ -163,6 +186,7 @@
   background: #F1F1F1;
   background: -moz-linear-gradient(#FFF, #F1F1F1);
   background: -webkit-linear-gradient(#FFF, #F1F1F1);
+  background: -o-linear-gradient(#FFF, #F1F1F1);
   background: -ms-linear-gradient(#FFF, #F1F1F1);
   background: linear-gradient(#FFF, #F1F1F1);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FFFFFF', endColorstr = '#F1F1F1');
