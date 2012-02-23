@@ -1,6 +1,7 @@
 const BLINK_FREQUENCY = 1000;
 
-const INPUT_MONITOR_INTERVAL = 100;
+const STOP_BUTTON_MONITOR_INTERVAL = 100;
+const CONNECTED_INPUT_MONITOR_INTERVAL = 500;
 
 var util = require('util');
 var step = require('step');
@@ -15,10 +16,11 @@ function Zone(controller, zone)
   this.zone = zone;
   this.program = null;
   this.currentState = 'disconnected';
-  this.inputs = {stopButton: -1};
+  this.inputs = {stopButton: -1, connected: -1};
   this.timers = {};
   this.inputChangeListener = null;
   this.doesNeedReset = false;
+  this.doesNeedPlugIn = false;
 }
 
 /**
@@ -103,6 +105,8 @@ Zone.prototype.getInput = function(input, done)
     if (oldValue !== newValue)
     {
       zone.inputs[input] = newValue;
+
+      zone.onInputChange(input, newValue, oldValue);
 
       if (zone.inputChangeListener)
       {
@@ -290,32 +294,42 @@ Zone.prototype.startInputMonitor = function()
 {
   var zone = this;
 
-  function getStopButtonInput()
+  function getInput(input, interval)
   {
-    zone.getInput('stopButton', function()
+    var timer = input + 'InputMonitor';
+
+    zone.getInput(input, function()
     {
-      zone.timers.inputMonitor = setTimeout(
+      zone.timers[timer] = setTimeout(
         function()
         {
-          if (zone.timers.inputMonitor)
+          if (zone.timers[timer])
           {
-            getStopButtonInput();
+            getInput(input, interval);
           }
         },
-        INPUT_MONITOR_INTERVAL
+        interval
       );
     });
   }
 
-  getStopButtonInput();
+  getInput('connected', CONNECTED_INPUT_MONITOR_INTERVAL);
+  getInput('stopButton', STOP_BUTTON_MONITOR_INTERVAL);
 };
 
 Zone.prototype.stopInputMonitor = function()
 {
   this.inputChangeListener = null;
 
-  clearTimeout(this.timers.inputMonitor);
-  delete this.timers.inputMonitor;
+  var zone = this;
+
+  ['stopButton', 'connected'].forEach(function(input)
+  {
+    var timer = input + 'InputMonitor';
+
+    clearTimeout(zone.timers[timer]);
+    delete zone.timers[timer];
+  });
 };
 
 /**
@@ -425,6 +439,24 @@ Zone.prototype.wasReset = function()
   });
 };
 
+Zone.prototype.needsPlugIn = function()
+{
+  this.doesNeedPlugIn = true;
+
+  this.controller.sendMessage('zoneNeedsPlugIn', {
+    zoneId: this.zone._id
+  });
+};
+
+Zone.prototype.wasPlugIn = function()
+{
+  this.doesNeedPlugIn = false;
+
+  this.controller.sendMessage('zoneWasPlugIn', {
+    zoneId: this.zone._id
+  });
+};
+
 Zone.prototype.programStopped = function()
 {
   var zone = this;
@@ -463,6 +495,20 @@ Zone.prototype.startAssignedProgram = function()
   this.controller.sendMessage('startAssignedProgram', {
     zoneId: this.zone._id
   });
+};
+
+/**
+ * @private
+ * @param {String} input
+ * @param {Number} newValue
+ * @param {Number} oldValue
+ */
+Zone.prototype.onInputChange = function(input, newValue, oldValue)
+{
+  if (input === 'connected')
+  {
+    return newValue === 1 ? this.wasPlugIn() : this.needsPlugIn();
+  }
 };
 
 module.exports = Zone;

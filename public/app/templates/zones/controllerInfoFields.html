@@ -29,6 +29,12 @@
     <li>
       <label for="zone-modbus-tcp-stop-input">Wejście przycisku stop</label>
       <input id="zone-modbus-tcp-stop-input" name="zone.controllerInfo.stopButtonInput" class="short textline" type="number" min="0" max="65535" value="<%= zone.controllerInfo.stopButtonInput %>">
+    <li>
+      <label for="zone-modbus-tcp-connected-unit">Jednostka zasilania wózka</label>
+      <input id="zone-modbus-tcp-connected-unit" name="zone.controllerInfo.connectedUnit" class="short textline" type="number" min="0" max="255" value="<%= zone.controllerInfo.connectedUnit %>">
+    <li>
+      <label for="zone-modbus-tcp-connected-input">Wejście zasilania wózka</label>
+      <input id="zone-modbus-tcp-connected-input" name="zone.controllerInfo.connectedInput" class="short textline" type="number" min="0" max="65535" value="<%= zone.controllerInfo.connectedInput %>">
   </ul>
 <li class="controller-info" data-type="libcoap">
   <ul class="fields">
@@ -44,4 +50,7 @@
     <li>
       <label for="zone-libcoap-stop-resource">Zasób przycisku stop</label>
       <input id="zone-libcoap-stop-resource" name="zone.controllerInfo.stopButtonResource" class="short textline" type="text" value="<%= zone.controllerInfo.stopButtonResource %>">
+     <li>
+      <label for="zone-libcoap-connected-resource">Zasób zasilania wózka</label>
+      <input id="zone-libcoap-connected-resource" name="zone.controllerInfo.connectedResource" class="short textline" type="text" value="<%= zone.controllerInfo.connectedResource %>">
   </ul>

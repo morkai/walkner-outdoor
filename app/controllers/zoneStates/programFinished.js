@@ -38,4 +38,11 @@ function onInputChange(input, newValue, oldValue)
     this.connected();
     this.wasReset();
   }
+
+  // If the zone cart was plugged off a power supply then switch to
+  // the connected state
+  if (input === 'connected' && newValue === 0)
+  {
+    this.connected();
+  }
 }

@@ -60,6 +60,13 @@ function onInputChange(input, newValue, oldValue)
   {
     this.programStopped();
   }
+
+  // If the zone cart was plug off a power supply, then stop the running
+  // program with an error
+  if (input === 'connected' && newValue === 0)
+  {
+    this.changeState('programErrored', {error: 'Odłączenie wózka strefy.'});
+  }
 }
 
 function executeStep(zone, stepIndex, stepIteration, turnOnStartTime)

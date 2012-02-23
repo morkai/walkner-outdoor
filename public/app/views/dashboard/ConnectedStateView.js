@@ -47,13 +47,15 @@ function(
   {
     _.bindAll(this, 'showProgramPicker');
 
-    this.model.bind('change:needsReset', this.checkIfNeedsReset, this);
+    this.model.bind('change:needsReset', this.checkNeeds, this);
+    this.model.bind('change:needsPlugIn', this.checkNeeds, this);
     this.model.bind('change:assignedProgram', this.render, this);
   };
 
   ConnectedStateView.prototype.destroy = function()
   {
-    this.model.unbind('change:needsReset', this.checkIfNeedsReset, this);
+    this.model.unbind('change:needsReset', this.checkNeeds, this);
+    this.model.unbind('change:needsPlugIn', this.checkNeeds, this);
     this.model.unbind('change:assignedProgram', this.render, this);
 
     this.remove();
@@ -66,7 +68,7 @@ function(
   {
     this.el.innerHTML = this.template(this.model.toJSON());
 
-    this.checkIfNeedsReset();
+    this.checkNeeds();
 
     if (!user.isAllowedTo('startStop'))
     {
@@ -79,20 +81,23 @@ function(
   /**
    * @private
    */
-  ConnectedStateView.prototype.checkIfNeedsReset = function()
+  ConnectedStateView.prototype.checkNeeds = function()
   {
+    var needsPlugIn = this.model.get('needsPlugIn');
     var needsReset = this.model.get('needsReset');
     var startProgramEl = this.$('.startProgram').hide();
-    var actionMessageEl = this.$('.actionMessage');
+    var actionMessageEls = this.$('.actionMessage').hide();
 
-    if (needsReset)
+    if (needsPlugIn)
     {
-      actionMessageEl.show();
+      actionMessageEls.filter('.needsPlugIn').show();
+    }
+    else if (needsReset)
+    {
+      actionMessageEls.filter('.needsReset').show();
     }
     else
     {
-      actionMessageEl.hide();
-
       if (user.isAllowedTo('startStop'))
       {
         startProgramEl.show();

@@ -8,7 +8,6 @@ exports.validLeaveStates = [
 exports.enter = function(oldState, options, done)
 {
   this.inputChangeListener = onInputChange;
-  this.doesNeedReset = false;
 
   this.cancelConnectedStateReset = this.turnOff();
   this.cancelConnectedGreenLedReset = this.forceLeds({green: false});
@@ -22,7 +21,6 @@ exports.enter = function(oldState, options, done)
 exports.leave = function(newState, options, done)
 {
   this.inputChangeListener = null;
-  this.doesNeedReset = false;
 
   this.cancelConnectedStateReset();
   delete this.cancelConnectedStateReset;
@@ -38,9 +36,19 @@ exports.leave = function(newState, options, done)
 
 function onInputChange(input, newValue, oldValue)
 {
-  if (input !== 'stopButton')
+  if (input === 'stopButton')
   {
-    return;
+    return handleStopButtonChange.call(this, newValue, oldValue);
+  }
+}
+
+function handleStopButtonChange(newValue, oldValue)
+{
+  // If somehow stop button is changed while the zone cart is not plugged in
+  // to a power supply then the zone needs to be reset
+  if (this.doesNeedPlugIn)
+  {
+    return this.needsReset();
   }
 
   // If the stop button is released (newValue=0) right after
@@ -59,7 +67,7 @@ function onInputChange(input, newValue, oldValue)
 
   // If the stop button is released (newValue=0 and oldValue=1)
   // then start a program assigned to this zone
-  if (newValue === 0 && oldValue === 1)
+  if (!this.doesNeedReset && newValue === 0 && oldValue === 1)
   {
     return this.startAssignedProgram();
   }

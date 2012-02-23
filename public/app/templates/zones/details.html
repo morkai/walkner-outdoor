@@ -56,6 +56,13 @@
       w jednostce <code><%- zone.controllerInfo.stopButtonUnit %></code>
     </span>
   </div>
+  <div class="property">
+    <span class="property-name">Adres zasilania wózka:</span>
+    <span class="property-value">
+      Wejście <code><%- zone.controllerInfo.connectedInput %></code>
+      w jednostce <code><%- zone.controllerInfo.connectedUnit %></code>
+    </span>
+  </div>
   <% } %>
   <% if (zone.controller.type === 'libcoap') { %>
   <div class="property">
@@ -73,6 +80,10 @@
   <div class="property">
     <span class="property-name">Zasób przycisku stop:</span>
     <span class="property-value"><code><%- zone.controllerInfo.stopButtonResource %></code></span>
+  </div>
+  <div class="property">
+    <span class="property-name">Zasób zasilania wózka:</span>
+    <span class="property-value"><code><%- zone.controllerInfo.connectedResource %></code></span>
   </div>
   <% } %>
 </div>

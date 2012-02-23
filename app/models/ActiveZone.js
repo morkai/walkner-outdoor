@@ -16,6 +16,7 @@ function ActiveZone(zone, initialState, done)
   this.program = null;
   this.progress = null;
   this.doesNeedReset = false;
+  this.doesNeedPlugIn = false;
   this.historyEntry = null;
 
   this.fetchAssignedProgram(done);
@@ -34,6 +35,7 @@ ActiveZone.prototype.toJSON = function()
     program: this.program,
     progress: this.progress,
     needsReset: this.doesNeedReset,
+    needsPlugIn: this.doesNeedPlugIn,
     historyEntry: this.historyEntry ? this.historyEntry.id : null
   };
 };
@@ -172,6 +174,20 @@ ActiveZone.prototype.wasReset = function()
   this.doesNeedReset = false;
 
   this.emitState({needsReset: false});
+};
+
+ActiveZone.prototype.needsPlugIn = function()
+{
+  this.doesNeedPlugIn = true;
+
+  this.emitState({needsPlugIn: true});
+};
+
+ActiveZone.prototype.wasPlugIn = function()
+{
+  this.doesNeedPlugIn = false;
+
+  this.emitState({needsPlugIn: false});
 };
 
 ActiveZone.prototype.programmed = function(program)

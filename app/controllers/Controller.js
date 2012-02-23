@@ -33,7 +33,8 @@ Controller.LED_STATE_VALUES = {
 };
 
 Controller.INPUT_STATE_VALUES = {
-  stopButton: {'true': 1, 'false': 0}
+  stopButton: {'true': 1, 'false': 0},
+  connected: {'true': 1, 'false': 0}
 };
 
 /**

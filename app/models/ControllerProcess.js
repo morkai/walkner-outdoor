@@ -448,6 +448,38 @@ _.extend(messageHandlers, {
    * @param {Object} data
    * @param {String} data.zoneId
    */
+  zoneNeedsPlugIn: function(data)
+  {
+    var zone = this.zones[data.zoneId];
+
+    if (!zone)
+    {
+      return;
+    }
+
+    zone.needsPlugIn();
+  },
+
+  /**
+   * @param {Object} data
+   * @param {String} data.zoneId
+   */
+  zoneWasPlugIn: function(data)
+  {
+    var zone = this.zones[data.zoneId];
+
+    if (!zone)
+    {
+      return;
+    }
+
+    zone.wasPlugIn();
+  },
+
+  /**
+   * @param {Object} data
+   * @param {String} data.zoneId
+   */
   programFinished: function(data)
   {
     var zone = this.zones[data.zoneId];
