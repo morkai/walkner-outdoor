@@ -24,5 +24,7 @@ exports.enter = function(oldState, options, done)
 
 exports.leave = function(newState, options, done)
 {
+  this.startInputMonitor();
+
   done();
 };

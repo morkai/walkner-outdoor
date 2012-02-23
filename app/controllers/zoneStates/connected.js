@@ -13,8 +13,6 @@ exports.enter = function(oldState, options, done)
   this.cancelConnectedGreenLedReset = this.forceLeds({green: false});
   this.cancelConnectedLedBlinking = this.blinkLed('red', false);
 
-  this.startInputMonitor();
-
   done();
 };
 
