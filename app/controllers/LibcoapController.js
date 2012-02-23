@@ -11,7 +11,8 @@ var RESOURCE_DEFAULTS = {
   'stateResource': '/io/state',
   'greenLedResource': '/io/greenLed',
   'redLedResource': '/io/redLed',
-  'stopButtonResource': '/io/stopBut'
+  'stopButtonResource': '/io/stopBut',
+  'connectedResource': '/io/connected'
 };
 
 /**
