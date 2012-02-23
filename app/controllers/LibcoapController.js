@@ -108,7 +108,9 @@ LibcoapController.prototype.setZoneLeds = function(leds, controllerInfo, done)
       var greenLedResource = controllerInfo.greenLedResource
         || RESOURCE_DEFAULTS.greenLedResource;
 
-      controller.setResource(greenLedResource, leds.green, next);
+      var value = Controller.LED_STATE_VALUES['green'][Boolean(leds.green)];
+
+      controller.setResource(greenLedResource, value, next);
     },
     function setRedLedStep(err)
     {
@@ -127,7 +129,9 @@ LibcoapController.prototype.setZoneLeds = function(leds, controllerInfo, done)
       var redLedResource = controllerInfo.redLedResource
         || RESOURCE_DEFAULTS.redLedResource;
 
-      controller.setResource(redLedResource, leds.red, next);
+      var value = Controller.LED_STATE_VALUES['red'][Boolean(leds.red)];
+
+      controller.setResource(redLedResource, value, next);
     },
     function checkErrorStep(err)
     {
