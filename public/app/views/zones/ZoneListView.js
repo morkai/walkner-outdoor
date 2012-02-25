@@ -28,6 +28,7 @@ function($, _, Backbone, limits, viewport, PageLayout, ListView)
    * @param {Object} [options]
    */
   var ZoneListView = ListView.extend({
+    helpHash: 'zones-browse',
     layout: PageLayout,
     title: 'Strefy',
     className: 'zones',

@@ -25,6 +25,7 @@ function($, _, Backbone, viewport, PageLayout, DeleteView)
    * @param {Object} [options]
    */
   var DeleteProgramView = DeleteView.extend({
+    helpHash: 'programs-delete',
     events: {
       'click .yes.action': 'onButtonClickHandleDelete'
     },

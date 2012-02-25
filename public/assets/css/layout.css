@@ -55,9 +55,10 @@ strong {
   font-weight: bold;
   text-shadow: 1px 1px 1px #FFF;
 }
-.menu .refresh-link {
-  border-left: 0;
+.menu .refresh-link,
+.menu .help-link {
   float: right;
+  width: 4em;
 }
 .menu .refresh-link a {
   cursor: pointer;

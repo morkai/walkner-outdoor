@@ -37,6 +37,7 @@ function(
    * @param {Object} [options]
    */
   var ActiveZonesView = Backbone.View.extend({
+    helpHash: 'dashboard',
     tagName: 'ul',
     className: 'activeZones',
     events: {

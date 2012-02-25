@@ -47,6 +47,7 @@ function(
    * @param {Object} [options]
    */
   var DiagView = Backbone.View.extend({
+    helpHash: 'diag',
     template: _.template(diagTpl),
     layout: PageLayout,
     className: 'diag',

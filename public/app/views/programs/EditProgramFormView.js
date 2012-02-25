@@ -38,6 +38,7 @@ function(
    * @param {Object} [options]
    */
   var EditProgramFormView = Backbone.View.extend({
+    helpHash: 'programs-edit',
     template: _.template(formTpl),
     layout: PageLayout,
     breadcrumbs: function()

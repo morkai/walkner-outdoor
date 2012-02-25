@@ -28,6 +28,7 @@ function($, _, Backbone, viewport, PageLayout, DeleteUserView, detailsTpl)
    * @param {Object} [options]
    */
   var UserDetailsView = Backbone.View.extend({
+    helpHash: 'users-view',
     template: _.template(detailsTpl),
     layout: PageLayout,
     breadcrumbs: function()

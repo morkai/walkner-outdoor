@@ -25,6 +25,7 @@ function($, _, Backbone, viewport, PageLayout, DeleteView)
    * @param {Object} [options]
    */
   var DeleteUserView = DeleteView.extend({
+    helpHash: 'users-delete',
     events: {
       'click .yes.action': 'onButtonClickHandleDelete'
     },

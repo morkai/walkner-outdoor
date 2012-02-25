@@ -38,6 +38,7 @@ function(
    * @param {Object} [options]
    */
   var AddControllerFormView = Backbone.View.extend({
+    helpHash: 'controllers-add',
     template: _.template(formTpl),
     layout: PageLayout,
     breadcrumbs: function()

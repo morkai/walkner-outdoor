@@ -28,6 +28,7 @@ function($, _, Backbone, viewport, PageLayout, DeleteZoneView, detailsTpl)
    * @param {Object} [options]
    */
   var ZoneDetailsView = Backbone.View.extend({
+    helpHash: 'zones-view',
     template: _.template(detailsTpl),
     layout: PageLayout,
     className: 'zone-details',

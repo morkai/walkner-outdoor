@@ -38,6 +38,7 @@ function(
    * @param {Object} [options]
    */
   var ProgramZoneView = Backbone.View.extend({
+    helpHash: 'zones-program',
     template: _.template(programFormTpl),
     layout: PageLayout,
     breadcrumbs: function()

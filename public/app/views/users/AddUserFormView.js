@@ -35,6 +35,7 @@ function(
    * @param {Object} [options]
    */
   var AddUserFormView = Backbone.View.extend({
+    helpHash: 'users-add',
     template: _.template(formTpl),
     layout: PageLayout,
     breadcrumbs: function()

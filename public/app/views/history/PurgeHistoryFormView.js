@@ -32,6 +32,7 @@ function(
    * @param {Object} [options]
    */
   var PurgeHistoryFormView = Backbone.View.extend({
+    helpHash: 'history-purge',
     template: _.template(purgeFormTpl),
     layout: PageLayout,
     breadcrumbs: function()

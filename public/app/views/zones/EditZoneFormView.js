@@ -37,6 +37,7 @@ function(
    * @param {Object} [options]
    */
   var EditZoneFormView = Backbone.View.extend({
+    helpHash: 'zones-edit',
     template: _.template(formTpl),
     layout: PageLayout,
     breadcrumbs: function()

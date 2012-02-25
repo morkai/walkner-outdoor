@@ -34,7 +34,8 @@ function(require, $, _, Backbone, user, touch, menuTpl)
     events: {
       'click .login-link': 'onLoginLinkClick',
       'click .logout-link': 'onLogoutLinkClick',
-      'click .refresh-link': 'onRefreshLinkClick'
+      'click .refresh-link': 'onRefreshLinkClick',
+      'click .help-link': 'onHelpLinkClick'
     }
   });
 
@@ -75,6 +76,7 @@ function(require, $, _, Backbone, user, touch, menuTpl)
     this.$('li').hide();
 
     this.showLink('dashboard');
+    this.showLink('help');
 
     if (user.isLoggedIn())
     {
@@ -198,6 +200,30 @@ function(require, $, _, Backbone, user, touch, menuTpl)
   MenuView.prototype.onRefreshLinkClick = function()
   {
     window.location.reload();
+
+    return false;
+  };
+
+  /**
+   * @private
+   * @return {Boolean}
+   */
+  MenuView.prototype.onHelpLinkClick = function(e)
+  {
+    require(
+      ['app/views/viewport'],
+      function(viewport)
+      {
+        var href = e.target.href + '?' + encodeURIComponent(window.location.hash.substr(1));
+
+        if (viewport.view && viewport.view.helpHash)
+        {
+          href += '#' + viewport.view.helpHash;
+        }
+
+        window.location.href = href;
+      }
+    );
 
     return false;
   };

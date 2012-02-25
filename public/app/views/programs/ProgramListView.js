@@ -28,6 +28,7 @@ function($, _, Backbone, limits, viewport, PageLayout, ListView)
    * @param {Object} [options]
    */
   var ProgramListView = ListView.extend({
+    helpHash: 'programs-browse',
     layout: PageLayout,
     title: 'Programy',
     className: 'programs',

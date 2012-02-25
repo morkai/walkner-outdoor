@@ -25,6 +25,7 @@ function($, _, Backbone, viewport, PageLayout, DeleteView)
    * @param {Object} [options]
    */
   var DeleteZoneView = DeleteView.extend({
+    helpHash: 'zones-delete',
     events: {
       'click .yes.action': 'onButtonClickHandleDelete'
     },

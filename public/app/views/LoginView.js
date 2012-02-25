@@ -26,6 +26,7 @@ function($, _, Backbone, viewport, PageLayout, loginFormTpl)
    * @param {Object} [options]
    */
   var LoginView = Backbone.View.extend({
+    helpHash: 'users-auth',
     template: _.template(loginFormTpl),
     layout: PageLayout,
     className: 'login',

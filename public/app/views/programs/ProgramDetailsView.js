@@ -41,6 +41,7 @@ function(
    * @param {Object} [options]
    */
   var ProgramDetailsView = Backbone.View.extend({
+    helpHash: 'programs-view',
     template: _.template(detailsTpl),
     layout: PageLayout,
     breadcrumbs: function()

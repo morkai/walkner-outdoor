@@ -23,6 +23,7 @@ function($, _, Backbone, PageLayout, ListView)
    * @param {Object} [options]
    */
   var ControllerListView = ListView.extend({
+    helpHash: 'controllers-browse',
     layout: PageLayout,
     title: 'Sterowniki',
     className: 'controllers',

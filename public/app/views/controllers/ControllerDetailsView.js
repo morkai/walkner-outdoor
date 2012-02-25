@@ -28,6 +28,7 @@ function($, _, Backbone, viewport, PageLayout, DeleteControllerView, detailsTpl)
    * @param {Object} [options]
    */
   var ControllerDetailsView = Backbone.View.extend({
+    helpHash: 'controllers-view',
     template: _.template(detailsTpl),
     layout: PageLayout,
     breadcrumbs: function()

@@ -1,3 +1,13 @@
 <div class="state" title="Brak połączenia ze sterownikiem :("></div>
-<h1 data-property="name" title="Strefa"><%- name %></h1>
-<p class="actionMessage">Brak połączenia<br>ze<br>sterownikiem</p>
+<h1>
+  <span data-property="name" title="Strefa"><%- name %></span>:
+  <span class="assignedProgram" title="Przypisany program">
+    <% if (assignedProgram) { %>
+    <a class="programPreview" href="#programs/<%- assignedProgram._id %>" data-programProperty="assignedProgram">
+      <%- assignedProgram.name %>
+    </a>
+    <% } else { %>
+    -
+    <% } %>
+  </span>
+</h1>

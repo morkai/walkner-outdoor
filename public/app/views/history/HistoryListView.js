@@ -38,6 +38,7 @@ function(
    * @param {Object} [options]
    */
   var HistoryListView = Backbone.View.extend({
+    helpHash: 'history-browse',
     listTemplate: _.template(listTpl),
     listItemTemplate: _.template(listItemTpl),
     layout: PageLayout,

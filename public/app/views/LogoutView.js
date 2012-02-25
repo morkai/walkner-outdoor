@@ -24,6 +24,7 @@ function($, _, Backbone, PageLayout, logoutFormTpl)
    * @param {Object} [options]
    */
   var LogoutView = Backbone.View.extend({
+    helpHash: 'users-auth',
     template: _.template(logoutFormTpl),
     layout: PageLayout,
     className: 'logout',

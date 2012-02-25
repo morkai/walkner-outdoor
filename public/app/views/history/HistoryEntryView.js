@@ -41,6 +41,7 @@ function(
    * @param {Object} [options]
    */
   var HistoryEntryView = Backbone.View.extend({
+    helpHash: 'history-view',
     template: _.template(entryTpl),
     layout: PageLayout,
     breadcrumbs: function()

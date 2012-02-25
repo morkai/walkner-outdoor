@@ -23,6 +23,7 @@ function($, _, Backbone, PageLayout, ListView)
    * @param {Object} [options]
    */
   var UserListView = ListView.extend({
+    helpHash: 'users-browse',
     layout: PageLayout,
     title: 'Użytkownicy',
     className: 'users',

@@ -23,6 +23,7 @@ function($, _, Backbone, viewport, DeleteView)
    * @param {Object} [options]
    */
   var DeleteControllerView = DeleteView.extend({
+    helpHash: 'controllers-delete',
     events: {
       'click .yes.action': 'onButtonClickHandleDelete'
     },

@@ -38,6 +38,7 @@ function(
    * @param {Object} [options]
    */
   var AddZoneFormView = Backbone.View.extend({
+    helpHash: 'zones-add',
     template: _.template(formTpl),
     layout: PageLayout,
     breadcrumbs: function()

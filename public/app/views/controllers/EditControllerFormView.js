@@ -35,6 +35,7 @@ function(
    * @param {Object} [options]
    */
   var EditControllerFormView = Backbone.View.extend({
+    helpHash: 'controllers-edit',
     template: _.template(formTpl),
     layout: PageLayout,
     breadcrumbs: function()
