@@ -14,7 +14,7 @@ function(_)
     _routeToRegExp: function(route)
     {
       route = route.replace(/[-[\]{}()+?.,\\^$|#\s]/g, "\\$&")
-        .replace(/:([\w\d]+)/g, "([^\/][a-zA-Z0-9_-]+)")
+        .replace(/:([\w\d]+)/g, "([^\/][a-zA-Z0-9_-]*)")
         .replace(/\*([\w\d]+)/g, "(.*?)");
 
       return new RegExp('^' + route + '$');
