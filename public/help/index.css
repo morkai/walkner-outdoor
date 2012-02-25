@@ -1,0 +1,299 @@
+body {
+  background: #EEE;
+  margin: 0 4em;
+  color: #333;
+  font: 1em/1.4 Arial, sans-serif;
+}
+#helpContainer  {
+  padding: 1em;
+  background: #FFF;
+  box-shadow: 0 0 1em #666;
+  min-width: 950px;
+  margin: 0 auto 3em auto;
+}
+#toolbar {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 400;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -o-user-select: none;
+  user-select: none;
+}
+#toolbar.noAppLink #showApp {
+  display: none;
+}
+#toolbar li {
+  width: 5em;
+}
+#toolbar li:first-child,
+#toolbar li:last-child {
+  width: 10em;
+}
+.help section {
+  border-top: 1px dotted #999;
+}
+.help h1 + section {
+  border-top: 0;
+}
+.help section > h1 {
+  margin: 1em 0;
+  font-weight: bold;
+}
+.help section > h1 {
+  font-size: 1.6em;
+}
+.help section section > h1 {
+  font-size: 1.3em;
+}
+.help section section section > h1 {
+  font-size: 1.1em;
+}
+.help section section section section > h1 {
+  font-size: 1em;
+}
+.help section > p {
+  margin: 1em 0;
+}
+.help em {
+  font-style: oblique;
+}
+.help dd {
+  margin: 0 0 .5em 2em;
+}
+.help dd:last-child {
+  margin-bottom: 0;
+}
+.help code {
+  font-family: monospace;
+}
+.help img {
+  border: 0;
+}
+.help a {
+  cursor: pointer;
+}
+#toc {
+  border-top: 0;
+}
+#toc h1 {
+  margin: 0;
+  font-size: 2em;
+}
+#toc > ol {
+  margin: 1em 0;
+}
+#toc ol {
+  list-style-type: upper-roman;
+  margin-left: 2em;
+}
+#browsers {
+  text-align: center;
+}
+#hardware dl {
+  margin-bottom: 0;
+}
+.help .image {
+  text-align: center;
+  font-size: .8em;
+  color: #666;
+}
+.help .image.righted {
+  float: right;
+}
+.help .centered {
+  text-align: center;
+}
+.todo {
+  color: red;
+}
+.help .screen {
+  box-shadow: 0 0 20px #000;
+  display: inline-block;
+  margin-bottom: 1em;
+  background: #EEE;
+}
+.help object {
+  vertical-align: top;
+}
+.help .pageLayout {
+  background: #EEE;
+  width: 18cm;
+  box-shadow: 0 0 20px #000;
+  padding-bottom: .5em;
+  margin: 2em auto;
+  position: relative;
+  line-height: 1;
+}
+.help .content {
+  margin-left: 1em;
+  margin-right: 1em;
+}
+.help .breadcrumbs {
+  display: inline-block;
+}
+.tooltip {
+  opacity: .7;
+  position: relative;
+  padding: .25em .5em;
+  color:#EEE;
+  background:#333;
+  display: inline-block;
+  box-shadow: 0 0 3px #333;
+  z-index: 300;
+}
+.help .link {
+  color: #06C;
+}
+.help .hoveredLink {
+  color: #F50;
+}
+.help .message {
+  display: block;
+}
+.help .message > div {
+  border-top-width: 1px;
+}
+.help .pageLayout .message > div {
+  border-top-width: 0;
+}
+.help .message.success,
+.help .message.error {
+  position: static;
+}
+.help section > .info {
+  text-align: center;
+  margin: 1em 0;
+}
+.help .info p {
+  border-radius: 4px;
+  padding: .5em;
+  margin: 0 auto;
+  display: inline-block;
+}
+.help .info p.warn {
+  background: #FFD1D1;
+  border: 1px solid #F8ACAC;
+}
+.help .info p.ok {
+  background: #EAF7D9;
+  border: 1px solid #BBDF8D;
+}
+.help kbd {
+	padding: 5px 3px;
+	white-space: nowrap;
+	color: #000;
+	background-color: #EEE;
+	border-top: solid 2px #CCC;
+	border-right: solid 4px #AAA;
+	border-bottom: solid 5px #888;
+	border-left: solid 3px #BBB;
+}
+.help .privilege {
+  background : #F9EDBE url(images/user_key.png) .25em center no-repeat;
+  border: 1px solid #F0C36D;
+  font-size: .8em;
+  display: inline-block;
+  padding: .2em .5em .2em 1.75em;
+  border-radius: 2px;
+}
+.help section > ol {
+  padding-left: 2.5em;
+  list-style: decimal;
+}
+.help section > ul {
+  padding-left: 2.5em;
+  list-style: square;
+}
+.help .table {
+  margin: 1em auto;
+  text-align: center;
+}
+.help .table caption {
+  font-size: .8em;
+  color: #666;
+  margin-top: 1em;
+  caption-side: bottom;
+}
+.help .table th {
+  font-weight: bold;
+  padding: .25em .5em;
+}
+.help .table td {
+  border: 1px solid #DDD;
+  padding: .25em .5em;
+}
+.help span.state {
+  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
+  vertical-align: middle;
+  box-shadow: 0 1px 3px #666;
+}
+.help ul.states {
+  list-style: none;
+  padding-left: 1em;
+  margin: 1em 0;
+}
+.help ul.states li {
+  margin-top: .5em;
+}
+.help ul.states li:first-child {
+  margin-top: 0em;
+}
+.help .activeZone {
+  margin-bottom: 2em;
+}
+.help .activeZone .programRunning,
+.help .activeZone .programFinished,
+.help .activeZone .programStopped,
+.help .activeZone .programErrored {
+  margin-top: 2em;
+}
+.help .menu a:active {
+  background: #F1F1F1;
+  background: -moz-linear-gradient(#F1F1F1, #FFF);
+  background: -webkit-linear-gradient(#F1F1F1, #FFF);
+  background: -o-linear-gradient(#F1F1F1, #FFF);
+  background: -ms-linear-gradient(#F1F1F1, #FFF);
+  background: linear-gradient(#F1F1F1, #FFF);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#F1F1F1', endColorstr = '#FFFFFF');
+}
+.help.touchEnabled #toc > ol {
+  font-size: 1.4em;
+}
+.help.touchEnabled #toc a {
+  display: block;
+  padding: .25em;
+}
+.help .button,
+.help .action {
+  cursor: default;
+}
+
+@media print {
+  a {
+    color: inherit;
+  }
+  body {
+    margin: 0;
+    background: #FFF;
+    color: #000;
+  }
+  #helpContainer {
+    box-shadow: none;
+    padding: 0;
+  }
+  #toolbar {
+    display: none;
+  }
+  .todo {
+    color: inherit;
+  }
+  .noprint {
+    display: none;
+  }
+}

@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset=utf-8>
+    <title>Dokumentacja - Urządzenie testowe HighBay LED</title>
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="./index.css">
+  </head>
+  <body class="help">
+    <ul id="toolbar" class="menu">
+      <li><a href="#toc" title="Pokaż spis treści">Spis treści</a>
+      <li><a id="back" title="Do tyłu">&#8678;</a>
+      <li><a id="forward" title="Do przodu">&#8680;</a>
+      <li><a id="up" title="Przewiń do góry">&#8679;</a>
+      <li><a id="down" title="Przewiń do dołu">&#8681;</a>
+      <li id="showApp"><a title="Wróć do aplikacji" href="/">Aplikacja</a>
+    </ul>
+    <div id=helpContainer>
+      <div id="toc">
+        <h1>Wygrzewanie opraw LED</h1>
+        <ol></ol>
+      </div>
+      <section id="intro">
+        <h1>Wstęp</h1>
+        <p>Niniejszy dokument stanowi dokumentację użytkownika dla aplikacji <em>Wygrzewania opraw LED</em>.</p>
+        <p>
+          Uruchomienie aplikacji odbywa się poprzez wpisanie przez użytkownika adresu IP i portu
+          serwera w przeglądarce internetowej. Dane te różnią się w zależności od tego, w jakiej
+          sieci znajduje się użytkownik. Dla sieci <em>ML_WLAN</em>, adres to
+          <a href="http://192.168.21.58/">http://192.168.21.58/</a>,
+          natomiast dla sieci <em class="todo">?!?XXX?!?</em> -
+          <a href="http://192.168.64.20:8081/">http://161.87.64.20:8081/</a>.
+        </p>
+      </section>
+      <section id="requirements">
+        <h1>Wymagania</h1>
+        <p>
+          Do poprawnego korzystania z aplikacji,
+          użytkownik musi mieć zainstalowaną jedną z popularnych, aktualnych
+          przeglądarek internetowych.
+        </p>
+        <p id=browsers>
+          <a href="http://google.com/chrome"><img src="images/128-chrome.png" alt="Google Chrome" title="Pobierz Google Chrome"></a>
+          <a href="http://getfirefox.com/"><img src="images/128-firefox.png" alt="Firefox" title="Pobierz Firefoxa"></a>
+          <a href="http://www.opera.com/download/"><img src="images/128-opera.png" alt="Opera" title="Pobierz Operę"></a>
+          <a href="http://apple.com/pl/safari/download/"><img src="images/128-safari.png" alt="Safari" title="Pobierz Safari"></a>
+          <a href="http://windows.microsoft.com/pl-PL/internet-explorer/products/ie/home"><img src="images/128-ie.png" alt="Internet Explorer" title="Pobierz Internet Explorer"></a>
+        </p>
+      </section>
+      <section id="interface">
+        <h1>Interfejs</h1>
+        <div class="pageLayout">
+          <ul class="menu" data-tooltip="left" title="Główne menu">
+            <li class="help-link"><a data-tooltip="top" title="Pomoc">?</a>
+            <li class="active"><a data-tooltip="top" title="Aktualny moduł">Dashboard</a>
+            <li><a>Historia</a>
+            <li><a>Programy</a>
+            <li><a>Zaloguj się</a>
+          </ul>
+          <ul class="page-actions" data-tooltip="top" title="Przyciski akcji">
+            <li><a class="blue action">Edytuj</a>
+            <li><a class="red action">Usuń</a>
+          </ul>
+          <ul class="breadcrumbs" data-tooltip="left, right" title="Aktualna lokalizacja">
+            <li><a>Sterowniki</a>
+            <li><span>Symulator 1</span>
+          </ul>
+          <div class="bd" data-tooltip="" title="Zawartość strony">
+            <div class="properties">
+              <div class="property"><span class="property-name">Nazwa:</span> <span class="property-value">Symulator 1</span></div>
+              <div class="property"><span class="property-name">Typ:</span> <span class="property-value">MODBUS TCP</span></div>
+            </div>
+          </div>
+        </div>
+        <section id="interface-navigation">
+          <h1>Nawigacja</h1>
+          <p>
+            Po aplikacji można poruszać się klikając na odnośniki i przyciski wyświetlane na ekranie.
+          </p>
+          <p>
+            Odnośniki mają następującą postać: <a class="link">przykładowy odnośnik</a>.
+            Najechanie myszką na dany odnośnik sprawi, że zostanie on wyróżniony poprzez
+            przybranie następującej postaci: <a class="hoveredLink">aktywny odnośnik</a>.
+          </p>
+          <p>
+            Przyciski, ze względu na swoją funkcję, podzielone są na akcje i elementy formularzy.
+          </p>
+          <p>
+            Przyciski jako elementy formularzy wyglądają następująco:
+            <button class="button">Przykładowy przycisk</button>.
+            Kliknięcie takiego przycisku może w widoczny sposób spowodować zmianę
+            stanu wyświetlanego w danym momencie na ekranie, ale nigdy nie zmieni
+            stanu aplikacji. To znaczy, że po kliknięciu takiego przycisku,
+            a następnie odświeżeniu strony, ekran wróci do stanu początkowego.
+          </p>
+          <p>
+            Przyciski akcji przedstawiają się następująco:
+            <button class="action green">Uruchom</button>,
+            <button class="action blue">Zapisz</button>,
+            <button class="action red">Usuń</button>,
+            <button class="action red" disabled>Zablokowana akcja</button>.
+            Kliknięcie akcji może zmienić stan wyświetlany w danym momencie na ekranie
+            oraz może zmienić stan aplikacji. Na przykład, kliknięcie przycisku
+            <button class="button">Dodaj krok</button> na ekranie edycji programu
+            spowoduje, że pojawią się pola umożliwiające zdefiniowanie nowego
+            kroku w istniejącym programie. Jednak opuszczając ekran edycji
+            bez wciśnięcia akcji <button class="action blue">Zapisz</button>
+            spowoduje, że nowy krok nie zostanie zapisany. Dopiero po kliknięciu
+            przycisku <button class="button">Dodaj krok</button>, wypełnieniu formularza
+            i wciśnięciu akcji <button class="action blue">Zapisz</button>,
+            dane zostaną przesłane do aplikacji i zapisane.
+          </p>
+        </section>
+        <section id="interface-messages">
+          <h1>Komunikaty</h1>
+          <div class="pageLayout">
+            <div id="exampleMessage" class="message" data-tooltip="top, bottom" title="Komunikat">
+              <div>Przykładowa treść komunikatu :)</div>
+            </div>
+            <ul class="menu">
+              <li class="active"><a>Dashboard</a>
+              <li><a>Historia</a>
+              <li><a>Programy</a>
+              <li><a>Zaloguj się</a>
+            </ul>
+            <div class="bd">
+              <p class="content">
+                Przykład komunikatu. Kliknij na obszarze menu aby ukryć komunikat.
+              </p>
+            </div>
+          </div>
+          <p>
+            Po wykonaniu niektórych akcji mogą zostać wyświetlonone komunikaty
+            informujące użytkownika o powodzeniu lub porażce.
+            Wyświetlane komunikaty przykrywają menu główne. Aby móc ponownie
+            korzystać z menu, komunikat należy zamknąć. Można to zrobić
+            poprzez pojedyńcze kliknięcie na obszarze zajmowanym przez menu
+            (a tym samym komunikat). Niektóre komunikaty same znikną po upływie
+            kilku sekund.
+          </p>
+          <p>
+            Komunikaty, ze względu na przekazywaną informację, różnią się od siebie
+            kolorem tła.
+          </p>
+          <p>
+            Komunikat informujący o pomyślnym wykonaniu akcji wygląda następująco:
+          </p>
+          <div class="message success">
+            <div>Program został uruchomiony pomyślnie :)</div>
+          </div>
+          <p>
+            Natomiast komunikat informujący o nieudanym wykonaniu akcji wygląda tak:
+          </p>
+          <div class="message error">
+            <div>Nie udało się uruchomić programu :(</div>
+          </div>
+        </section>
+        <section id="interface-dialogs">
+          <h1>Okna dialogowe</h1>
+          <p>
+            Kliknięcie niektórych akcji sprawi, że na ekranie pojawi się okno
+            dialogowe. Okno dialogowe przykrywa aktualnie wyświetlany ekran
+            do momentu podjęcia akcji związanej z tym oknem dialogowym lub zamknięciem
+            go.
+          </p>
+          <div class="image noprint">
+            <div class="screen">
+              <object type="application/x-shockwave-flash" data="screens/interface-dialogs.swf" width=586 height=216>
+                <param name="movie" value="screens/interface-dialogs.swf">
+                <param name="quality" value="high">
+                <param name="bgcolor" value="#EEEEEE">
+                <param name="wmode" value="transparent">
+              </object>
+            </div>
+            <br>
+            Wyłączanie okna dialogowego
+          </div>
+          <p>
+            W celu zamknięcia okna dialogowego klikamy odnośnik
+            <a>Anuluj</a> (jeżeli jest dostępny)
+            lub wciskamy na klawiaturze klawisz <kbd>Esc</kbd>. W przypadku
+            korzystania z aplikacji w trybie dotykowym, aby zamknąć okno
+            dialogowe bez podejmowania akcji klikamy przycisk
+            <button class="action red" title="Zamknij dialog">X</button>.
+          </p>
+        </section>
+        <section id="interface-touch">
+          <h1>Tryb dotykowy</h1>
+          <p>
+            Przy monitorze zainstalowanym na hali produkcyjnej nie ma dostępnej
+            myszki ani klawiatury. W związku z tym, jeżeli aplikacja wykryje, że
+            jest wyświetlana na tym monitorze, to włącza wsparcie dla technologii
+            dotyku.
+          </p>
+          <p>
+            Po pierwsze, przewijanie zawartości w dół lub w górę odbywa się na tej samej
+            zasadzie jak w dotykowych smartfonach. Przeciągamy palcem po ekranie
+            w stronę, w którą chcemy przewinąć zawartość.
+          </p>
+          <div class="image noprint">
+            <object class="screen" type="application/x-shockwave-flash" data="screens/interface-scrolling.swf" width=586 height=432>
+              <param name="movie" value="screens/interface-scrolling.swf">
+              <param name="quality" value="high">
+              <param name="bgcolor" value="#ffffff">
+              <param name="wmode" value="transparent">
+            </object>
+            <br>
+            Przewijanie zawartości w trybie dotykowym
+          </div>
+          <p>
+            Po drugie, w menu pojawia się odnośnik <a>↻</a>,
+            po kliknięciu którego strona aplikacji
+            zostanie przeładowana. To samo stanie się, gdy na klawiaturze wciśnięty
+            zostanie klawisz <kbd>F5</kbd>. Funkcja ta może się przydać
+            w przypadku, gdy stan wyświetlany na ekranie nie odzwierciedla stanu
+            rzeczywistego (np. strefa w module <a href="#dashboard">Dashboard</a>
+            ma inny stan niż wskazują na to lampki na wózku) lub klikanie jakieś
+            akcji nie zmienia stanu aplikacji wyświetlanego na ekranie
+            (np. po kliknięciu <button class="action blue">Start</button>
+            w module Dashboard nie pokaże się okno dialogowe z listą programów).
+          </p>
+          <div class="pageLayout">
+            <ul class="menu">
+              <li class="refresh-link" data-tooltip="bottom" title="Odśwież tę stronę"><a>↻</a>
+              <li class="active"><a>Dashboard</a>
+              <li><a>Historia</a>
+              <li><a>Programy</a>
+              <li><a>Zaloguj się</a>
+            </ul>
+            <br>
+          </div>
+          <p>
+            Po trzecie, jeżeli w danym momencie na ekranie aplikacji dostępne
+            jest pole formularza, to na dole ekranu pokaże się przycisk
+            <button class="button">Pokaż klawiaturę</button>, po kliknięciu
+            którego pojawi się wirtualna klawiatura:
+          </p>
+          <p class="image">
+            <img src="screens/interface-keyboard.png" alt="Wirtualna klawiatura"><br>
+            Wirtualna klawiatura
+          </p>
+          <p>
+            Najpierw należy aktywować pole formularza, które chcemy uzupełnić
+            klikając na nie, a następnie należy wyklikać odpowiednie znaki na klawiaturze.
+            Aby ukryć klawiaturę można kliknąć przycisk
+            <button class="button">Schowaj klawiaturę</button>
+            lub przejść do ekranu, na którym nie ma żadnych pól formularzy
+            (klawiatura i przycisk same znikną).
+          </p>
+          <p>
+            Po czwarte, w prawym górnym rogu każdego okna dialogowego
+            pojawia się przycisk
+            <button class="action red" title="Zamknij dialog">X</button>,
+            po kliknięciu którego okno to zostanie zamknięte.
+          </p>
+        </section>
+      </section>
+      <section id="modules">
+        <h1>Moduły</h1>
+        <section id="users" class="todo">
+          <h1>Użytkownicy</h1>
+          <p>
+            Lorem ipsum dolor sit amet...
+          </p>
+          <section id="users-authentication">
+            <h1>Uwierzytelnianie</h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="users-browse">
+            <h1>Przeglądanie listy użytkowników <span class="privilege">Przeglądanie użytkowników</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="users-view">
+            <h1>Przeglądanie wybranego użytkownika <span class="privilege">Przeglądanie użytkowników</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="users-add">
+            <h1>Dodawanie użytkowników <span class="privilege">Przeglądanie użytkowników, Zarządzanie użytkownikami</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="users-edit">
+            <h1>Modyfikacja użytkowników <span class="privilege">Przeglądanie użytkowników, Zarządzanie użytkownikami</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="users-delete">
+            <h1>Usuwanie użytkowników <span class="privilege">Przeglądanie użytkowników, Zarządzanie użytkownikami</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+        </section>
+        <section id="controllers" class="todo">
+          <h1>Sterowniki</h1>
+          <p>
+            Lorem ipsum dolor sit amet...
+          </p>
+          <section id="controllers-browse">
+            <h1>Przeglądanie listy sterowników <span class="privilege">Przeglądanie sterowników</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="controllers-view">
+            <h1>Przeglądanie wybranego sterownika <span class="privilege">Przeglądanie sterowników</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="controllers-add">
+            <h1>Dodawanie sterowników <span class="privilege">Przeglądanie sterowników, Zarządzanie sterownikami</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="controllers-edit">
+            <h1>Modyfikacja sterowników <span class="privilege">Przeglądanie sterowników, Zarządzanie sterownikami</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="controllers-delete">
+            <h1>Usuwanie sterowników <span class="privilege">Przeglądanie sterowników, Zarządzanie sterownikami</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+        </section>
+        <section id="zones" class="todo">
+          <h1>Strefy</h1>
+          <p>
+            Lorem ipsum dolor sit amet...
+          </p>
+          <section id="zones-browse">
+            <h1>Przeglądanie listy stref <span class="privilege">Przeglądanie stref</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="zones-view">
+            <h1>Przeglądanie wybranej strefy <span class="privilege">Przeglądanie stref</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="zones-add">
+            <h1>Dodawanie stref <span class="privilege">Przeglądanie stref, Zarządzanie strefami</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="zones-edit">
+            <h1>Modyfikacja stref <span class="privilege">Przeglądanie stref, Zarządzanie strefami</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="zones-delete">
+            <h1>Usuwanie stref <span class="privilege">Przeglądanie stref, Zarządzanie strefami</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="zones-program">
+            <h1>Programowanie stref <span class="privilege">Przeglądanie stref, Przypisywanie programów do stref</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+        </section>
+        <section id="programs">
+          <h1>Programy</h1>
+          <p>
+            Moduł <em>Programy</em> służy do zarządzania programami uruchamianymi
+            na strefach. Programy można przeglądać, dodawać, modyfikować oraz
+            usuwać.
+          </p>
+          <p>
+            Każdy program składa się z nazwy, listy kroków oraz
+            flagi wskazującej czy dany program ma być uruchamiany w nieskończoność.
+          </p>
+          <p>
+            Każdy krok programu składa się z czasu włączenia, czasu wyłączenia
+            oraz liczby powtórzeń. Czas włączenia to liczba sekund przez jaką
+            strefa ma być włączona, czas wyłączenia to liczba sekund przez jaką
+            strefa ma być wyłączona, a liczba powtórzeń to liczba wskazująca
+            ile razy dany krok ma zostać powtórzony zanim program przejdzie
+            do kroku następnego.
+          </p>
+          <p>
+            Lista kroków przedstawiana w aplikacji jest w dwóch formatach:
+            tabeli oraz wykresu.
+          </p>
+          <p>
+            Program o następujących krokach:
+          </p>
+          <ol>
+            <li>włącz strefę na 1 s, wyłącz na 1 s,
+            <li>włącz strefę na 2 s, wyłącz na 2 s (powtórz krok dwa razy),
+            <li>włącz strefę na 3 s, wyłącz na 3 s (powtórz krok trzy razy),
+          </ol>
+          <p>w formie tabeli przedstawia się następująco:</p>
+          <p class="image">
+            <img class="screen" src="screens/programs-table.png" alt="Reprezentacja kroków programu w formie tabeli"><br>
+            Reprezentacja kroków programu w formie tabeli
+          </p>
+          <p>
+            Natomiast w formie wykresu, tak:
+          </p>
+          <p class="image">
+            <img class="screen" src="screens/programs-plot.png" alt="Reprezentacja kroków programu w formie wykresu"><br>
+            Reprezentacja kroków programu w formie wykresu
+          </p>
+          <p>
+            Stan wysoki reprezentuje włączoną strefę, a stan niski - wyłączoną.
+            Długości poszczególnych stanów na wykresie są relatywne do długości
+            całego programu (w tym wypadku 28 s).
+            Ponadto, każdy krok rysowany jest na wykresie tyle razy, ile wynosi jego
+            liczba powtórzeń.
+          </p>
+          <p>
+            Czas trwania programu obliczany jest poprzez zsumowanie czasów trwania
+            poszczególnych kroków programu, gdzie czas trwania kroku obliczany
+            jest następująco:
+          </p>
+          <p class="centered">
+            <code>czas trwania kroku = (czas włączenia + czas wyłączenia) * liczba powtórzeń</code>
+          </p>
+          <section id="programs-browse">
+            <h1>Przeglądanie listy programów <span class="privilege">Przeglądanie programów</span></h1>
+            <p class="image">
+              <img class="screen" src="screens/programs-browse.png" alt="Ekran przeglądania listy wszystkich programów"><br>
+              Ekran listy wszystkich programów
+            </p>
+            <p>
+              Po kliknięciu odnośnika <a>PROGRAMY</a> w menu głównym, na ekranie
+              wyświetlona zostanie lista dostępnych programów oraz przycisk
+              akcji dodania nowego programu.
+            </p>
+            <p>
+              Kliknięcie nazwy programu na liście, przeniesie użytkownika do
+              <a href="#programs-view">ekranu ze szczegółami danego programu</a>.
+            </p>
+            <p>
+              Po kliknięciu przycisku <button class="action blue">Dodaj</button>,
+              użytkownik przeniesiony zostanie do <a href="#programs-add">ekranu
+              z formularzem dodawania nowego użytkownika</a>. Przycisk ten
+              pojawia się użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie programami</span>.
+            </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> W przypadku, gdy maksymalna ilość programów
+                możliwych do dodania została osiągnięta, przycisk dodania nowego
+                programu będzie zablokowany. Aby móc dodać nowy program, należy
+                wtedy usunąć jeden z istniejących programów.
+              </p>
+            </div>
+          </section>
+          <section id="programs-view">
+            <h1>Przeglądanie wybranego programu <span class="privilege">Przeglądanie programów</span></h1>
+            <p class="image">
+              <img class="screen" src="screens/programs-view.png" alt="Ekran przeglądania wybranego programu"><br>
+              Ekran wybranego programu
+            </p>
+            <p>
+              Na ekranie wybranego programu dostępne są szczegółowe informacje
+              o danym programie: nazwa, informacja, czy program jest powtarzany
+              w nieskończoność, czas trwania oraz zdefiniowane kroki
+              (w formacie wykresu oraz tabeli).
+              Ponadto, wybrany program można zmodyfikować lub usunąć.
+            </p>
+            <p>
+              Wybranie akcji <button class="action blue">Edytuj</button> sprawi,
+              że użytkownik przeniesiony zostanie do <a href="#programs-edit">ekranu
+              z formularzem modyfikacji programu</a>. Przycisk ten pojawia się
+              użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie programami</span>.
+            </p>
+            <p>
+              Wybranie akcji <button class="action blue">Usuń</button> sprawi,
+              że wyświetlone zostanie <a href="#programs-delete">okno dialogowe
+              pytające o potwierdzenie usunięcia programu</a>. Przycisk ten pojawia się
+              użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie programami</span>.
+            </p>
+          </section>
+          <section id="programs-add">
+            <h1>Dodawanie programów <span class="privilege">Przeglądanie programów, Zarządzanie programami</span></h1>
+            <div class="image">
+              <div class="screen">
+                <object type="application/x-shockwave-flash" data="screens/programs-add.swf" width=703 height=597>
+                  <param name="movie" value="screens/programs-add.swf">
+                  <param name="quality" value="high">
+                  <param name="bgcolor" value="#EEEEEE">
+                  <param name="wmode" value="transparent">
+                  <img src="screens/programs-add.png" alt="Ekran dodawania nowego programu">
+                </object>
+              </div>
+              <br>
+              Ekran dodawania nowego programu
+            </div>
+            <p>
+              Na ekranie dodawania nowego programu dostępny jest formularz zawierający
+              następujące pola:
+            </p>
+            <ul>
+              <li>nazwa programu - pole tekstowe, wymagane, maksymalnie 50 znaków,
+              <li>czy program ma być powtarzany w nieskończoność - pole wyboru, pole zaznaczone - tak, pole odznaczone - nie,
+              <li>kroki - interaktywna tabela kroków programu.
+            </ul>
+            <p>
+              Wiersze w tabeli reprezentują kolejne kroki programu.
+              Aby dodać więcej kroków, należy wcisnąć przycisk
+              <button class="button">Dodaj krok</button>.
+              Aby usunąć istniejący krok, należy wcisnać przycisk
+              <button class="button">Usuń krok</button> znajdujący się w kolumnie
+              <strong>Akcje</strong>.
+            </p>
+            <p>
+              Pola znajdujące się w kolumnach <strong>Czas włączenia</strong>
+              oraz <strong>Czas wyłączenia</strong> jako wartość przyjmują
+              liczbę sekund. Jako ułatwienie dla użytkownika, zaimplementowany
+              został prosty konwerter jednostek czasu (godziny, minuty i sekundy)
+              do sekund. Dodając po danej liczbie jednostkę czasu:
+              <code>h</code>, <code>min</code> (lub <code>m</code>) lub <code>s</code>
+              i opuszczeniu danego pola, jego wartość zostanie przekonwertowana
+              do liczby sekund znajdującej się w podanym czasie. Wszystkie
+              jednostki mogą wystąpić w tym samym momencie i w dowolnym porządku.
+              Odstępy między liczbami a jednostkami są opcjonalne. Poniższa
+              tabela przedstawia przykładowe wyniki konwersji:
+            </p>
+            <table class="table">
+              <caption>Przykłady wyników automatycznej konwersji czasu trwania</caption>
+              <thead>
+                <tr>
+                  <th>Wpisany czas trwania
+                  <th>Otrzymana liczba sekund
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>10 s<td>10</tr>
+                <tr><td>5 min<td>300</tr>
+                <tr><td>1 h<td>3600</tr>
+                <tr><td>5 min 10 s<td>310</tr>
+                <tr><td>1 h 10 s<td>3610</tr>
+                <tr><td>1 h 5 min<td>3900</tr>
+                <tr><td>1 h 5 min 10 s<td>3910</tr>
+                <tr><td>5m10s<td>310</tr>
+                <tr><td>10s5m1h<td>3910</tr>
+                <tr><td>1.5 h, 25.3 min i 33 s<td>6951</tr>
+              </tbody>
+            </table>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Aby nowy program był dostępny po opuszczeniu
+                ekranu dodawania nowego programu, należy go wcześniej zapisać
+                wciskając przycisk <button class="action blue">Zapisz</button>!
+              </p>
+            </div>
+          </section>
+          <section id="programs-edit">
+            <h1>Modyfikacja programów <span class="privilege">Przeglądanie programów, Zarządzanie programami</span></h1>
+            <div class="image">
+              <img class="screen" src="screens/programs-edit.png" alt="Ekran modyfikowania istniejącego programu">
+              <br>
+              Ekran modyfikowania istniejącego programu
+            </div>
+            <p>
+              Na ekranie modyfikowania programu dostępny jest formularz
+              zawierający następujące pola:
+            </p>
+            <ul>
+              <li>nazwa programu - pole tekstowe, wymagane, maksymalnie 50 znaków,
+              <li>czy program ma być powtarzany w nieskończoność - pole wyboru, pole zaznaczone - tak, pole odznaczone - nie,
+              <li>kroki - interaktywna tabela kroków programu.
+            </ul>
+            <p>
+              Tabela kroków działa tak samo jak na
+              <a href="#programs-add">ekranie dodawania nowego programu</a>.
+            </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Aby dokonane w programie zmiany były
+                dostępne po opuszczeniu ekranu modyfikowania programu, należy je
+                wcześniej zapisać wciskając przycisk
+                <button class="action blue">Zapisz</button>!
+              </p>
+            </div>
+            <div class="info">
+              <p class="ok">
+                <strong>UWAGA!</strong> Zmodyfikowanie danego programu nie wpłynie
+                na przebieg instancji tego programu uruchomionej na jednej ze stref.
+              </p>
+            </div>
+          </section>
+          <section id="programs-delete">
+            <h1>Usuwanie programów <span class="privilege">Przeglądanie programów, Zarządzanie programami</span></h1>
+            <div class="image">
+              <img class="screen" src="screens/programs-delete.png" alt="Okno dialogowe usuwania istniejącego programu">
+              <br>
+              Okno dialogowe usuwania istniejącego programu
+            </div>
+            <p>
+              Aby usunąć program, na <a href="#programs-view">ekranie wybranego programu</a>
+              należy wcisnąć przycisk <button class="action blue">Usuń</button>,
+              a następnie na oknie dialogowym, które się pojawi, należy potwierdzić
+              usunięcie programu poprzez wciśnięcie przycisku <button class="action red">Usuń</button>.
+            </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Wciśnięcie przycisku
+                <button class="action red">Usuń</button> bezpowrotnie usunie
+                dany program z listy programów!
+              </p>
+            </div>
+          </section>
+        </section>
+        <section id="history" class="todo">
+          <h1>Historia</h1>
+          <p>
+            Lorem ipsum dolor sit amet...
+          </p>
+          <section id="history-browse">
+            <h1>Przeglądanie listy wpisów <span class="privilege">Przeglądanie historii</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="history-view">
+            <h1>Przeglądanie wybranego wpisu <span class="privilege">Przeglądanie historii</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+          <section id="history-purge">
+            <h1>Czyszczenie historii <span class="privilege">Przeglądanie historii, Czyszczenie historii</span></h1>
+            <p>
+              Lorem ipsum dolor sit amet...
+            </p>
+          </section>
+        </section>
+        <section id="dashboard">
+          <h1>Dashboard</h1>
+          <div class="image">
+            <img class="screen" src="screens/dashboard.png" alt="Dashboard">
+            <br>
+            Dashboard
+          </div>
+          <p>
+            Dashboard pozwala użytkownikowi na monitorowanie stanów wszystkich
+            aktywnych stref oraz uruchamianie i zatrzymywanie programów na tych
+            strefach.
+          </p>
+          <section id="dashboard-states">
+            <h1>Stany aktywnych stref</h1>
+            <p>
+              Każda z aktywnych stref znajduje się w danym momencie w jednym
+              z sześciu stanów. Stany aktywnych stref identyfikowane są przez różne
+              kolory kwadratów znajdujących się po lewej stronie od nazwy strefy.
+              Ponadto, każdy stan ma przypisaną kombinację świecenia
+              lampek znajdujących się na wózku (zielonej i czerwonej).
+            </p>
+            <table class="table states">
+              <caption>Identyfikacja stanu w jakim znajduje się strefa</caption>
+              <thead>
+                <tr>
+                  <th>Stan strefy
+                  <th>Kolor
+                  <th>Zielona lampka
+                  <th>Czerwona lampka
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="disconnected">
+                  <td><a href="#dashboard-states-disconnected">Brak połączenia ze sterownikiem</a>
+                  <td class="state">
+                  <td>Wyłączona
+                  <td>Włączona
+                </tr>
+                <tr class="connected">
+                  <td><a href="#dashboard-states-connected">Gotowy do pracy</a>
+                  <td class="state">
+                  <td>Wyłączona
+                  <td>Miga
+                </tr>
+                <tr class="programRunning">
+                  <td><a href="#dashboard-states-programRunning">Program w trakcie wykonywania</a>
+                  <td class="state">
+                  <td>Włączona
+                  <td>Wyłączona
+                </tr>
+                <tr class="programFinished">
+                  <td><a href="#dashboard-states-programFinished">Program pomyślnie ukończony</a>
+                  <td class="state">
+                  <td>Miga
+                  <td>Wyłączona
+                </tr>
+                <tr class="programStopped">
+                  <td><a href="#dashboard-states-programStopped">Program zatrzymany przez użytkownika</a>
+                  <td class="state">
+                  <td>Miga
+                  <td>Miga
+                </tr>
+                <tr class="programErrored">
+                  <td><a href="#dashboard-states-programErrored">Program zatrzymany z błędem</a>
+                  <td class="state">
+                  <td>Miga
+                  <td>Miga
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              Strefa z danego aktualnego stanu może przejść do innych,
+              określonych stanów. Wszystkie te przejścia zaprezentowane są
+              w tabeli przejść stanów stref.
+            </p>
+            <table class="table">
+              <caption>Tabela przejść stanów stref</caption>
+              <tr>
+                <th>
+                <th class="disconnected"><span class="state" title="Ze stanu: Brak połączenia ze sterownikiem"></span>
+                <th class="connected"><span class="state" title="Ze stanu: Gotowy do pracy"></span>
+                <th class="programRunning"><span class="state" title="Ze stanu: Program w trakcie wykonywania"></span>
+                <th class="programFinished"><span class="state" title="Ze stanu: Program pomyślnie ukończony"></span>
+                <th class="programStopped"><span class="state" title="Ze stanu: Program zatrzymany przez użytkownika"></span>
+                <th class="programErrored"><span class="state" title="Ze stanu: Program zatrzymany z błędem"></span>
+              </tr>
+              <tr>
+                <th class="disconnected"><span class="state" title="Do stanu: Brak połączenia ze sterownikiem"></span></th>
+                <td>0
+                <td>1
+                <td>1
+                <td>1
+                <td>1
+                <td>1
+              </tr>
+              <tr>
+                <th class="connected"><span class="state" title="Do stanu: Gotowy do pracy"></span></th>
+                <td>1
+                <td>0
+                <td>0
+                <td>1
+                <td>1
+                <td>1
+              </tr>
+              <tr>
+                <th class="programRunning"><span class="state" title="Do stanu: Program w trakcie wykonywania"></span></th>
+                <td>0
+                <td>1
+                <td>0
+                <td>0
+                <td>0
+                <td>0
+              </tr>
+              <tr>
+                <th class="programFinished"><span class="state" title="Do stanu: Program pomyślnie ukończony"></span></th>
+                <td>0
+                <td>0
+                <td>1
+                <td>0
+                <td>0
+                <td>0
+              </tr>
+              <tr>
+                <th class="programStopped"><span class="state" title="Do stanu: Program zatrzymany przez użytkownika"></span></th>
+                <td>0
+                <td>0
+                <td>1
+                <td>0
+                <td>0
+                <td>0
+              </tr>
+              <tr>
+                <th class="programErrored"><span class="state" title="Do stanu: Program zatrzymany z błędem"></span></th>
+                <td>0
+                <td>0
+                <td>1
+                <td>0
+                <td>0
+                <td>0
+              </tr>
+            </table>
+            <section id="dashboard-states-disconnected">
+              <h1 class="disconnected">Brak połączenia ze sterownikiem</h1>
+              <div class="activeZone">
+                <div class="disconnected">
+                  <div class="state" data-tooltip="bottom, top" title="Identyfikator"></div>
+                  <h1>
+                    <span data-tooltip="bottom, top" title="Nazwa strefy">Strefa ABC</span>:
+                    <a data-tooltip="bottom, top" title="Nazwa przypisanego programu">Program XYZ</a>
+                  </h1>
+                </div>
+              </div>
+              <p>
+                Jeżeli strefa nie nawiąże połączenia lub utraci połączenie
+                ze sterownikiem po jego nawiązaniu, to przechodzi w stan
+                <em class="disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</em>.
+              </p>
+              <p>
+                Sposób w jaki utrata połączenia jest identyfikowana zależy od
+                od typu sterownika kontrolującego daną strefę.
+              </p>
+              <p>
+                Dla sterowników
+                typu <em>MODBUS TCP</em> zostało przyjęte, że strefa utraciła
+                połączenie, jeżeli przez 2 sekundy od momentu zerwania połączenia
+                TCP nie zostało automatycznie nawiązane ponowne połączenie.
+              </p>
+              <p>
+                Dla sterowników typu <em>libcoap</em> zostało przyjęte, że strefa
+                utraciła połączenie, jeżeli przez 10 sekund od ostatniego
+                nieudanego żądania odczytu/ustawienia wejścia/wyjścia nie
+                powiodło się żadne inne żądanie.
+              </p>
+              <p>
+                Jeżeli w momencie utraty połączenia strefa wykonywała program,
+                to program ten jest zatrzymywany i zapisywany w <a href="#history">historii</a>
+                jako zakończony z błędem.
+              </p>
+              <p>
+                Strefa może przejść do stanu <em class="disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</em>
+                z każdego innego stanu. Natomiast ze stanu <em class="disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</em>,
+                strefa może przejść tylko do stanu
+                <em class="connected"><a href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a></em>.
+              </p>
+              <div class="info">
+                <p class="warn">
+                  <strong>UWAGA!</strong> Jeżeli strefa przez dłuższy czas
+                  znajduje się w stanie
+                  <em class="disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</em>
+                  sprawdź, czy wózek wygrzewania opraw jest podłączony do zasilania
+                  (czerwona lampka musi się świecić). Jeżeli wózek ma zasilanie,
+                  a połączenie nadal nie jest nawiązane, <span class="todo">poinformuj o tym fakcie
+                  producenta sterowników</span>.
+                </p>
+              </div>
+            </section>
+            <section id="dashboard-states-connected">
+              <h1>Gotowy do pracy</h1>
+              <div class="activeZone">
+                <div class="connected">
+                  <div class="state" data-tooltip="bottom, top" title="Identyfikator"></div>
+                  <h1>
+                    <span data-tooltip="bottom, top" title="Nazwa strefy">Strefa ABC</span>:
+                    <a data-tooltip="bottom, top" title="Nazwa przypisanego programu">Program XYZ</a>
+                  </h1>
+                  <input class="action green" type="button" value="Start" data-tooltip="bottom, top" title="Obszar akcji">
+                </div>
+              </div>
+              <p>
+                <em class="connected"><span class="state"></span> Gotowy do pracy</em>
+                to stan, w którym strefa musi się znajdować, aby można było uruchomić na
+                niej wykonywanie programu.
+                Program może zostać uruchomiony z wykorzystaniem aplikacji
+                (zobacz <a href="#control-start-app">Uruchamianie programu z poziomu aplikacji</a>)
+                albo z wykorzystaniem pulpitu sterującego znajdującym się
+                na wózku do wygrzewania opraw (zobacz
+                <a href="#control-start-cart">Uruchamianie programu z poziomu pulpitu sterującego wózkiem</a>).
+              </p>
+              <p>
+                Na belce strefy znajdują się takie informacje jak: identyfikator
+                strefy (<span class="connected"><span class="state"></span></span>),
+                nazwa strefy, nazwa przypisanego programu (jeżeli strefa ma
+                przypisany program) oraz przycisk <button class="action blue">Start</button>
+                (jeżeli użytkownik posiada uprawnienie
+                <span class="privilege">Uruchamianie i zatrzymywanie programów</span>,
+                wózek jest podłączony do zasilania oraz przełącznik na pulpicie
+                sterującym wózkiem wskazuje na pozycję <code>0</code>).
+              </p>
+              <p>
+                Kliknięcie na nazwę przypisanego programu spowoduje otworzenie
+                okna dialogowego ze szczegółowymi informacjami o danym programie
+                (zobacz <a href="#programs-view">Przeglądanie wybranego programu</a>).
+              </p>
+              <p>
+                Kliknięcie przycisku <button class="action blue">Start</button>
+                rozpocznie procedurę <a href="#control-start-app">Uruchamiania programu z poziomu aplikacji</a>.
+              </p>
+              <div class="info">
+                <p class="warn">
+                  <strong>UWAGA!</strong> Jeżeli strefa będzie znajdować się w stanie
+                  <em class="connected"><span class="state"></span> Gotowy do pracy</em>,
+                  i wózek wygrzewania opraw nie będzie podłączony do zasilania,
+                  to przycisk <button class="action blue">Start</button>
+                  nie będzie dostępny. Zamiast niego, na obszarze akcji wyświetlony
+                  zostanie komunikat informujący użytkownika o potrzebie
+                  podłączenia wózka strefy do zasilania.
+                </p>
+              </div>
+              <div class="info">
+                <p class="warn">
+                  <strong>UWAGA!</strong> Jeżeli strefa będzie znajdować w stanie
+                  <em class="connected"><span class="state"></span> Gotowy do pracy</em>,
+                  podczas gdy przełącznik na pulpicie sterującym wózka nie będzie wskazywał
+                  na pozycję <code>0</code>, to przycisk <button class="action blue">Start</button>
+                  nie będzie dostępny. Zamiast niego, na obszarze akcji wyświetlony
+                  zostanie komunikat informujący użytkownika o potrzebie
+                  wykonania <a href="#control-reset">ręcznego resetu strefy</a>.
+                </p>
+              </div>
+              <p>
+                Do stanu <em class="connected"><span class="state"></span> Gotowy do pracy</em>
+                strefa może przejść z jednego z następujących stanów:
+              </p>
+              <ul class="states">
+                <li class="disconnected">
+                  <a href="#dashboard-states-disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</a>
+                  - jeżeli połączenie ze sterownikiem strefy zostanie nawiązane,
+                <li class="programFinished">
+                  <a href="#dashboard-states-programFinished"><span class="state"></span> Program pomyślnie ukończony</a>
+                  - jeżeli strefa zostanie zresetowana lub wózek strefy zostanie odłączony od zasilania,
+                <li class="programStopped">
+                <a href="#dashboard-states-programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</a>
+                  - jeżeli strefa zostanie zresetowana lub wózek strefy zostanie odłączony od zasilania,
+                <li class="programErrored">
+                <a href="#dashboard-states-programErrored"><span class="state"></span> Program zatrzymany z błędem</a>
+                  - jeżeli strefa zostanie zresetowana lub wózek strefy zostanie odłączony od zasilania.
+              </ul>
+              <p>
+                Ze stanu <em class="connected"><span class="state"></span> Gotowy do pracy</em>,
+                strefa może przejść do jednego z następujących stanów:
+              </p>
+              <ul class="states">
+                <li class="disconnected">
+                  <a href="#dashboard-states-disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</a>
+                  - jeżeli połączenie ze sterownikiem strefy zostanie utracone,
+                <li class="programRunning">
+                  <a href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
+                  - jeżeli program zostanie uruchomiony na danej strefie.
+              </ul>
+            </section>
+            <section id="dashboard-states-programRunning">
+              <h1>Program w trakcie wykonywania</h1>
+              <div class="activeZone">
+                <div class="programRunning">
+                  <div class="state" data-tooltip="top, bottom" title="Identyfikator"></div>
+                  <h1>
+                    <span data-tooltip="top, bottom" title="Nazwa strefy">Strefa ABC</span>:
+                    <a data-tooltip="top, bottom" title="Nazwa uruchomionego programu">Program XYZ</a>
+                  </h1>
+                  <input class="action red" type="button" value="Stop" data-tooltip="top, bottom" title="Obszar akcji">
+                  <div class="progressBar">
+                    <p class="timeToEnd">
+                      <span data-tooltip="right bottom, right top" title="Czas do końca programu">43 s</span>
+                      ∞
+                      <span data-tooltip="left bottom, left top" title="Czas trwania programu">1 min 17 s</span>
+                    </p>
+                    <div class="progressValue" style="width: 25%" data-tooltip="bottom" title="Pasek postępu">&nbsp;</div>
+                  </div>
+                </div>
+              </div>
+              <p>
+                Strefa przechodzi w stan
+                <em class="programRunning"><span class="state"></span> Program w trakcie wykonywania</em>,
+                gdy zostanie uruchomiony na niej program z poziomu
+                <a href="#control-start-app">aplikacji</a> lub
+                <a href="#control-start-cart">pulpitu sterującego</a>.
+              </p>
+              <p>
+                Na belce strefy znajdują się takie informacje jak: identyfikator
+                strefy (<span class="programRunning"><span class="state"></span></span>),
+                nazwa strefy, nazwa uruchomionego programu, przycisk
+                <button class="action red">Stop</button>
+                (jeżeli użytkownik posiada uprawnienie
+                <span class="privilege">Uruchamianie i zatrzymywanie programów</span>)
+                oraz pasek postępu.
+              </p>
+              <p>
+                Zielony obszar na pasku postępu wskazuje procent ukończenia
+                programu. Ponadto, na środku pasku postępu wyświetlany jest czas
+                do końca programu. Jeżeli uruchomiony program ma ustawioną
+                flagę wykonywania w nieskończoność, to po czasie do końca programu
+                dodawany jest znak nieskończoności (∞) oraz czas jaki upłynął
+                od rozpoczęcia programu.
+              </p>
+              <div class="info">
+                <p class="ok">
+                  <strong>UWAGA!</strong> Jeżeli uruchomiony program ma ustawioną flagę
+                  wykonywania w nieskończoność, to po dojściu do końca programu,
+                  program rozpocznie się wykonywać od początku, a co za tym idzie
+                  pasek postępu i czas do końca programu zostaną przywrócone
+                  do początkowych wartości.
+                </p>
+              </div>
+              <p>
+                Kliknięcie na nazwę uruchomionego programu spowoduje otworzenie
+                okna dialogowego ze szczegółowymi informacjami o danym programie
+                (zobacz <a href="#programs-view">Przeglądanie wybranego programu</a>),
+                gdzie można podejrzeć, który krok programu jest aktualnie wykonywany.
+              </p>
+              <p>
+                Kliknięcie przycisku <button class="action red">Stop</button>
+                rozpocznie procedurę <a href="#control-stop-app">Zatrzymywania programu z poziomu aplikacji</a>.
+              </p>
+              <div class="image">
+                <div class="screen">
+                  <object type="application/x-shockwave-flash" data="screens/dashboard-programRunning.swf" width=615 height=420>
+                    <param name="movie" value="screens/dashboard-programRunning.swf">
+                    <param name="quality" value="high">
+                    <param name="bgcolor" value="#EEEEEE">
+                    <param name="wmode" value="transparent">
+                    <img src="screens/dashboard-programRunning.png" alt="Podgląd uruchomionego programu">
+                  </object>
+                </div>
+                <br>
+                Podgląd uruchomionego programu
+              </div>
+              <p>
+                Do stanu <em class="programRunning"><span class="state"></span> Program w trakcie wykonywania</em>
+                strefa może przejść tylko ze stanu
+                <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>.
+              </p>
+              <p>
+                Ze stanu <em class="programRunning"><span class="state"></span> Program w trakcie wykonywania</em>,
+                strefa może przejść do jednego z następujących stanów:
+              </p>
+              <ul class="states">
+                <li class="disconnected">
+                  <a href="#dashboard-states-disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</a>
+                  - jeżeli połączenie ze sterownikiem strefy zostanie utracone,
+                <li class="programFinished">
+                  <a href="#dashboard-states-programFinished"><span class="state"></span> Program pomyślnie ukończony</a>
+                  - jeżeli uruchomiony program dojdzie do końca i nie ma ustawionej flagi wykonywania w nieskończoność,
+                <li class="programStopped">
+                  <a href="#dashboard-states-programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</a>
+                  - jeżeli uruchomiony program zostanie zatrzymany z poziomu <a href="#control-stop-app">aplikacji</a>
+                  lub <a href="#control-stop-cart">pulpitu sterującego</a>,
+                <li class="programErrored">
+                  <a href="#dashboard-states-programErrored"><span class="state"></span> Program zatrzymany z błędem</a>
+                  - jeżeli podczas próby wykonania któregoś z kroków programu wystąpi błąd w komunikacji ze sterownikiem
+                  lub wózek strefy straci zasilanie (np. przez wyciągnięcie kabla).
+              </ul>
+            </section>
+            <section id="dashboard-states-programFinished">
+              <h1>Program pomyślnie ukończony</h1>
+              <div class="activeZone">
+                <div class="programFinished">
+                  <div class="state" data-tooltip="top, bottom" title="Identyfikator"></div>
+                  <h1>
+                    <span data-tooltip="top, bottom" title="Nazwa strefy">Strefa ABC</span>:
+                    <a data-tooltip="top, bottom" title="Nazwa ukończonego programu">Program XYZ</a>
+                  </h1>
+                  <p class="actionMessage needsReset" data-tooltip="bottom, top" title="Obszar akcji">
+                    Wymagany<br>ręczny<br>reset
+                  </p>
+                  <p class="info">
+                    Program <em data-tooltip="bottom, top" title="Nazwa programu">Program XYZ</em> uruchomiony
+                    przez <em data-tooltip="top, bottom" title="Użytkownik uruchamiający program">Jan Kowalski</em>
+                    o godz. <em data-tooltip="bottom, top" title="Czas uruchomienia">17:19:50</em>
+                    został <span class="finalState">ukończony</span>
+                    po <em data-tooltip="bottom, top" title="Czas trwania">1 h 2 min 3 s</em>
+                    o godz. <em data-tooltip="bottom, top" title="Czas ukończenia">18:21:53</em>.
+                  </p>
+                </div>
+              </div>
+              <p>
+                Strefa przechodzi w stan
+                <em class="programFinished"><span class="state"></span> Program pomyślnie ukończony</em>,
+                gdy uruchomiony na niej program wykona się do końca bez zatrzymania
+                przez użytkownika bądź z powodu błędu.
+              </p>
+              <div class="info">
+                <p class="warn">
+                  <strong>UWAGA!</strong> Strefa, na której uruchomiony jest program
+                  mający ustawioną flagę wykonywania w nieskończoność, nie przejdzie
+                  w stan <em class="programFinished"><span class="state"></span> Program pomyślnie ukończony</em>.
+                  Taki program musi zostać zatrzymany z poziomu
+                  <a href="#control-stop-app">aplikacji</a>
+                  lub <a href="#control-stop-cart">pulpitu sterującego</a>.
+                </p>
+              </div>
+              <p>
+                Na belce strefy znajdują się takie informacje jak: identyfikator
+                strefy (<span class="programFinished"><span class="state"></span></span>),
+                nazwa strefy, nazwa ukończonego programu oraz zdanie krótko
+                podsumowujące zdarzenie ukończenia programu (kto i kiedy
+                uruchomił program, kiedy się skończył i ile czasu trwało jego wykonywanie).
+              </p>
+              <p>
+                Kliknięcie na nazwę ukończonego programu spowoduje otworzenie
+                okna dialogowego ze szczegółowymi informacjami o tym programie
+                (zobacz <a href="#programs-view">Przeglądanie wybranego programu</a>).
+              </p>
+              <div class="info">
+                <p class="warn">
+                  <strong>UWAGA!</strong> Aby uruchomić następny program na strefie
+                  znajdującej się w stanie
+                  <em class="programFinished"><span class="state"></span> Program pomyślnie ukończony</em>
+                  należy wykonać <a href="#control-reset">ręczny reset strefy</a>,
+                  aby ta przeszła do stanu
+                  <a class="connected"><span class="state"></span> Gotowy do pracy</a>.
+                </p>
+              </div>
+              <p>
+                Do stanu <em class="programFinished"><span class="state"></span> Program pomyślnie ukończony</em>
+                strefa może przejść tylko ze stanu
+                <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>.
+              </p>
+              <p>
+                Ze stanu <em class="programFinished"><span class="state"></span> Program pomyślnie ukończony</em>,
+                strefa może przejść do jednego z następujących stanów:
+              </p>
+              <ul class="states">
+                <li class="disconnected">
+                  <a href="#dashboard-states-disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</a>
+                  - jeżeli połączenie ze sterownikiem strefy zostanie utracone,
+                <li class="connected">
+                  <a href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
+                  - jeżeli wykonany zostanie <a href="#control-reset">ręczny reset strefy</a>.
+              </ul>
+              <div class="info">
+                <p class="ok">
+                  <strong>UWAGA!</strong> Wpis o ukończeniu się programu
+                  zapisywany jest w <a href="#history">historii</a>.
+                </p>
+              </div>
+            </section>
+            <section id="dashboard-states-programStopped">
+              <h1>Program zatrzymany przez użytkownika</h1>
+              <div class="activeZone">
+                <div class="programStopped">
+                  <div class="state" data-tooltip="top, bottom" title="Identyfikator"></div>
+                  <h1>
+                    <span data-tooltip="top, bottom" title="Nazwa strefy">Strefa ABC</span>:
+                    <a data-tooltip="top, bottom" title="Nazwa zatrzymanego programu">Program XYZ</a>
+                  </h1>
+                  <p class="actionMessage needsReset" data-tooltip="bottom, top" title="Obszar akcji">
+                    Wymagany<br>ręczny<br>reset
+                  </p>
+                  <p class="info">
+                    Program <em data-tooltip="bottom, top" title="Nazwa programu">Program XYZ</em> uruchomiony
+                    przez <em data-tooltip="top, bottom" title="Użytkownik uruchamiający program">Jan Kowalski</em>
+                    o godz. <em data-tooltip="bottom, top" title="Czas uruchomienia">17:19:50</em>
+                    został <span class="finalState">zatrzymany</span>
+                    przez <em data-tooltip="top, bottom" title="Użytkownik zatrzymujący program">Joe Doe</em>
+                    po <em data-tooltip="bottom, top" title="Czas trwania">1 h 2 min 3 s</em>
+                    o godz. <em data-tooltip="bottom, top" title="Czas zatrzymania">18:21:53</em>.
+                  </p>
+                </div>
+              </div>
+              <p>
+                Strefa przechodzi w stan
+                <em class="programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</em>,
+                gdy uruchomiony na niej program zostanie zatrzymany przez
+                użytkownika z poziomu <a href="#control-stop-app">aplikacji</a>
+                lub <a href="#control-stop-cart">pulpitu sterującego</a>.
+              </p>
+              <p>
+                Na belce strefy znajdują się takie informacje jak: identyfikator
+                strefy (<span class="programStopped"><span class="state"></span></span>),
+                nazwa strefy, nazwa zatrzymanego programu oraz zdanie krótko
+                podsumowujące zdarzenie zatrzymania programu (kto i kiedy
+                uruchomił program, kto i kiedy zatrzymał program oraz
+                ile czasu program ten się wykonywał).
+              </p>
+              <p>
+                Kliknięcie na nazwę zatrzymanego programu spowoduje otworzenie
+                okna dialogowego ze szczegółowymi informacjami o tym programie
+                (zobacz <a href="#programs-view">Przeglądanie wybranego programu</a>).
+              </p>
+              <div class="info">
+                <p class="warn">
+                  <strong>UWAGA!</strong> Aby uruchomić następny program na strefie
+                  znajdującej się w stanie
+                  <em class="programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</em>
+                  należy wykonać <a href="#control-reset">ręczny reset strefy</a>,
+                  aby ta przeszła do stanu
+                  <a class="connected"><span class="state"></span> Gotowy do pracy</a>.
+                </p>
+              </div>
+              <p>
+                Do stanu <em class="programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</em>
+                strefa może przejść tylko ze stanu
+                <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>.
+              </p>
+              <p>
+                Ze stanu <em class="programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</em>,
+                strefa może przejść do jednego z następujących stanów:
+              </p>
+              <ul class="states">
+                <li class="disconnected">
+                  <a href="#dashboard-states-disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</a>
+                  - jeżeli połączenie ze sterownikiem strefy zostanie utracone,
+                <li class="connected">
+                  <a href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
+                  - jeżeli wykonany zostanie <a href="#control-reset">ręczny reset strefy</a>.
+              </ul>
+              <div class="info">
+                <p class="ok">
+                  <strong>UWAGA!</strong> Wpis o zatrzymaniu programu przez
+                  użytkownika zapisywany jest w <a href="#history">historii</a>.
+                </p>
+              </div>
+            </section>
+            <section id="dashboard-states-programErrored">
+              <h1>Program zatrzymany z błędem</h1>
+              <div class="activeZone">
+                <div class="programErrored">
+                  <div class="state" data-tooltip="top, bottom" title="Identyfikator"></div>
+                  <h1>
+                    <span data-tooltip="top, bottom" title="Nazwa strefy">Strefa ABC</span>:
+                    <a data-tooltip="top, bottom" title="Nazwa zatrzymanego programu">Program XYZ</a>
+                  </h1>
+                  <p class="actionMessage needsReset" data-tooltip="bottom, top" title="Obszar akcji">
+                    Wymagany<br>ręczny<br>reset
+                  </p>
+                  <p class="info">
+                    Program <em data-tooltip="bottom, top" title="Nazwa programu">3 sekundy</em> uruchomiony
+                    przez <em data-tooltip="top, bottom" title="Użytkownik uruchamiający program">Jan Kowalski</em>
+                    o godz. <em data-tooltip="bottom, top" title="Czas uruchomienia">17:19:50</em>
+                    został <span class="finalState">zatrzymany z błędem</span>
+                    po <em data-tooltip="bottom, top" title="Czas trwania">1 h 2 min 3 s</em>
+                    o godz. <em data-tooltip="bottom, top" title="Czas ukończenia">18:21:53</em>:
+                    <span data-tooltip="top, bottom" title="Opis błędu">Odłączenie wózka strefy</span>
+                  </p>
+                </div>
+              </div>
+              <p>
+                Strefa przechodzi w stan
+                <em class="programErrored"><span class="state"></span> Program zatrzymany z błędem</em>,
+                gdy uruchomiony na niej program zostanie zatrzymany z powodu
+                błędu.
+              </p>
+              <p>
+                Na belce strefy znajdują się takie informacje jak: identyfikator
+                strefy (<span class="programErrored"><span class="state"></span></span>),
+                nazwa strefy, nazwa zatrzymanego programu oraz zdanie krótko
+                podsumowujące zdarzenie zatrzymania programu z błędem (kto i kiedy
+                uruchomił program, ile czasu program ten się wykonywał,
+                kiedy wystąpił błąd oraz opis błędu).
+              </p>
+              <p>
+                Kliknięcie na nazwę zatrzymanego programu spowoduje otworzenie
+                okna dialogowego ze szczegółowymi informacjami o tym programie
+                (zobacz <a href="#programs-view">Przeglądanie wybranego programu</a>).
+              </p>
+              <div class="info">
+                <p class="warn">
+                  <strong>UWAGA!</strong> Aby uruchomić następny program na strefie
+                  znajdującej się w stanie
+                  <em class="programErrored"><span class="state"></span> Program zatrzymany z błędem</em>
+                  należy wykonać <a href="#control-reset">ręczny reset strefy</a>,
+                  aby ta przeszła do stanu
+                  <a class="connected"><span class="state"></span> Gotowy do pracy</a>.
+                </p>
+              </div>
+              <p>
+                Do sytuacji, które sprawią, że program zostanie zatrzymany z błędem
+                należą:
+              </p>
+              <ul>
+                <li>zatrzymanie strefy za pomocą <a href="#diag">modułu diagnostycznego</a>,
+                <li>zatrzymanie procesu sterownika za pomocą <a href="#diag">modułu diagnostycznego</a>,
+                <li>nieudana próba włączenia lub wyłączenia wygrzewania w związku z wykonywaniem
+                  kolejnych kroków programu,
+                <li>utrata połączenia ze sterownikiem strefy,
+                <li>odłączenie wózka strefy od zasilania,
+                <li>odłączenie serwera aplikacji od zasilania.
+              </ul>
+              <p>
+                Do stanu <em class="programErrored"><span class="state"></span> Program zatrzymany z błędem</em>
+                strefa może przejść tylko ze stanu
+                <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>.
+              </p>
+              <p>
+                Ze stanu <em class="programErrored"><span class="state"></span> Program zatrzymany z błędem</em>,
+                strefa może przejść do jednego z następujących stanów:
+              </p>
+              <ul class="states">
+                <li class="disconnected">
+                  <a href="#dashboard-states-disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</a>
+                  - jeżeli połączenie ze sterownikiem strefy zostanie utracone,
+                <li class="connected">
+                  <a href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
+                  - jeżeli wykonany zostanie <a href="#control-reset">ręczny reset strefy</a>.
+              </ul>
+              <div class="info">
+                <p class="ok">
+                  <strong>UWAGA!</strong> Wpis o zatrzymaniu się programu z powodu
+                  błędu zapisywany jest w <a href="#history">historii</a>.
+                </p>
+              </div>
+            </section>
+          </section>
+        </section>
+        <section id="diag" class="todo">
+          <h1>Diagnostyka <span class="privilege">Moduł diagnostyczny</span></h1>
+          <p>
+            Lorem ipsum dolor sit amet...
+          </p>
+        </section>
+      </section>
+      <section id="control" class="todo">
+        <h1>Sterowanie</h1>
+        <section id="control-reset">
+          <h1>Ręczny reset strefy</h1>
+        </section>
+        <section id="control-start-app">
+          <h1>Uruchamianie programu z poziomu aplikacji</h1>
+        </section>
+        <section id="control-start-cart">
+          <h1>Uruchamianie programu z poziomu pulpitu sterującego</h1>
+        </section>
+        <section id="control-stop-app">
+          <h1>Zatrzymywanie programu z poziomu aplikacji</h1>
+        </section>
+        <section id="control-stop-cart">
+          <h1>Zatrzymywanie programu z poziomu pulpitu sterującego</h1>
+        </section>
+      </section>
+      <section id="faq" class="todo">
+        <h1>F.A.Q.</h1>
+        <section id="faq-1">
+          <h1>Lorem ipsum?</h1>
+          <p>
+            Lorem ipsum dolor sit amet...
+          </p>
+        </section>
+      </section>
+      <section id="appendix-a">
+        <h1>Informacje o sprzęcie</h1>
+        <dl>
+          <dt>Adres IP i port aplikacji w sieci <em>ML_WLAN</em>
+          <dd><code>192.168.21.58:80</code>
+          <dt>Adres IP i port aplikacji w sieci <em class="todo">?!?XXX?!?</em>
+          <dd><code>161.87.64.20:8081</code>
+        </dl>
+      </section>
+    </div>
+    <script src="../vendor/jquery-min.js"></script>
+    <script src="scripts/jquery-ui.min.js"></script>
+    <script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script>
+    <script src="index.js"></script>
+  </body>
+</html>
