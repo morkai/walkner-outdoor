@@ -202,3 +202,23 @@ strong {
 #copyrights {
   display: none;
 }
+.pages {
+  display: block;
+  text-align: center;
+}
+.pages li {
+  display: inline-block;
+  margin: 1em .25em 0 .25em;
+  font-size: 1.6em;
+}
+.pages .page a {
+  display: inline-block;
+  padding: .5em 0;
+  width: 2.5em;
+  background-color: #FFF;
+  box-shadow: 0 1px 3px #666;
+  border-radius: .25em;
+}
+.pages .currentPage {
+  width: 2.5em;
+}

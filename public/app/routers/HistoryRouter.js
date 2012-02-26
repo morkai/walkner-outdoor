@@ -1,5 +1,7 @@
 define(
 [
+  'jQuery',
+  'Underscore',
   'Backbone',
 
   'app/models/History',
@@ -10,6 +12,8 @@ define(
   'app/views/history/PurgeHistoryFormView'
 ],
 /**
+ * @param {jQuery} $
+ * @param {Underscore} _
  * @param {Backbone} Backbone
  * @param {function(new:History)} History
  * @param {function(new:HistoryEntry)} HistoryEntry
@@ -19,6 +23,8 @@ define(
  * @param {function(new:PurgeHistoryFormView)} PurgeHistoryFormView
  */
 function(
+  $,
+  _,
   Backbone,
   History,
   HistoryEntry,
@@ -37,11 +43,12 @@ function(
     routes: {
       'history': 'list',
       'history/:id': 'view',
+      'history?page=:page': 'list',
       'history;purge': 'purge'
     }
   });
 
-  HistoryRouter.prototype.list = function()
+  HistoryRouter.prototype.list = function(page)
   {
     if (viewport.msg.auth('viewHistory'))
     {
@@ -50,13 +57,17 @@ function(
 
     viewport.msg.loading();
 
-    new History().fetch({
-      data: {
-        fields: ['zoneName', 'programName', 'finishedAt', 'finishState']
-      },
-      success: function(collection)
+    $.ajax({
+      url: '/history;page',
+      success: function(data)
       {
-        viewport.showView(new HistoryListView({collection: collection}));
+        var collection = new History();
+        collection.page = page;
+
+        viewport.showView(new HistoryListView({
+          collection: collection,
+          model: data
+        }));
       },
       error: function()
       {

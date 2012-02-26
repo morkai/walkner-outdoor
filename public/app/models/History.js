@@ -22,5 +22,19 @@ function(Backbone, HistoryEntry)
     url: '/history'
   });
 
+  /**
+   * @param {Object} res
+   * @return {Array.<Object>}
+   */
+  History.prototype.parse = function(res)
+  {
+    this.page = res.page || 1;
+    this.limit = res.limit || 10;
+    this.pages = res.pages || 1;
+    this.totalCount = res.totalCount || res.data.length;
+
+    return res.data;
+  };
+
   return History;
 });

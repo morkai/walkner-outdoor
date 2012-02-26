@@ -1,0 +1,30 @@
+<thead>
+  <tr>
+    <th>Stan
+    <% if (showZoneName) { %>
+    <th>Strefa
+    <% } %>
+    <% if (showProgramName) { %>
+    <th>Program
+    <% } %>
+    <th>Data uruchomienia
+    <th>Data zakończenia
+    <th>Czas trwania
+  </tr>
+</thead>
+<tbody>
+  <% _.each(entries, function(entry) { %>
+  <tr data-id="<%- entry._id %>" class="<%- entry.zoneFinishState %>">
+    <td class="state" title="<%- entry.finishStateText %>">
+    <% if (showZoneName) { %>
+    <td><%- entry.zoneName %>
+    <% } %>
+    <% if (showProgramName) { %>
+    <td><%- entry.programName %>
+    <% } %>
+    <td><%- entry.startDate %>
+    <td><%- entry.finishDate %>
+    <td><%- entry.duration %>
+  </tr>
+  <% }) %>
+</tbody>

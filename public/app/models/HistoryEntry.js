@@ -20,21 +20,27 @@ function(_, Backbone, moment, Program)
     error: 'Błąd'
   };
 
+  var FINISH_STATE_TO_ZONE_STATE = {
+    finish: 'programFinished',
+    stop: 'programStopped',
+    error: 'programErrored'
+  };
+
   /**
-   * @class History
+   * @class HistoryEntry
    * @extends Backbone.Model
    * @constructor
    * @param {Object} [attributes]
    * @param {Object} [options]
    */
-  var History = Backbone.Model.extend({
+  var HistoryEntry = Backbone.Model.extend({
     urlRoot: '/history'
   });
 
   /**
    * @return {Object}
    */
-  History.prototype.toTemplateData = function()
+  HistoryEntry.prototype.toTemplateData = function()
   {
     var data = this.toJSON();
 
@@ -46,6 +52,7 @@ function(_, Backbone, moment, Program)
     if (data.finishState)
     {
       data.finishStateText = STATE_TO_TEXT[data.finishState];
+      data.zoneFinishState = FINISH_STATE_TO_ZONE_STATE[data.finishState];
     }
 
     if (data.finishedAt)
@@ -62,5 +69,5 @@ function(_, Backbone, moment, Program)
     return data;
   };
 
-  return History;
+  return HistoryEntry;
 });

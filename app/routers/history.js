@@ -4,23 +4,78 @@ app.get('/history', auth('viewHistory'), function(req, res, next)
 {
   var HistoryEntry = app.db.model('HistoryEntry');
 
-  var page = parseInt(req.query.page || 1) - 1;
-  var limit = 10;
-  var query = HistoryEntry.find({}, req.query.fields);
+  var conditions = req.query.conditions || {};
+  var fields = req.query.fields;
+  var page = (parseInt(req.query.page) || 1) - 1;
+  var limit = parseInt(req.query.limit) || 10;
 
-  query.exists('finishState');
-  query.desc('finishedAt');
-  query.limit(limit);
-  query.skip(limit * page);
-
-  query.run(function(err, docs)
+  HistoryEntry.count(conditions, function(err, totalCount)
   {
     if (err)
     {
       return next(err);
     }
 
-    res.send(docs);
+    function send(data)
+    {
+      res.send({
+        page: page + 1,
+        limit: limit,
+        pages: Math.ceil(totalCount / limit),
+        totalCount: totalCount,
+        data: data
+      });
+    }
+
+    if (totalCount === 0)
+    {
+      return send([]);
+    }
+
+    var query = HistoryEntry.find(conditions, fields);
+
+    query.exists('finishState');
+    query.desc('finishedAt');
+    query.limit(limit);
+    query.skip(limit * page);
+
+    query.run(function(err, docs)
+    {
+      if (err)
+      {
+        return next(err);
+      }
+
+      send(docs);
+    });
+  });
+});
+
+app.get('/history;page', auth('viewHistory'), function(req, res, next)
+{
+  var Program = app.db.model('Program');
+
+  Program.find({}, {name: 1}).asc('name').run(function(err, programs)
+  {
+    if (err)
+    {
+      return next(err);
+    }
+
+    var Zone = app.db.model('Zone');
+
+    Zone.find({}, {name: 1}).asc('name').run(function(err, zones)
+    {
+      if (err)
+      {
+        return next(err);
+      }
+
+      res.send({
+        programs: programs,
+        zones: zones
+      });
+    });
   });
 });
 

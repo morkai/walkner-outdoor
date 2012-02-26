@@ -1,14 +1,57 @@
-.history small {
-  font-size: .7em;
-  color: #333;
+.historyEntriesContainer {
+  padding: 0 1em 1em 1em;
 }
-.history .list a:hover small {
-  color: inherit;
+.historyEntries {
+  width: 100%;
+  border-collapse: collapse;
+  background: #FFF;
+  box-shadow: 0 1px 3px #666;
 }
-.history .moreContainer {
-  margin: 0 auto 1em auto;
+.historyEntries th {
+  padding: .5em;
+  font-size: 1.4em;
+  font-weight: bold;
+  background: #F1F1F1;
+  background: -moz-linear-gradient(#FFF, #F1F1F1);
+  background: -webkit-linear-gradient(#FFF, #F1F1F1);
+  background: -o-linear-gradient(#FFF, #F1F1F1);
+  background: -ms-linear-gradient(#FFF, #F1F1F1);
+  background: linear-gradient(#FFF, #F1F1F1);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F1F1F1');
+  border: 1px solid #D4D4D4;
+  border-top: 0;
+  border-left: 0;
+}
+.historyEntries tr:hover td {
+  background-color: #39F;
+  color: #FFF;
+}
+.historyEntries td {
+  padding: 0 .5em;
   text-align: center;
+  vertical-align: middle;
+  font-size: 1.2em;
+  border: 1px solid #D4D4D4;
+  border-bottom: 0;
+  border-left: 0;
+  cursor: pointer;
 }
-.history .more {
-  font-size: 2em;
+.historyEntries td:last-child,
+.historyEntries th:last-child {
+  border-right: 0;
+}
+.historyEntries .state {
+  width: 2em;
+  height: 3em;
+}
+.historyFilter .fields > li {
+  display: inline-block;
+  margin-top: 0;
+  margin-right: 1em;
+}
+#historyFilterState {
+  margin-right: 0;
+}
+#historyFilterState > label {
+  margin-bottom: .5em;
 }

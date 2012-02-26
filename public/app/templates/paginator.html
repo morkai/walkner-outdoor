@@ -1,0 +1,33 @@
+  <li class="summary">Strony (<%- currentPage %>/<%- pageCount %>):
+  <li class="firstPage">
+    <% if (showFirstPageLink) { %><a href="<%- href.replace('${page}', 1) %>" data-page="1">&laquo; Pierwsza</a>
+    <% } else { %>&laquo; Pierwsza
+    <% } %>
+
+
+  <li class="prevPage">
+    <% if (showPrevPageLink) { %><a href="<%- href.replace('${page}', currentPage - 1) %>" data-page="<%- currentPage - 1 %>">&lsaquo; Poprzednia</a>
+    <% } else { %>&lsaquo; Poprzednia
+    <% } %>
+
+<% if (showLeftDots) { %>
+  <li>...
+<% } %>
+
+<% for (var page = firstPage; page <= lastPage; ++page) { %>
+  <li class="<%- page === currentPage ? 'currentPage' : 'page' %>"><a href="<%- href.replace('${page}', page) %>" data-page="<%- page %>"><%- page %></a>
+<% } %>
+
+<% if (showRightDots) { %>
+  <li>...
+<% } %>
+
+  <li class="nextPage">
+    <% if (showNextPageLink) { %><a href="<%- href.replace('${page}', currentPage + 1) %>" data-page="<%- currentPage + 1 %>">Następna &rsaquo;</a>
+    <% } else { %>Następna &rsaquo;
+    <% } %>
+
+  <li class="lastPage">
+    <% if (showLastPageLink) { %><a href="<%- href.replace('${page}', pageCount) %>" data-page="<%- pageCount %>">Ostatnia &raquo;</a>
+    <% } else { %>Ostatnia &raquo;
+    <% } %>
