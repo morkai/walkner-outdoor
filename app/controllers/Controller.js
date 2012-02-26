@@ -398,9 +398,9 @@ Controller.prototype.sendRequestTimes = function()
   {
     this.sendMessage('timed', {
       last: Math.ceil(times.last),
-      avg : Math.ceil(times.total / times.count),
-      min : Math.ceil(times.min),
-      max : Math.ceil(times.max)
+      avg: Math.ceil(times.total / times.count),
+      min: Math.ceil(times.min),
+      max: Math.ceil(times.max)
     });
   }
 

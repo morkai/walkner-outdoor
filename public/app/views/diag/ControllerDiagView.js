@@ -33,7 +33,7 @@ function(
     className: 'box',
     events: {
       'click .start': 'startController',
-      'click .stop' : 'stopController'
+      'click .stop': 'stopController'
     }
   });
 
@@ -47,7 +47,7 @@ function(
     }
     else
     {
-      model.online    = false;
+      model.online = false;
       model.startTime = '0';
       model.startedAt = '-';
     }
@@ -142,8 +142,8 @@ function(
         viewport.msg.show({
           type: 'error',
           time: 2000,
-          text: 'Nie udało się uruchomić sterownika: ' +
-            (xhr.responseText || xhr.statusText)
+          text: 'Nie udało się uruchomić sterownika: '
+            + (xhr.responseText || xhr.statusText)
         });
       },
       complete: function()

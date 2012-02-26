@@ -76,12 +76,12 @@ function(
     var controller = this.model.toTemplateData();
 
     this.el.innerHTML = this.template({
-      action    : '/controllers',
+      action: '/controllers',
       controller: controller
     });
 
     new ConnectionInfoFieldsView({
-      el   : this.$('ul.fields')[0],
+      el: this.$('ul.fields')[0],
       model: controller
     }).render();
 

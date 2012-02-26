@@ -181,7 +181,7 @@ function(
 
     viewport.msg.show({
       delay: 200,
-      text : 'Uruchamianie programu...'
+      text: 'Uruchamianie programu...'
     });
 
     $.ajax({
@@ -205,8 +205,8 @@ function(
         viewport.msg.show({
           type: 'error',
           time: 3000,
-          text: 'Nie udało się uruchomić programu' +
-                (xhr.responseText ? ': ' + xhr.responseText : ' :(')
+          text: 'Nie udało się uruchomić programu'
+            + (xhr.responseText ? ': ' + xhr.responseText : ' :(')
         });
       },
       complete: function()

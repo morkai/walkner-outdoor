@@ -105,10 +105,10 @@ ModbusTcpController.prototype.setZoneState = function(
   newState, controllerInfo, done)
 {
   this.executeTimedRequest({
-    fn     : 5,
-    unit   : controllerInfo.stateUnit,
+    fn: 5,
+    unit: controllerInfo.stateUnit,
     address: controllerInfo.stateOutput,
-    value  : newState ? true : false,
+    value: newState ? true : false,
     handler: done
   });
 };
@@ -130,10 +130,10 @@ ModbusTcpController.prototype.setZoneLeds = function(leds, controllerInfo, done)
       for (var led in leds)
       {
         controller.executeTimedRequest({
-          fn     : 5,
-          unit   : controllerInfo[led + 'LedUnit'],
+          fn: 5,
+          unit: controllerInfo[led + 'LedUnit'],
           address: controllerInfo[led + 'LedOutput'],
-          value  : Controller.LED_STATE_VALUES[led][Boolean(leds[led])],
+          value: Controller.LED_STATE_VALUES[led][Boolean(leds[led])],
           handler: group()
         });
       }
@@ -158,11 +158,11 @@ ModbusTcpController.prototype.getZoneInput = function(
       var next = this;
 
       controller.executeTimedRequest({
-        fn      : 2,
-        unit    : controllerInfo[input + 'Unit'],
-        address : controllerInfo[input + 'Input'],
+        fn: 2,
+        unit: controllerInfo[input + 'Unit'],
+        address: controllerInfo[input + 'Input'],
         quantity: 1,
-        handler : function(err, data)
+        handler: function(err, data)
         {
           if (err)
           {

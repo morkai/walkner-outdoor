@@ -19,7 +19,7 @@ function(Backbone, ActiveZone)
    */
   var ActiveZones = Backbone.Collection.extend({
     model: ActiveZone,
-    url  : '/activeZones'
+    url: '/activeZones'
   });
 
   ActiveZones.prototype.comparator = function(activeZone)

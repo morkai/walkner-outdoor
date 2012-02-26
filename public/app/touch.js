@@ -29,7 +29,7 @@ define(['require', 'jQuery'], function(require, $)
 
   function resizeView()
   {
-    var viewEl   = $(viewport.view.el);
+    var viewEl = $(viewport.view.el);
     var layoutEl = $(viewport.layout.el);
 
     if (viewEl.hasClass('activeZones'))
@@ -39,9 +39,8 @@ define(['require', 'jQuery'], function(require, $)
 
     viewEl.append('<div class="bottomSpacer"></div>');
 
-    var height = window.innerHeight +
-                 viewEl.outerHeight() -
-                 layoutEl.outerHeight();
+    var height =
+      window.innerHeight + viewEl.outerHeight() - layoutEl.outerHeight();
 
     if (VirtualKeyboard.isOpen())
     {
@@ -77,17 +76,17 @@ define(['require', 'jQuery'], function(require, $)
     {
       var type = el.type;
 
-      return type === 'button' ||
-             type === 'submit' ||
-             type === 'radio' ||
-             type === 'checkbox';
+      return type === 'button'
+        || type === 'submit'
+        || type === 'radio'
+        || type === 'checkbox';
     }
 
-    var selector    = 'input, textarea';
-    var currentEl   = null;
+    var selector = 'input, textarea';
+    var currentEl = null;
     var containerEl = $('<div id="kbContainer"></div>').appendTo(bodyEl);
-    var holderEl    = $('<div id="kbHolder"></div>');
-    var toggleEl    = $('<input id="toggleKb" value="Pokaż klawiaturę" type="button" class="button">');
+    var holderEl = $('<div id="kbHolder"></div>');
+    var toggleEl = $('<input id="toggleKb" value="Pokaż klawiaturę" type="button" class="button">');
 
     containerEl.append(toggleEl).append(holderEl);
 

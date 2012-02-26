@@ -125,7 +125,7 @@ function($, _, Backbone, user)
    */
   MessageView.prototype.loading = function()
   {
-    var self  = this;
+    var self = this;
     var shown = false;
 
     this.showTimeout = _.timeout(200, function()

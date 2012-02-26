@@ -60,7 +60,7 @@ function(
    */
   ControllerInfoFieldsView.prototype.renderControllerOptions = function(done)
   {
-    var self     = this;
+    var self = this;
     var selectEl = this.$('select[name="zone.controller"]');
 
     new Controllers().fetch({

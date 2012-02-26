@@ -51,13 +51,13 @@ function(
     actions: function()
     {
       return [{
-        text     : 'Zapisz',
+        text: 'Zapisz',
         className: 'blue save action',
-        handler  : this.submitForm
+        handler: this.submitForm
       }];
     },
     events: {
-      'submit .form' : 'submitForm'
+      'submit .form': 'submitForm'
     }
   });
 

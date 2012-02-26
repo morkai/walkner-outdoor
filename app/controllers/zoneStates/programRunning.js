@@ -108,7 +108,7 @@ function executeStep(zone, stepIndex, stepIteration, turnOnStartTime)
   step(
     function turnOnStep()
     {
-      var next      = this;
+      var next = this;
       var startTime = turnOnStartTime || Date.now();
 
       zone.setState(true, function(err)

@@ -92,7 +92,7 @@ function(
    */
   ProgramZoneView.prototype.renderProgramOptions = function()
   {
-    var selectEl  = this.$('select[name="zone.program"]');
+    var selectEl = this.$('select[name="zone.program"]');
     var currentProgram = this.model.get('program');
 
     if (currentProgram)

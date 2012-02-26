@@ -159,7 +159,7 @@ function(_, Backbone)
   Program.prototype.toTemplateData = function(options)
   {
     var minSteps = options && options.minSteps ? options.minSteps : 0;
-    var data     = this.toJSON();
+    var data = this.toJSON();
 
     for (var i = data.steps.length; i < minSteps; ++i)
     {
