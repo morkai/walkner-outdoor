@@ -207,6 +207,11 @@ app.put('/zones/:id', function(req, res, next)
     data.program = data.program._id;
   }
 
+  if (_.isString(data.program) && data.program.length === 0)
+  {
+    data.program = null;
+  }
+
   var privilege = data.program ? 'assignPrograms' : 'manageZones';
 
   auth(privilege)(req, res, function()
@@ -225,7 +230,7 @@ app.put('/zones/:id', function(req, res, next)
         return res.send(404);
       }
 
-      if (!data.program && zone.isStarted())
+      if (_.isUndefined(data.program) && zone.isStarted())
       {
         return res.send('Nie można modyfikować uruchomionej strefy :(', 400);
       }
