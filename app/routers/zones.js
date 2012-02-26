@@ -483,7 +483,7 @@ function stopProgram(req, res, next, zone, user)
 {
   var pin = req.body.pin;
 
-  if (user.privileges.hasOwnProperty('pickProgram'))
+  if (user.loggedIn)
   {
     return stop(user);
   }
