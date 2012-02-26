@@ -65,6 +65,11 @@ function(
 
       return [
         {
+          href: '#zones/' + id + ';program',
+          text: 'Programuj',
+          privileges: 'assignPrograms'
+        },
+        {
           href: '#zones/' + id + ';edit',
           text: 'Edytuj',
           privileges: 'manageZones'
