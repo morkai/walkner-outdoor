@@ -1,0 +1,15 @@
+.zoneDetailsPage .details {
+  display: inline-block;
+  vertical-align: top;
+  width: 30%;
+}
+.zoneDetailsPage .history {
+  margin-top: 1em;
+  display: inline-block;
+  vertical-align: top;
+  width: 69%;
+}
+.zoneDetailsPage .history h3 {
+  font-size: 1.2em;
+  margin-bottom: .8em;
+}

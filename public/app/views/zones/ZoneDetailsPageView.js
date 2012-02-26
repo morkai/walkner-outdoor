@@ -9,10 +9,10 @@ define(
   'app/views/viewport',
   'app/views/PageLayout',
   'app/views/history/HistoryEntriesTableView',
-  'app/views/programs/ProgramDetailsView',
-  'app/views/programs/DeleteProgramView',
+  'app/views/zones/ZoneDetailsView',
+  'app/views/zones/DeleteZoneView',
 
-  'text!app/templates/programs/detailsPage.html'
+  'text!app/templates/zones/detailsPage.html'
 ],
 /**
  * @param {jQuery} $
@@ -23,8 +23,8 @@ define(
  * @param {Viewport} viewport
  * @param {function(new:PageLayout)} PageLayout
  * @param {function(new:HistoryEntriesTableView)} HistoryEntriesTableView
- * @param {function(new:ProgramDetailsView)} ProgramDetailsView
- * @param {function(new:DeleteProgramView)} DeleteProgramView
+ * @param {function(new:ZoneDetailsView)} ZoneDetailsView
+ * @param {function(new:DeleteZoneView)} DeleteZoneView
  * @param {String} detailsPageTpl
  */
 function(
@@ -36,25 +36,25 @@ function(
   viewport,
   PageLayout,
   HistoryEntriesTableView,
-  ProgramDetailsView,
-  DeleteProgramView,
+  ZoneDetailsView,
+  DeleteZoneView,
   detailsPageTpl)
 {
   /**
-   * @class ProgramDetailsPageView
+   * @class ZoneDetailsPageView
    * @constructor
    * @extends Backbone.View
    * @param {Object} [options]
    */
-  var ProgramDetailsPageView = Backbone.View.extend({
-    helpHash: 'programs-view',
-    className: 'programDetailsPage',
+  var ZoneDetailsPageView = Backbone.View.extend({
+    helpHash: 'zones-view',
+    className: 'zoneDetailsPage',
     template: _.template(detailsPageTpl),
     layout: PageLayout,
     breadcrumbs: function()
     {
       return [
-        {href: '#programs', text: 'Programy'},
+        {href: '#zones', text: 'Strefy'},
         this.model.get('name')
       ];
     },
@@ -65,14 +65,14 @@ function(
 
       return [
         {
-          href: '#programs/' + id + ';edit',
+          href: '#zones/' + id + ';edit',
           text: 'Edytuj',
-          privileges: 'managePrograms'
+          privileges: 'manageZones'
         },
         {
-          href: '#programs/' + id + ';delete',
+          href: '#zones/' + id + ';delete',
           text: 'Usuń',
-          privileges: 'managePrograms',
+          privileges: 'manageZones',
           handler: function(e)
           {
             if (e.button !== 0)
@@ -80,7 +80,7 @@ function(
               return;
             }
 
-            viewport.showDialog(new DeleteProgramView({model: model}));
+            viewport.showDialog(new DeleteZoneView({model: model}));
 
             return false;
           }
@@ -89,26 +89,26 @@ function(
     }
   });
 
-  ProgramDetailsPageView.prototype.initialize = function()
+  ZoneDetailsPageView.prototype.initialize = function()
   {
     this.detailsView = null;
     this.historyView = null;
   };
 
-  ProgramDetailsPageView.prototype.destroy = function()
+  ZoneDetailsPageView.prototype.destroy = function()
   {
     _.destruct(this, 'detailsView', 'historyView');
 
     this.remove();
   };
 
-  ProgramDetailsPageView.prototype.render = function()
+  ZoneDetailsPageView.prototype.render = function()
   {
     _.destruct(this, 'detailsView', 'historyView');
 
     this.el.innerHTML = this.template();
 
-    this.detailsView = new ProgramDetailsView({model: this.model});
+    this.detailsView = new ZoneDetailsView({model: this.model});
     this.detailsView.render();
 
     this.$('.details').append(this.detailsView.el);
@@ -124,9 +124,8 @@ function(
         data: {
           page: 1,
           limit: 5,
-          conditions: {programId: this.model.id},
+          conditions: {zoneId: this.model.id},
           fields: {
-            zoneName: 1,
             programName: 1,
             startedAt: 1,
             finishedAt: 1,
@@ -141,7 +140,7 @@ function(
           }
 
           self.historyView = new HistoryEntriesTableView({
-            showProgramName: false,
+            showZoneName: false,
             collection: history
           });
           self.historyView.render();
@@ -154,5 +153,5 @@ function(
     return this;
   };
 
-  return ProgramDetailsPageView;
+  return ZoneDetailsPageView;
 });

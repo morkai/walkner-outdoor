@@ -7,7 +7,7 @@ define(
   'app/views/viewport',
   'app/views/zones/ZoneListView',
   'app/views/zones/AddZoneFormView',
-  'app/views/zones/ZoneDetailsView',
+  'app/views/zones/ZoneDetailsPageView',
   'app/views/zones/EditZoneFormView',
   'app/views/zones/DeleteZoneView',
   'app/views/zones/ProgramZoneView',
@@ -19,7 +19,7 @@ define(
  * @param {Viewport} viewport
  * @param {function(new:ZoneListView)} ZoneListView
  * @param {function(new:AddZoneFormView)} AddZoneFormView
- * @param {function(new:ZoneDetailsView)} ZoneDetailsView
+ * @param {function(new:ZoneDetailsPageView)} ZoneDetailsPageView
  * @param {function(new:EditZoneFormView)} EditZoneFormView
  * @param {function(new:DeleteZoneView)} DeleteZoneView
  * @param {function(new:ProgramZoneView)} ProgramZoneView
@@ -31,7 +31,7 @@ function(
   viewport,
   ZoneListView,
   AddZoneFormView,
-  ZoneDetailsView,
+  ZoneDetailsPageView,
   EditZoneFormView,
   DeleteZoneView,
   ProgramZoneView)
@@ -99,7 +99,7 @@ function(
     new Zone({_id: id}).fetch({
       success: function(model)
       {
-        viewport.showView(new ZoneDetailsView({model: model}));
+        viewport.showView(new ZoneDetailsPageView({model: model}));
       },
       error: function()
       {
