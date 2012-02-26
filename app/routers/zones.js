@@ -294,14 +294,15 @@ app.del('/zones/:id', auth('manageZones'), function(req, res, next)
 
 app.get('/zones/:id/programs', function(req, res, nextHandler)
 {
+  var Zone = app.db.model('Zone');
+  var Program = app.db.model('Program');
+
   step(
     function findZoneStep()
     {
-      app.db.model('Zone')
-        .findById(req.params.id, {name: 1, program: 1})
-        .run(this);
+      Zone.findById(req.params.id, {name: 1, program: 1}).run(this);
     },
-    function findAssignedProgramStep(err, zone)
+    function fetchAssignedProgramStep(err, zone)
     {
       var nextStep = this;
 
@@ -315,11 +316,14 @@ app.get('/zones/:id/programs', function(req, res, nextHandler)
         return nextStep(404);
       }
 
-      app.db.model('Program').findById(zone.program, {name: 1}).run(
-        function(err, program) { nextStep(err, zone, program); }
+      Program.findById(zone.program).run(
+        function(err, program)
+        {
+          nextStep(err, zone, program);
+        }
       );
     },
-    function checkAuthStep(err, zone, program)
+    function setAssignedProgram(err, zone, assignedProgram)
     {
       var nextStep = this;
 
@@ -330,19 +334,43 @@ app.get('/zones/:id/programs', function(req, res, nextHandler)
 
       var data = {zone: {_id: zone._id, name: zone.name}};
 
-      if (program)
+      if (assignedProgram)
       {
-        data.assignedProgram = {_id: program._id, name: program.name};
+        data.assignedProgram = assignedProgram.toJSON();
+      }
+
+      return data;
+    },
+    function fetchAllProgramsStep(err, data)
+    {
+      var nextStep = this;
+
+      if (err)
+      {
+        return nextStep(err);
       }
 
       var user = req.session.user;
 
-      if (user && user.privileges.pickProgram)
+      if (!user || !user.privileges.pickProgram)
       {
-        return attachPickProgramData(data, nextStep);
+        return nextStep(null, data);
       }
 
-      return data;
+      Program.find({}, {name: 1}).run(function(err, allPrograms)
+      {
+        if (err)
+        {
+          return nextStep(err);
+        }
+
+        data.allPrograms = allPrograms.map(function(program)
+        {
+          return program.toJSON();
+        });
+
+        return nextStep(null, data);
+      });
     },
     function sendResponseStep(err, data)
     {
@@ -355,99 +383,6 @@ app.get('/zones/:id/programs', function(req, res, nextHandler)
     }
   );
 });
-
-function attachPickProgramData(data, done)
-{
-  step(
-    function findAllPrograms()
-    {
-      app.db.model('Program').find({}, {name: 1}).asc('name').run(this);
-    },
-    function findRecentlyRunPrograms(err, allPrograms)
-    {
-      var nextStep = this;
-
-      if (err)
-      {
-        return nextStep(err);
-      }
-
-      var HistoryEntry = app.db.model('HistoryEntry');
-      var criteria = {
-        zoneId: data.zone._id,
-        finishState: 'finish'
-      };
-      var fields = {programId: 1, programName: 1};
-
-      HistoryEntry
-        .find(criteria, fields)
-        .desc('finishedAt')
-        .limit(10)
-        .run(function(err, historyEntries)
-        {
-          nextStep(err, allPrograms, historyEntries);
-        });
-    },
-    function cleanUpListsStep(err, allPrograms, recentHistoryEntries)
-    {
-      var nextStep = this;
-
-      if (err)
-      {
-        return nextStep(err);
-      }
-
-      var allProgramIds = {};
-
-      data.allPrograms = allPrograms.map(function(program)
-      {
-        allProgramIds[program._id] = true;
-
-        return {
-          _id: program._id,
-          name: program.name
-        };
-      });
-      data.recentPrograms = [];
-
-      var recentProgramIds = {};
-
-      for (var i = 0, l = recentHistoryEntries.length; i < l; ++i)
-      {
-        if (data.recentPrograms.length === 5)
-        {
-          break;
-        }
-
-        var historyEntry = recentHistoryEntries[i];
-        var programId = historyEntry.programId;
-
-        if (!allProgramIds[programId])
-        {
-          continue;
-        }
-
-        if (recentProgramIds[programId])
-        {
-          continue;
-        }
-
-        recentProgramIds[programId] = 1;
-
-        data.recentPrograms.push({
-          _id: programId,
-          name: historyEntry.programName
-        });
-      }
-
-      return nextStep(null);
-    },
-    function finishStep(err)
-    {
-      return done(err, data);
-    }
-  );
-}
 
 function startProgram(req, res, next, zone, user)
 {

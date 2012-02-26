@@ -1,49 +1,3 @@
-<% if (showAssignedProgram) { %>
-<div class="assignedProgram box">
-  <h4>Przypisany program</h4>
-  <ol class="list">
-    <li>
-      <a class="program" href="#programs/<%- assignedProgram._id %>" data-id="<%- assignedProgram._id %>"><%- assignedProgram.name %></a>
-    </li>
-  </ol>
-</div>
-<% } %>
-
-<% if (showRecentPrograms) { %>
-<div class="recentPrograms box">
-  <h4>Ostatnio zakończone programy</h4>
-  <ol class="list">
-    <% _.each(recentPrograms, function(program) { %>
-    <li>
-      <a class="program" href="#programs/<%- program._id %>" data-id="<%- program._id %>"><%- program.name %></a>
-    </li>
-    <% }) %>
-  </ol>
-</div>
-<% } %>
-
-<% if (showAllPrograms) { %>
-<div class="allPrograms box">
-  <h4>Wszystkie programy</h4>
-  <ol class="list">
-    <% _.each(allPrograms, function(program) { %>
-    <li>
-      <a class="program" href="#programs/<%- program._id %>" data-id="<%- program._id %>"><%- program.name %></a>
-    </li>
-    <% }) %>
-  </ol>
-</div>
-<% } %>
-
-<% if (showEnterPinForm) { %>
-<p class="content">
-  Jeżeli chcesz uruchomić program<br><strong>&lt;<%- assignedProgram.name %>&gt;</strong><br>
-  na strefie<br><strong>&lt;<%- zone.name %>&gt;</strong><br>to podaj swój PIN
-  i wciśnij przycisk <em>Start</em>.
-</p>
-<div class="enterPinForm"></div>
-<% } %>
-
 <% if (showNoAssignedProgramMessage) { %>
 <div class="content">
   <p>
@@ -51,5 +5,60 @@
     gdyż nie ma ona przypisanego żadnego programu.
   </p>
   <a class="cancel" href="#">Anuluj</a>
+</div>
+<% } %>
+
+<% if (showEnterPinForm) { %>
+<p class="content">
+  Jeżeli chcesz uruchomić program<br>
+  <strong>&lt;<%- assignedProgram.name %>&gt;</strong><br>
+  na strefie<br>
+  <strong>&lt;<%- zone.name %>&gt;</strong><br>
+  to podaj swój PIN i wciśnij przycisk <em>Start</em>.
+</p>
+<div class="enterPinForm"></div>
+<% } %>
+
+<% if (showAssignedProgram) { %>
+<div class="assignedProgramContainer">
+  <p class="content">
+    Jeżeli chcesz uruchomić program
+    <strong>&lt;<%- assignedProgram.name %>&gt;</strong>
+    przypisany do strefy
+    <strong>&lt;<%- zone.name %>&gt;</strong>
+    to wciśnij przycisk <em>Start</em>.
+  </p>
+  <div class="pickedProgram box">
+    <h4>Przypisany program</h4>
+    <div class="programDetails"></div>
+    <input class="cancel action red" type="button" value="Anuluj">
+    <input class="startProgram action green" type="button" value="Start">
+  </div>
+</div>
+<% } %>
+
+<% if (showAllPrograms) { %>
+<div class="allProgramsContainer">
+  <p class="content">
+    Wybierz z listy program, który chcesz uruchomić na strefie
+    <strong>&lt;<%- zone.name %>&gt;</strong>
+    i wciśnij przycisk <em>Start</em>.
+  </p>
+  <div class="allPrograms box">
+    <h4>Programy</h4>
+    <ol class="list">
+      <% _.each(allPrograms, function(program) { %>
+      <li>
+        <a class="program" href="#programs/<%- program._id %>" data-id="<%- program._id %>"><%- program.name %></a>
+      </li>
+      <% }) %>
+    </ol>
+  </div>
+  <div class="pickedProgram box">
+    <h4>Wybrany program</h4>
+    <div class="programDetails"></div>
+    <input class="cancel action red" type="button" value="Anuluj">
+    <input class="startProgram action green" type="button" value="Start">
+  </div>
 </div>
 <% } %>

@@ -188,15 +188,57 @@
   background: linear-gradient(#FFF, #F1F1F1);
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FFFFFF', endColorstr = '#F1F1F1');
 }
-.programPicker .list {
+.programPicker .list,
+.programPicker .properties {
   margin: 0;
   overflow-y: auto;
+  background: #FFF;
 }
 .programPicker .box {
   vertical-align: top;
   display: inline-block;
-  margin-left: .9em;
+  box-shadow: 0 1px 3px #333;
+}
+.programPicker .allProgramsContainer {
+  padding: 1em;
+}
+.programPicker .allProgramsContainer .content {
+  max-width: none;
+  margin-top: 0;
+  margin-bottom: 1em;
+  box-shadow: 0 1px 3px #333;
+}
+.programPicker .allProgramsContainer .allPrograms {
   width: 30%;
+  float: left;
+}
+.programPicker .allProgramsContainer .pickedProgram {
+  width: 69%;
+  float: right;
+}
+.programPicker .assignedProgramContainer .pickedProgram {
+  margin: 0 1em;
+}
+.programPicker .assignedProgramContainer .content {
+  max-width: none;
+  margin: 1em;
+  box-shadow: 0 1px 3px #333;
+}
+.programPicker .properties {
+  margin: 0;
+}
+.programPicker .pickedProgram {
+  position: relative;
+}
+.programPicker .pickedProgram .action {
+  position: absolute;
+  bottom: 0;
+  width: 50%;
+  font-size: 28px;
+  height: 84px;
+}
+.programPicker .startProgram {
+  left: 50%;
 }
 .programPicker .box:first-child {
   margin-left: 0;
