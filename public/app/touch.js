@@ -27,8 +27,6 @@ define(['require', 'jQuery'], function(require, $)
     makeScrollable();
   });
 
-  return {enabled: true};
-
   function resizeView()
   {
     var viewEl   = $(viewport.view.el);
@@ -169,6 +167,7 @@ define(['require', 'jQuery'], function(require, $)
       bodyEl.addClass('kb');
 
       VirtualKeyboard.show(currentEl, holderEl[0]);
+      resizeView();
     });
 
     viewport.bind('dialog:show', function()
@@ -202,4 +201,20 @@ define(['require', 'jQuery'], function(require, $)
       }
     }
   }
+
+  function hideKeyboard()
+  {
+    var toggleEl = $('#toggleKb');
+
+    if (VirtualKeyboard.isOpen())
+    {
+      toggleEl.click().hide();
+    }
+    else
+    {
+      toggleEl.hide();
+    }
+  }
+
+  return {enabled: true, hideKeyboard: hideKeyboard};
 });
