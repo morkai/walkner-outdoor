@@ -4,11 +4,8 @@ define(
   'Underscore',
   'Backbone',
 
-  'app/views/viewport',
-  'app/views/PageLayout',
   'app/views/programs/ProgramStepsPlotView',
   'app/views/programs/ProgramStepsTableView',
-  'app/views/programs/DeleteProgramView',
 
   'text!app/templates/programs/details.html'
 ],
@@ -16,22 +13,16 @@ define(
  * @param {jQuery} $
  * @param {Underscore} _
  * @param {Backbone} Backbone
- * @param {Viewport} viewport
- * @param {function(new:PageLayout)} PageLayout
  * @param {function(new:ProgramStepsPlotView)} ProgramStepsPlotView
  * @param {function(new:ProgramStepsTableView)} ProgramStepsTableView
- * @param {function(new:DeleteProgramView)} DeleteProgramView
  * @param {String} detailsTpl
  */
 function(
   $,
   _,
   Backbone,
-  viewport,
-  PageLayout,
   ProgramStepsPlotView,
   ProgramStepsTableView,
-  DeleteProgramView,
   detailsTpl)
 {
   /**
@@ -41,45 +32,7 @@ function(
    * @param {Object} [options]
    */
   var ProgramDetailsView = Backbone.View.extend({
-    helpHash: 'programs-view',
-    template: _.template(detailsTpl),
-    layout: PageLayout,
-    breadcrumbs: function()
-    {
-      return [
-        {href: '#programs', text: 'Programy'},
-        this.model.get('name')
-      ];
-    },
-    actions: function()
-    {
-      var model = this.model;
-      var id = model.id;
-
-      return [
-        {
-          href: '#programs/' + id + ';edit',
-          text: 'Edytuj',
-          privileges: 'managePrograms'
-        },
-        {
-          href: '#programs/' + id + ';delete',
-          text: 'Usuń',
-          privileges: 'managePrograms',
-          handler: function(e)
-          {
-            if (e.button !== 0)
-            {
-              return;
-            }
-
-            viewport.showDialog(new DeleteProgramView({model: model}));
-
-            return false;
-          }
-        }
-      ];
-    }
+    template: _.template(detailsTpl)
   });
 
   ProgramDetailsView.prototype.initialize = function()

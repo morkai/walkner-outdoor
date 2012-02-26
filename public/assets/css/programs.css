@@ -37,3 +37,6 @@ table.program-steps {
 .program-steps.mutable tr:last-child td {
   padding-bottom: .5em;
 }
+.programDetailsPage .history {
+  padding: 0 1em 1em 1em;
+}

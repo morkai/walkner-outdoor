@@ -7,7 +7,7 @@ define(
   'app/views/viewport',
   'app/views/programs/ProgramListView',
   'app/views/programs/AddProgramFormView',
-  'app/views/programs/ProgramDetailsView',
+  'app/views/programs/ProgramDetailsPageView',
   'app/views/programs/EditProgramFormView',
   'app/views/programs/DeleteProgramView'
 ],
@@ -18,7 +18,7 @@ define(
  * @param {Viewport} viewport
  * @param {function(new:ProgramListView)} ProgramListView
  * @param {function(new:AddProgramFormView)} AddProgramFormView
- * @param {function(new:ProgramDetailsView)} ProgramDetailsView
+ * @param {function(new:ProgramDetailsPageView)} ProgramDetailsPageView
  * @param {function(new:EditProgramFormView)} EditProgramFormView
  * @param {function(new:DeleteProgramView)} DeleteProgramView
  */
@@ -29,7 +29,7 @@ function(
   viewport,
   ProgramListView,
   AddProgramFormView,
-  ProgramDetailsView,
+  ProgramDetailsPageView,
   EditProgramFormView,
   DeleteProgramView)
 {
@@ -95,7 +95,7 @@ function(
     new Program({_id: id}).fetch({
       success: function(model)
       {
-        viewport.showView(new ProgramDetailsView({model: model}));
+        viewport.showView(new ProgramDetailsPageView({model: model}));
       },
       error: function()
       {
