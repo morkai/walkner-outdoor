@@ -477,7 +477,10 @@
               o danym programie: nazwa, informacja, czy program jest powtarzany
               w nieskończoność, czas trwania oraz zdefiniowane kroki
               (w formacie wykresu oraz tabeli).
-              Ponadto, wybrany program można zmodyfikować lub usunąć.
+              Ponadto, jeżeli użytkownik posiada uprawnienie
+              <span class="privilege">Przeglądanie historii</span>, to
+              wyświetlana jest lista 5 ostatnich wpisów z historii dotyczących
+              danego programu.
             </p>
             <p>
               Wybranie akcji <button class="action blue">Edytuj</button> sprawi,
@@ -625,28 +628,153 @@
             </div>
           </section>
         </section>
-        <section id="history" class="todo">
+        <section id="history">
           <h1>Historia</h1>
           <p>
-            Lorem ipsum dolor sit amet...
+            W module <em>Historia</em> dostępne są do wglądu wszystkie zapisane
+            zakończenia wykonywania programów na strefach.
           </p>
           <section id="history-browse">
             <h1>Przeglądanie listy wpisów <span class="privilege">Przeglądanie historii</span></h1>
+            <div class="image">
+              <div class="screen">
+                <object type="application/x-shockwave-flash" data="screens/history-browse.swf" width=899 height=672>
+                  <param name="movie" value="screens/history-browse.swf">
+                  <param name="quality" value="high">
+                  <param name="bgcolor" value="#EEEEEE">
+                  <param name="wmode" value="transparent">
+                  <img src="screens/history-browse.png" alt="Ekran wpisów w historii">
+                </object>
+              </div>
+              <br>
+              Ekran wpisów w historii
+            </div>
             <p>
-              Lorem ipsum dolor sit amet...
+              Na ekranie wpisów w historii dostępna jest filtrowalna tabela
+              wszystkich zapisanych zakończonych wykonań programów ze wszystkich
+              stref. Każdy wiersz w tabeli odpowiada innemu wpisowi w historii
+              i zawiera następujące informacje:
+            </p>
+            <ul>
+              <li>
+                stan zakończenia programu
+                (<em class="programFinished"><span class="state"></span> Ukończony pomyślnie</em>,
+                <em class="programStopped"><span class="state"></span> Zatrzymany przez użytkownika</em>,
+                <em class="programErrored"><span class="state"></span> Zatrzymany z błędem</em>),
+              <li>nazwa strefy, na której wykonywany był program,
+              <li>nazwa wykonywanego programu,
+              <li>data włączenia programu,
+              <li>data zakończenia wykonywania programu,
+              <li>czas trwania programu.
+            </ul>
+            <p>
+              Kliknięcie na wiersz tabeli przeniesie użytkownika do
+              <a href="#history-view">ekranu wybranego wpisu</a>, gdzie dostępnych
+              jest więcej informacji dotyczących wybranego uruchomienia programu.
+            </p>
+            <p>
+              Gdy wpisów w historii będzie więcej niż 10, lista wpisów dzielona
+              jest na strony. Nawigacja między stronami odbywa się poprzez
+              klikanie odnośników wyświetlanych pod tabelą wpisów.
+              Użytkownik może przejść do wybranej strony klikając na odpowiadający
+              jej numer.
+            </p>
+            <div class="info">
+              <p class="ok">
+                <strong>UWAGA!</strong> W danym momencie wyświetlanych jest
+                maksymalnie siedem numerów stron: numer aktualnej strony, trzy
+                numery stron poprzednich oraz trzy numery stron następnych
+                (nawet w przypadku, gdy dostępnych stron jest więcej).
+              </p>
+            </div>
+            <p>
+              Listę wpisów można filtrować korzystając z formularza znajdującego
+              się nad tabelą. Wyświetlane dane można ograniczyć do:
+            </p>
+            <ul>
+              <li>wybranego programu,
+              <li>wybranej strefy,
+              <li>stanów zakończenia wykonywania programu,
+              <li>czasu uruchomienia programu,
+              <li>czasu zakończenia programu.
+            </ul>
+            <div class="info">
+              <p class="ok">
+                <strong>UWAGA!</strong> W przypadku wybrania kilku filtrów,
+                wyświetlane są tylko te dane, które spełniają wszystkie wybrane kryteria.
+                Na przykład wybranie jednej strefy, stanu zakończenia
+                <em>Ukończony pomyślnie</em>, wpisanie w polu <strong>Od</strong>
+                wartości <em>2012-02-25</em>, a w polu <strong>Do</strong>
+                wartości <em>2012-02-26 15:00</em> spowoduje wyświetlenie
+                wszystkich programów, które zakończyły się pomyślnie
+                na wybranej strefie między 2012-02-25 00:00:00 a 2012-02-26 15:00:00.
+              </p>
+            </div>
+            <p>
+              Filtry aplikowane są w locie i zapisywane do momentu opuszczenia
+              aplikacji przez użytkownika (tzn. zamknięcia karty w przęglądarce).
+              Wszystkie aktywne filtry można usunąć klikając przycisk
+              <button class="button" type="button">Usuń wszystkie filtry</button>
+            </p>
+            <p>
+              Wybranie akcji <button class="action blue">Wyczyść</button> sprawi,
+              że wyświetlone zostanie <a href="#history-purge">okno dialogowe
+              pytające z formularzem czyszczenia historii</a>. Przycisk ten pojawia się
+              użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Czyszczenie historii</span>.
             </p>
           </section>
           <section id="history-view">
             <h1>Przeglądanie wybranego wpisu <span class="privilege">Przeglądanie historii</span></h1>
+            <div class="image">
+              <img class="screen" src="screens/history-view.png" alt="Ekran wybranego wpisu historii">
+              <br>
+              Ekran wybranego wpisu historii
+            </div>
             <p>
-              Lorem ipsum dolor sit amet...
+              Na ekranie wpisu historii znajdują się szczegółowe informacje
+              dotyczące wybranego uruchomienia programu:
             </p>
+            <ul>
+              <li>nazwa strefy, na której program był uruchomiony,
+              <li>nazwa programu, który był wykonywany,
+              <li>stan zakończenia wykonywania programu (<em>Ukończony</em>, <em>Zatrzymany</em> lub <em>Błąd</em>),
+              <li>opis błędu (jeżeli stan zakończenia wykonywania programu to <em>Błąd</em>),
+              <li>data uruchomienia programu,
+              <li>data zakończenia programu,
+              <li>czas trwania programu,
+              <li>nazwa użytkownika, który uruchomił program (lub <em>przycisk</em>, jeżeli program został uruchomiony z pulpitu sterującego wózka),
+              <li>nazwa użytkownika, który zatrzymał program (lub <em>przycisk</em>, jeżeli program został zatrzymany z pulpitu sterującego wózka),
+              <li>kroki programu w formacie wykresu oraz tabeli.
+            </ul>
+            <div class="info">
+              <p class="ok">
+                <strong>UWAGA!</strong> Dane wyświetlane na ekranie
+                wpisu historii odzwierciedlają stan, jaki istniał w momencie
+                uruchomienia programu. Zmiany wprowadzone do strefy,
+                programu lub użytkowników powiązanych z tym wpisem po
+                uruchomieniu wykonywania programu nie mają wpływu na dany wpis.
+              </p>
+            </div>
           </section>
           <section id="history-purge">
             <h1>Czyszczenie historii <span class="privilege">Przeglądanie historii, Czyszczenie historii</span></h1>
+            <div class="image">
+              <img class="screen" src="screens/history-purge.png" alt="Okno dialogowe czyszczenia historii">
+              <br>
+              Okno dialogowe czyszczenia historii
+            </div>
             <p>
-              Lorem ipsum dolor sit amet...
+              Podając liczbę dni i klikając przycisk <button class="action red">Usuń</button>,
+              można usunąć z historii wpisy, które są starsze niż podana liczba dni, tzn.
+              wpisy programów uruchomionych <code>24 * liczba dni</code> godzin temu.
             </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Podając jako liczba dni wartość <code>0</code>
+                sprawi, że z historii usunięte zostaną wszystkie wpisy!
+              </p>
+            </div>
           </section>
         </section>
         <section id="dashboard">
