@@ -119,7 +119,11 @@ function(
       })
     });
 
-    var filterData = _.extend({}, this.filterData);
+    var filterData = _.defaults(this.filterData, {
+      zone: '',
+      program: '',
+      state: ['finish', 'stop', 'error']
+    });
 
     filterData.from = filterData.from
       ? moment(filterData.from).format('YYYY-MM-DD HH:mm:ss') : '';
