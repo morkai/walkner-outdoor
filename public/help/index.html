@@ -26,9 +26,9 @@
         <p>
           Uruchomienie aplikacji odbywa się poprzez wpisanie przez użytkownika adresu IP i portu
           serwera w przeglądarce internetowej. Dane te różnią się w zależności od tego, w jakiej
-          sieci znajduje się użytkownik. Dla sieci <em>ML_WLAN</em>, adres to
+          sieci znajduje się użytkownik. Dla sieci bezprzewodowej <em>ML_WLAN</em>, adres to
           <a href="http://192.168.21.58/">http://192.168.21.58/</a>,
-          natomiast dla sieci <em class="todo">?!?XXX?!?</em> -
+          natomiast dla sieci przewodowej -
           <a href="http://192.168.64.20:8081/">http://161.87.64.20:8081/</a>.
         </p>
       </section>
@@ -1428,22 +1428,90 @@
           </p>
         </section>
       </section>
-      <section id="control" class="todo">
+      <section id="control">
         <h1>Sterowanie</h1>
+        <p>
+          Aktywne strefy mogą być sterowane przez użytkownika z poziomu aplikacji
+          lub pulpitu sterującego wózka strefy.
+        </p>
+        <p>
+          Z poziomu aplikacji, użytkownik
+          może uruchamiać oraz zatrzymywać programy aktualnie uruchomione
+          na wszystkich strefach.
+        </p>
+        <p>Z poziomu pulpitu sterującego, użytkownik
+          może uruchamiać oraz zatrzymywać program na strefie należącej do
+          danego wózka oraz może wykonać ręczny reset tej strefy.
+        </p>
         <section id="control-reset">
           <h1>Ręczny reset strefy</h1>
+          <div class="image">
+            <div class="activeZone">
+              <p class="actionMessage needsReset">Wymagany<br>ręczny<br>reset</p>
+            </div>
+            <p>Komunikat widoczny na belce strefy na obszarze akcji</p>
+          </div>
+          <p>
+            W module <a href="#dashboard">Dashboard</a> na belce strefy,
+            w obszarze akcji może pojawić się komunikat informujący użytkownika
+            o wymaganym ręcznym resecie strefy.
+          </p>
+          <p>
+            Komunikat ten widoczny jest, jeżeli spełnione zostanie jedne
+            z następujących kryteriów:
+          </p>
+          <ul>
+            <li>dana strefa uzyskała połączenie ze sterownikiem (tzn. strefa przeszła ze stanu
+              <a class="disconnected" href="#dashboard-states-disconnected"><span class="state"></span> Brak połączenia ze sterownikiem</a>
+              do stanu <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>), ale przełącznik
+              na pulpicie sterującym wózka wskazuje na pozycję <code>1</code>.
+              Należy wykonać ręczny reset strefy, aby można było na niej uruchomić program.
+            <li>na danej strefie ukończone zostało wykonywanie programu
+              (tzn. strefa przeszła ze stanu
+              <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
+              do stanu
+              <a class="programFinished" href="#dashboard-states-programFinished"><span class="state"></span> Program pomyślnie ukończony</a>).
+              Należy wykonać ręczny reset strefy, aby strefa przeszła do stanu
+              <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
+              i można było uruchomić na niej kolejny program.
+            <li>na danej strefie użytkownik zatrzymał wykonywanie programu
+              (tzn. strefa przeszła ze stanu
+              <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
+              do stanu
+              <a class="programStopped" href="#dashboard-states-programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</a>).
+              Należy wykonać ręczny reset strefy, aby strefa przeszła do stanu
+              <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
+              i można było uruchomić na niej kolejny program.
+            <li>na danej strefie wykonywanie programu zostało zatrzymane z powodu błędu
+              (tzn. strefa przeszła ze stanu
+              <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
+              do stanu
+              <a class="programErrored" href="#dashboard-states-programErrored"><span class="state"></span> Program zatrzymany z błędem</a>).
+              Należy wykonać ręczny reset strefy, aby strefa przeszła do stanu
+              <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
+              i można było uruchomić na niej kolejny program.
+          </ul>
+          <p>
+            Aby wykonać ręczny reset strefy należy ustawić przełącznik na
+            pulpicie sterującym wózka na pozycję <code>0</code>.
+            Jeżeli aktualna pozycja przełącznika to <code>1</code>, to należy
+            przełącznik ustawić na pozycję <code>0</code>.
+            Jeżeli aktualna pozycja przełącznika to <code>0</code>, to należy
+            ustawić na chwilę przełącznik na pozycję <code>1</code>, a następnie
+            z powrotem na pozycję <code>0</code>.
+          </p>
         </section>
-        <section id="control-start-app">
-          <h1>Uruchamianie programu z poziomu aplikacji</h1>
-        </section>
-        <section id="control-start-cart">
+        <section id="control-start-cart" class="todo">
           <h1>Uruchamianie programu z poziomu pulpitu sterującego</h1>
         </section>
-        <section id="control-stop-app">
-          <h1>Zatrzymywanie programu z poziomu aplikacji</h1>
+        <section id="control-start-app" class="todo">
+          <h1>Uruchamianie programu z poziomu aplikacji</h1>
         </section>
-        <section id="control-stop-cart">
+        <section id="control-stop-cart" class="todo">
           <h1>Zatrzymywanie programu z poziomu pulpitu sterującego</h1>
+        </section>
+        <section id="control-stop-app" class="todo">
+          <h1>Zatrzymywanie programu z poziomu aplikacji</h1>
         </section>
       </section>
       <section id="faq" class="todo">
@@ -1458,9 +1526,9 @@
       <section id="appendix-a">
         <h1>Informacje o sprzęcie</h1>
         <dl>
-          <dt>Adres IP i port aplikacji w sieci <em>ML_WLAN</em>
+          <dt>Adres IP i port aplikacji w sieci bezprzewodowej <em>ML_WLAN</em>
           <dd><code>192.168.21.58:80</code>
-          <dt>Adres IP i port aplikacji w sieci <em class="todo">?!?XXX?!?</em>
+          <dt>Adres IP i port aplikacji w sieci przewodowej
           <dd><code>161.87.64.20:8081</code>
         </dl>
       </section>

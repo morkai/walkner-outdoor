@@ -273,6 +273,14 @@ body {
 .help .action {
   cursor: default;
 }
+#control-reset .needsReset {
+  position: static;
+  margin: 0 auto;
+  font-size: 1.5em;
+}
+#control-reset .activeZone {
+  margin: 0 0 1em 0;
+}
 
 @media print {
   a {
