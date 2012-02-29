@@ -159,7 +159,7 @@
   background-image: -moz-linear-gradient(top, #7EC44F, #5AAB25);
   background-image: -webkit-linear-gradient(top, #7EC44F, #5AAB25);
   background-image: -o-linear-gradient(top, #7EC44F, #5AAB25);
-  filter: "progid:DXImageTransform.Microsoft.gradient(startColorStr='#7EC44F', EndColorStr='#5AAB25')";
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#7EC44F', endColorstr='#5AAB25');
 }
 .timeToEnd {
   color: #FFF;
@@ -186,7 +186,7 @@
   background: -o-linear-gradient(#FFF, #F1F1F1);
   background: -ms-linear-gradient(#FFF, #F1F1F1);
   background: linear-gradient(#FFF, #F1F1F1);
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#FFFFFF', endColorstr = '#F1F1F1');
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FFFFFF', endColorstr='#F1F1F1');
 }
 .programPicker .list,
 .programPicker .properties {

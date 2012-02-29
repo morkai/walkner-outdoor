@@ -92,7 +92,7 @@ strong {
 }
 .breadcrumbs {
   margin: .5em .5em 0 .5em;
-  display: block;
+  display: inline-block;
   font-size: 2em;
 }
 .breadcrumbs + .bd {
