@@ -78,8 +78,6 @@ function(
     var canPickProgram = user.isAllowedTo('pickProgram');
     var hasAssignedProgram = _.isObject(data.assignedProgram);
 
-    data.showNoAssignedProgramMessage = !hasAssignedProgram && !isLoggedIn;
-
     data.showEnterPinForm = hasAssignedProgram && !isLoggedIn;
 
     data.showAllPrograms = canPickProgram
@@ -89,6 +87,9 @@ function(
     data.showAssignedProgram = isLoggedIn
       && hasAssignedProgram
       && !data.showAllPrograms;
+
+    data.showNoAssignedProgramMessage =
+      !hasAssignedProgram && !data.showAllPrograms;
 
     this.el.innerHTML = this.template(data);
 
