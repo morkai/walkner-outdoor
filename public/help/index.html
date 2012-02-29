@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset=utf-8>
-    <title>Dokumentacja - Urządzenie testowe HighBay LED</title>
+    <title>Wygrzewanie opraw LED - Dokumentacja</title>
     <link rel="stylesheet" href="../assets/css/main.css">
     <link rel="stylesheet" href="./index.css">
   </head>
@@ -15,12 +15,12 @@
       <li><a id="down" title="Przewiń do dołu">&#8681;</a>
       <li id="showApp"><a title="Wróć do aplikacji" href="/">Aplikacja</a>
     </ul>
-    <div id=helpContainer>
+    <div id="helpContainer">
       <div id="toc">
         <h1>Wygrzewanie opraw LED</h1>
         <ol></ol>
       </div>
-      <section id="intro">
+      <section id="intro" class="pbb">
         <h1>Wstęp</h1>
         <p>Niniejszy dokument stanowi dokumentację użytkownika dla aplikacji <em>Wygrzewania opraw LED</em>.</p>
         <p>
@@ -50,7 +50,7 @@
       <section id="interface">
         <h1>Interfejs</h1>
         <div class="pageLayout">
-          <ul class="menu" data-tooltip="left" title="Główne menu">
+          <ul class="menu" data-tooltip="left, right" title="Główne menu">
             <li class="help-link"><a data-tooltip="top" title="Pomoc">?</a>
             <li class="active"><a data-tooltip="top" title="Aktualny moduł">Dashboard</a>
             <li><a>Historia</a>
@@ -97,8 +97,8 @@
             Przyciski akcji przedstawiają się następująco:
             <button class="action green">Uruchom</button>,
             <button class="action blue">Zapisz</button>,
-            <button class="action red">Usuń</button>,
-            <button class="action red" disabled>Zablokowana akcja</button>.
+            <button class="action red">Usuń</button><span class="noprint">,
+            <button class="action red" disabled>Zablokowana akcja</button></span>.
             Kliknięcie akcji może zmienić stan wyświetlany w danym momencie na ekranie
             oraz może zmienić stan aplikacji. Na przykład, kliknięcie przycisku
             <button class="button">Dodaj krok</button> na ekranie edycji programu
@@ -113,22 +113,10 @@
         </section>
         <section id="interface-messages">
           <h1>Komunikaty</h1>
-          <div class="pageLayout">
-            <div id="exampleMessage" class="message" data-tooltip="top, bottom" title="Komunikat">
-              <div>Przykładowa treść komunikatu :)</div>
-            </div>
-            <ul class="menu">
-              <li class="active"><a>Dashboard</a>
-              <li><a>Historia</a>
-              <li><a>Programy</a>
-              <li><a>Zaloguj się</a>
-            </ul>
-            <div class="bd">
-              <p class="content">
-                Przykład komunikatu. Kliknij na obszarze menu aby ukryć komunikat.
-              </p>
-            </div>
-          </div>
+          <p class="image">
+            <img class="screen" src="screens/interface-message.png" alt="Przykład komunikatu"><br>
+            Przykład komunikatu
+          </p>
           <p>
             Po wykonaniu niektórych akcji mogą zostać wyświetlonone komunikaty
             informujące użytkownika o powodzeniu lub porażce.
@@ -148,7 +136,7 @@
           <div class="message success">
             <div>Program został uruchomiony pomyślnie :)</div>
           </div>
-          <p>
+          <p class="pbb">
             Natomiast komunikat informujący o nieudanym wykonaniu akcji wygląda tak:
           </p>
           <div class="message error">
@@ -216,19 +204,9 @@
             rzeczywistego (np. strefa w module <a href="#dashboard">Dashboard</a>
             ma inny stan niż wskazują na to lampki na wózku) lub klikanie jakieś
             akcji nie zmienia stanu aplikacji wyświetlanego na ekranie
-            (np. po kliknięciu <button class="action blue">Start</button>
+            (np. po kliknięciu <button class="action green">Start</button>
             w module Dashboard nie pokaże się okno dialogowe z listą programów).
           </p>
-          <div class="pageLayout">
-            <ul class="menu">
-              <li class="refresh-link" data-tooltip="bottom" title="Odśwież tę stronę"><a>↻</a>
-              <li class="active"><a>Dashboard</a>
-              <li><a>Historia</a>
-              <li><a>Programy</a>
-              <li><a>Zaloguj się</a>
-            </ul>
-            <br>
-          </div>
           <p>
             Po trzecie, jeżeli w danym momencie na ekranie aplikacji dostępne
             jest pole formularza, to na dole ekranu pokaże się przycisk
@@ -255,134 +233,813 @@
           </p>
         </section>
       </section>
-      <section id="modules">
+      <section id="modules" class="pbb">
         <h1>Moduły</h1>
-        <section id="users" class="todo">
+        <section id="users">
           <h1>Użytkownicy</h1>
           <p>
-            Lorem ipsum dolor sit amet...
+            Moduł <em>Użytkownicy</em> pozwala na zarządzanie użytkownikami
+            aplikacji. Użytkowników można przeglądać, dodawać, modyfikować oraz usuwać.
+            Moduł ten odpowiada także za procesy uwierzytelniania i autoryzacji.
           </p>
-          <section id="users-authentication">
+          <p>
+            Każdy użytkownik posiada imię i nazwisko, adres e-mail, unikalny login,
+            hasło, unikalny PIN oraz listę uprawnień.
+          </p>
+          <p>
+            Uprawnienia, jakie można przydzielać użytkownikom opisane są w tabeli
+            uprawnień.
+          </p>
+          <table id="privileges" class="table">
+            <caption>Tabela uprawnień</caption>
+            <thead>
+              <tr>
+                <th>Uprawnienie
+                <th>Przydzielone
+                <th>Nie przydzielone
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Uruchamianie i zatrzymywanie programów
+                <td>Użytkownik ma dostęp do akcji <button class="action green">Start</button>
+                  oraz <button class="action red">Stop</button> w module <a href="#dashboard">Dashboard</a>.
+                <td>Użytkownik nie ma dostępu do ww. akcji.
+              <tr>
+                <td>Wybieranie programów do uruchomienia
+                <td>Użytkownik, po kliknięciu akcji <button class="action green">Start</button>
+                  w module <a href="#dashboard">Dashboard</a> może uruchomić dowolny program
+                  na danej strefie.
+                <td>Użytkownik, po kliknięciu akcji <button class="action green">Start</button>
+                  w module <a href="#dashboard">Dashboard</a> może uruchomić tylko program
+                  przypisany do danej strefy.
+              <tr>
+                <td>Przeglądanie historii
+                <td>Użytkownik może przeglądać historię uruchomień programów.
+                <td>Użytkownik nie może przeglądać historii. Odnośnik <a>HISTORIA</a> nie pojawia się w menu.
+              <tr>
+                <td>Czyszczenie historii
+                <td>Użytkownik ma dostęp do akcji <button class="action blue">Wyczyść</button>
+                  w module <a href="#history">Historia</a> pozwalający na usuwanie
+                  starych wpisów.
+                <td>Użytkownik nie ma dostępu do ww. akcji.
+              <tr>
+                <td>Przeglądanie programów
+                <td>Użytkownik może przeglądać wszystkie programy.
+                <td>Użytkownik nie może przeglądać dodanych programów. Odnośnik <a>PROGRAMY</a> nie pojawia się w menu.
+              <tr>
+                <td>Zarządzanie programami
+                <td>Użytkownik ma dostęp do akcji <button class="action blue">Dodaj</button>,
+                  <button class="action blue">Edytuj</button> oraz <button class="action blue">Usuń</button>
+                  w module <a href="#programs">Programy</a>,
+                  pozwalających na dodanie nowego programu oraz zmodyfikowanie lub usunięcie
+                  istniejącego programu.
+                <td>Użytkownik nie ma dostępu do ww. akcji.
+              <tr>
+                <td>Przeglądanie stref
+                <td>Użytkownik może przeglądać wszystkie strefy.
+                <td>Użytkownik nie może przeglądać dodanych stref. Odnośnik <a>STREFY</a> nie pojawia się w menu.
+              <tr>
+                <td>Przypisywanie programów do stref
+                <td>Użytkownik ma dostęp do akcji <button class="action blue">Programuj</button>
+                  w module <a href="#history">Programy</a> pozwalający na przypisanie
+                  programu do strefy.
+                <td>Użytkownik nie ma dostępu do ww. akcji.
+              <tr>
+                <td>Zarządzanie strefami
+                <td>Użytkownik ma dostęp do akcji <button class="action blue">Dodaj</button>,
+                  <button class="action blue">Edytuj</button> oraz <button class="action blue">Usuń</button>
+                  w module <a href="#zones">Strefy</a>,
+                  pozwalających na dodanie nowej strefy oraz zmodyfikowanie lub usunięcie
+                  istniejącej strefy.
+                <td>Użytkownik nie ma dostępu do ww. akcji.
+              <tr>
+                <td>Przeglądanie sterowników
+                <td>Użytkownik może przeglądać wszystkie sterowniki.
+                <td>Użytkownik nie może przeglądać dodanych sterowników. Odnośnik <a>STEROWNIKI</a> nie pojawia się w menu.
+              <tr>
+                <td>Zarządzanie sterownikami
+                <td>Użytkownik ma dostęp do akcji <button class="action blue">Dodaj</button>,
+                  <button class="action blue">Edytuj</button> oraz <button class="action blue">Usuń</button>
+                  w module <a href="#controllers">Sterowniki</a>,
+                  pozwalających na dodanie nowego sterownika oraz zmodyfikowanie lub usunięcie
+                  istniejącego sterownika.
+                <td>Użytkownik nie ma dostępu do ww. akcji.
+              <tr>
+                <td>Przeglądanie użytkowników
+                <td>Użytkownik może przeglądać wszystkich użytkowników.
+                <td>Użytkownik nie może przeglądać dodanych użytkowników. Odnośnik <a>UŻYTKOWNICY</a> nie pojawia się w menu.
+              <tr>
+                <td>Zarządzanie użytkownikami
+                <td>Użytkownik ma dostęp do akcji <button class="action blue">Dodaj</button>,
+                  <button class="action blue">Edytuj</button> oraz <button class="action blue">Usuń</button>
+                  w module <a href="#users">Użytkownicy</a>,
+                  pozwalających na dodanie nowego użytkownika oraz zmodyfikowanie lub usunięcie
+                  istniejącego użytkownika.
+                <td>Użytkownik nie ma dostępu do ww. akcji.
+              <tr>
+                <td>Moduł diagnostyczny
+                <td>Użytkownik ma dostęp do <a href="#diag">modułu diagnostycznego</a>, gdzie może
+                  kontrolować aktywne strefy oraz procesy sterowników.
+                <td>Użytkownik nie ma dostępu do modułu diagnostycznego. Odnośnik <a>DIAGNOSTYKA</a> nie pojawia się w menu.
+            </tbody>
+          </table>
+          <p>
+            Niezalogowany użytkownik posiada następujący zestaw uprawnień:
+          </p>
+          <ul>
+            <li>Uruchamianie i zatrzymywanie programów,
+            <li>Przeglądanie historii,
+            <li>Przeglądanie programów.
+          </ul>
+          <section id="users-authentication" class="pbb">
             <h1>Uwierzytelnianie</h1>
+            <p class="image">
+              <img class="screen" src="screens/login.png" alt="Logowanie się do aplikacji"><br>
+              Logowanie się do aplikacji
+            </p>
             <p>
-              Lorem ipsum dolor sit amet...
+              Aby zalogować się na swoje konto, należy kliknąć odnośnik
+              <a>ZALOGUJ SIĘ</a> znajdujący się w menu. Na ekranie pojawi się
+              okno dialogowe z formularzem logowania. Należy podać login
+              i hasło konta, na które chcemy się zalogować, a następnie wcisnąć
+              przycisk <button class="button">Zaloguj się</button>.
+            </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Użytkownik zostaje zalogowany
+                do 4 godzin po opuszczeniu aplikacji (tzn. zamknięciu przeglądarki)
+                bez wylogowania się!
+              </p>
+            </div>
+            <p class="image">
+              <img class="screen" src="screens/logout.png" alt="Okno dialogowe z formularzem logowania"><br>
+              Wylogowywanie się z aplikacji
+            </p>
+            <p>
+              Aby wylogować się z aplikacji, należy kliknąć odnośnik
+              <a>WYLOGUJ SIĘ</a> znajdujący się w menu, a następnie w oknie
+              dialogowym, które pojawi się na ekranie, należy kliknąć
+              przycisk <button class="action blue">Wyloguj się</button>.
             </p>
           </section>
           <section id="users-browse">
             <h1>Przeglądanie listy użytkowników <span class="privilege">Przeglądanie użytkowników</span></h1>
+            <p class="image">
+              <img class="screen" src="screens/users-browse.png" alt="Ekran przeglądania listy wszystkich użytkowników"><br>
+              Ekran listy wszystkich użytkowników
+            </p>
             <p>
-              Lorem ipsum dolor sit amet...
+              Po kliknięciu odnośnika <a>UŻYTKOWNIKÓW</a> w menu głównym, na ekranie
+              wyświetlona zostanie lista dodanych użytkownik oraz przycisk
+              akcji dodania nowego użytkownika.
+            </p>
+            <p>
+              Kliknięcie imienia i nazwiska użytkownika na liście, przeniesie użytkownika aplikacji do
+              <a href="#users-view">ekranu ze szczegółami danego użytkownika</a>.
+            </p>
+            <p>
+              Po kliknięciu przycisku <button class="action blue">Dodaj</button>,
+              użytkownik przeniesiony zostanie do <a href="#users-add">ekranu
+              z formularzem dodawania nowego użytkownika</a>. Przycisk ten
+              pojawia się użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie użytkownikami</span>.
             </p>
           </section>
-          <section id="users-view">
+          <section id="users-view" class="pbb">
             <h1>Przeglądanie wybranego użytkownika <span class="privilege">Przeglądanie użytkowników</span></h1>
+            <p class="image">
+              <img class="screen" src="screens/users-view.png" alt="Ekran przeglądania wybranego użytkownika"><br>
+              Ekran wybranego użytkownika
+            </p>
             <p>
-              Lorem ipsum dolor sit amet...
+              Na ekranie wybranego użytkownika dostępne są szczegółowe informacje
+              o danym użytkowniku: imię i nazwisko, login oraz adres e-mail.
+              Hasło, PIN oraz lista uprawnień nie jest wyświetlana.
+              Uprawnienia danego użytkownika można sprawdzić na
+              <a href="#users-edit">ekranie edycji tego użytkownika</a>.
+            </p>
+            <p>
+              Wybranie akcji <button class="action blue">Edytuj</button> sprawi,
+              że użytkownik przeniesiony zostanie do <a href="#users-edit">ekranu
+              z formularzem modyfikacji użytkownika</a>. Przycisk ten pojawia się
+              użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie użytkownikami</span>.
+            </p>
+            <p>
+              Wybranie akcji <button class="action blue">Usuń</button> sprawi,
+              że wyświetlone zostanie <a href="#users-delete">okno dialogowe
+              pytające o potwierdzenie usunięcia użytkownika</a>. Przycisk ten pojawia się
+              użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie użytkownikami</span>.
             </p>
           </section>
           <section id="users-add">
             <h1>Dodawanie użytkowników <span class="privilege">Przeglądanie użytkowników, Zarządzanie użytkownikami</span></h1>
-            <p>
-              Lorem ipsum dolor sit amet...
+            <p class="image">
+              <img class="screen" src="screens/users-add.png" alt="Ekran dodawania nowego programu"><br>
+              Ekran dodawania nowego użytkownika
             </p>
+            <p>
+              Na ekranie dodawania nowego programu dostępny jest formularz zawierający
+              następujące pola:
+            </p>
+            <ul>
+              <li>imię i nazwisko - pole tekstowe, wymagane,
+              <li>adres e-mail - pole tekstowe, wymagane,
+              <li>login - pole tekstowe, wymagane, wartość nie może się powtarzać,
+              <li>hasło - pole tekstowe, wymagane,
+              <li>powtórzenie hasła - pole tekstowe, wartość musi być identyczna
+                do tej w polu <em>hasło</em>,
+              <li>PIN - pole tekstowe, opcjonalne,
+              <li>powtórzenie PINu - pole tekstowe, wartość musi być identyczna
+                do tej w polu <em>PIN</em>,
+              <li>lista uprawnień - pola wyboru (zobacz <a href="#privileges">tabelę uprawnień</a>).
+            </ul>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Aby nowy użytkownik był dostępny po opuszczeniu
+                ekranu dodawania nowego użytkownika, należy go wcześniej zapisać
+                wciskając przycisk <button class="action blue">Zapisz</button>!
+              </p>
+            </div>
+            <div class="info">
+              <p class="ok">
+                <strong>UWAGA!</strong> Zaleca się, aby PIN składał się tylko z cyfr, gdyż
+                wykorzystywany jest on do uruchamiania programów przez niezalogowanych
+                użytkowników za pomocą konsoli numerycznej ułatwiającej
+                wpisanie PINu przez monitor dotykowy.
+              </p>
+            </div>
           </section>
-          <section id="users-edit">
+          <section id="users-edit" class="pbb">
             <h1>Modyfikacja użytkowników <span class="privilege">Przeglądanie użytkowników, Zarządzanie użytkownikami</span></h1>
+            <div class="image">
+              <img class="screen" src="screens/users-edit.png" alt="Ekran modyfikowania istniejącego użytkownika">
+              <br>
+              Ekran modyfikowania istniejącego użytkownika
+            </div>
             <p>
-              Lorem ipsum dolor sit amet...
+              Na ekranie modyfikowania użytkownika dostępny jest formularz
+              zawierający następujące pola:
             </p>
+            <ul>
+              <li>imię i nazwisko - pole tekstowe, wymagane,
+              <li>adres e-mail - pole tekstowe, wymagane,
+              <li>login - pole tekstowe, wymagane, wartość nie może się powtarzać,
+              <li>hasło - pole tekstowe, opcjonalne (należy podać tylko w przypadku nadawania nowego hasła),
+              <li>powtórzenie hasła - pole tekstowe, wartość musi być identyczna
+                do tej w polu <em>hasło</em>,
+              <li>PIN - pole tekstowe, opcjonalne (należy podać tylko w przypadku nadawania nowego PINu),
+              <li>powtórzenie PINu - pole tekstowe, wartość musi być identyczna
+                do tej w polu <em>PIN</em>,
+              <li>lista uprawnień - pola wyboru (zobacz <a href="#privileges">tabelę uprawnień</a>).
+            </ul>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Aby dokonane w użytkowniku zmiany były
+                dostępne po opuszczeniu ekranu modyfikowania użytkownika, należy je
+                wcześniej zapisać wciskając przycisk
+                <button class="action blue">Zapisz</button>!
+              </p>
+            </div>
           </section>
           <section id="users-delete">
             <h1>Usuwanie użytkowników <span class="privilege">Przeglądanie użytkowników, Zarządzanie użytkownikami</span></h1>
+            <div class="image">
+              <img class="screen" src="screens/users-delete.png" alt="Okno dialogowe usuwania istniejącego użytkownika">
+              <br>
+              Okno dialogowe usuwania istniejącego użytkownika
+            </div>
             <p>
-              Lorem ipsum dolor sit amet...
+              Aby usunąć użytkownika, na <a href="#programs-view">ekranie wybranego użytkownika</a>
+              należy wcisnąć przycisk <button class="action blue">Usuń</button>,
+              a następnie na oknie dialogowym, które się pojawi, należy potwierdzić
+              usunięcie użytkownika poprzez wciśnięcie przycisku <button class="action red">Usuń</button>.
             </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Wciśnięcie przycisku
+                <button class="action red">Usuń</button> bezpowrotnie usunie
+                danego użytkownika z aplikacji!
+              </p>
+            </div>
           </section>
         </section>
-        <section id="controllers" class="todo">
+        <section id="controllers" class="pbb">
           <h1>Sterowniki</h1>
           <p>
-            Lorem ipsum dolor sit amet...
+            Moduł <em>Sterowniki</em> pozwala na zarządzanie sterownikami stref.
+            Sterowniki można przeglądać, dodawać, modyfikować oraz usuwać.
           </p>
+          <p>
+            Sterownik w aplikacji to wirtualna reprezentacja fizycznego sterownika,
+            służąca do komunikacji aplikacji z tym sterownikiem.
+            Każdy wirtualny sterownik składa się z nazwy, flagi wskazującej,
+            czy sterownik ma być uruchamiany wraz ze startem serwera aplikacji,
+            typu oraz parametrów połączenia, które różnią się w zależności
+            od typu.
+          </p>
+          <div class="info">
+            <p class="ok">
+              <strong>UWAGA!</strong> Jeżeli sterownik nie ma zaznaczonej flagi
+              autostartu, to aby go później uruchomić, należy skorzystać
+              z funkcji uruchamiania sterownika dostępnej w module
+              <a href="#diag">Diagnostyka</a>.
+            </p>
+          </div>
+          <p>
+            Typ sterownika określa sposób komunikacji aplikacji z fizycznym
+            sterownikiem. Aplikacja obsługuje aktualnie dwa typy sterowników:
+            <em>MODBUS TCP</em> oraz <em>libcoap</em>.
+          </p>
+          <p>
+            Dla sterowników typu <em>MODBUS TCP</em> należy podać adres
+            IPv4 oraz port sterownika, który pełni funkcję serwera
+            <a href="http://en.wikipedia.org/wiki/Modbus">MODBUS TCP</a>
+            (<em>slave</em>).
+          </p>
+          <p id="controllers-libcoap">
+            Dla sterowników typu <em>libcoap</em> należy podać URI do sterownika,
+            który pełni funkcję serwera <a href="http://en.wikipedia.org/wiki/Constrained_Application_Protocol">CoAP</a>.
+            URI musi mieć następujący format:
+          </p>
+          <p class="centered">
+            <code>coap://&lt;IPv4&gt;:&lt;port&gt;/</code>
+            lub
+            <code>coap://[&lt;IPv6&gt;]:&lt;port&gt;/</code>
+          </p>
+          <p>Na przykład:</p>
+          <p class="centered">
+            <code>coap://192.168.1.150:5683/</code>
+            lub
+            <code>coap://[1111::220:4aff:fee0:290c]:61616/</code>
+          </p>
+          <p>
+            Parametry połączenia sterownika wykorzystywane są przez strefy,
+            które mają przypisany dany sterownik (zobacz moduł <a href="#zones">Strefy</a>).
+          </p>
+          <div class="info">
+            <p class="warn">
+              <strong>UWAGA!</strong> W aplikacji dodane jest siedem sterowników typu <em>libcoap</em>,
+              odpowiadających siedmiu fizycznym sterownikom stref dostarczonych przez
+              firmę Walkner. Nieostrożna zmiana parametrów połączenia tych
+              sterowników może doprowadzić do błędnego działania kontrolera
+              sterownika, a co za tym idzie, strefy wykorzystujące dany
+              sterownik mogą się nie uruchomić!
+            </p>
+          </div>
           <section id="controllers-browse">
             <h1>Przeglądanie listy sterowników <span class="privilege">Przeglądanie sterowników</span></h1>
+            <p class="image">
+              <img class="screen" src="screens/controllers-browse.png" alt="Ekran przeglądania listy wszystkich sterowników"><br>
+              Ekran listy wszystkich sterowników
+            </p>
             <p>
-              Lorem ipsum dolor sit amet...
+              Po kliknięciu odnośnika <a>STEROWNIKI</a> w menu głównym, na ekranie
+              wyświetlona zostanie lista dostępnych sterowników oraz przycisk
+              akcji dodania nowego sterownika.
+            </p>
+            <p>
+              Kliknięcie nazwy sterownika na liście, przeniesie użytkownika do
+              <a href="#controllers-view">ekranu ze szczegółami danego sterownika</a>.
+            </p>
+            <p>
+              Po kliknięciu przycisku <button class="action blue">Dodaj</button>,
+              użytkownik przeniesiony zostanie do <a href="#controllers-add">ekranu
+              z formularzem dodawania nowego sterownika</a>. Przycisk ten
+              pojawia się użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie sterownikami</span>.
             </p>
           </section>
-          <section id="controllers-view">
+          <section id="controllers-view" class="pbb">
             <h1>Przeglądanie wybranego sterownika <span class="privilege">Przeglądanie sterowników</span></h1>
+            <p class="image">
+              <img class="screen" src="screens/controllers-view.png" alt="Ekran przeglądania wybranego sterownika"><br>
+              Ekran wybranego sterownika
+            </p>
             <p>
-              Lorem ipsum dolor sit amet...
+              Na ekranie wybranego sterownika dostępne są szczegółowe informacje
+              o danym sterowniku: nazwa, flaga autostartu, typ oraz parametry
+              połączenia.
+            </p>
+            <p>
+              Wybranie akcji <button class="action blue">Edytuj</button> sprawi,
+              że użytkownik przeniesiony zostanie do <a href="#controllers-edit">ekranu
+              z formularzem modyfikacji sterownika</a>. Przycisk ten pojawia się
+              użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie sterownikami</span>.
+            </p>
+            <p>
+              Wybranie akcji <button class="action blue">Usuń</button> sprawi,
+              że wyświetlone zostanie <a href="#controllers-delete">okno dialogowe
+              pytające o potwierdzenie usunięcia sterownika</a>. Przycisk ten pojawia się
+              użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie sterownikami</span>.
             </p>
           </section>
           <section id="controllers-add">
             <h1>Dodawanie sterowników <span class="privilege">Przeglądanie sterowników, Zarządzanie sterownikami</span></h1>
-            <p>
-              Lorem ipsum dolor sit amet...
+            <p class="image">
+              <img class="screen" src="screens/controllers-add.png" alt="Ekran dodawania nowego sterownika"><br>
+              Ekran dodawania nowego sterownika
             </p>
+            <p>
+              Na ekranie dodawania nowego sterownika dostępny jest formularz zawierający
+              następujące pola:
+            </p>
+            <ul>
+              <li>nazwa sterownika - pole tekstowe, wymagane, maksymalnie 50 znaków,
+              <li>uruchom przy starcie systemu - pole wyboru, opcjonalne,
+              <li>typ sterownika - lista wyboru, wymagane.
+            </ul>
+            <p>
+              W zależności od wybranego typu sterownika, wypełnić trzeba także
+              pola parametrów połączenia. Dla sterowników typu <em>MODBUS TCP</em>
+              są to:
+            </p>
+            <ul>
+              <li>host - pole tekstowe, opcjonalne,
+                wartość musi być adresem IPv4 (domyślnie <em>127.0.0.1</em>),
+              <li>port - pole tekstowe, opcjonalne,
+                wartość musi być numerem portu, na którym nasłuchuje serwer MODBUS TCP (domyślnie <em>502</em>).
+            </ul>
+            <p>
+              Dla sterowników typu <em>libcoap</em> jest to:
+            </p>
+            <ul>
+              <li>URI - pole tekstowe, wymagane,
+                wartość musi być poprawnym <a href="#controllers-libcoap">URI protokułu CoAP</a>.
+            </ul>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Aby nowy sterownik był dostępny po opuszczeniu
+                ekranu dodawania nowego sterownika, należy go wcześniej zapisać
+                wciskając przycisk <button class="action blue">Zapisz</button>!
+              </p>
+            </div>
           </section>
-          <section id="controllers-edit">
+          <section id="controllers-edit" class="pbb">
             <h1>Modyfikacja sterowników <span class="privilege">Przeglądanie sterowników, Zarządzanie sterownikami</span></h1>
+            <div class="image">
+              <img class="screen" src="screens/controllers-edit.png" alt="Ekran modyfikowania istniejącego sterownika">
+              <br>
+              Ekran modyfikowania istniejącego sterownika
+            </div>
             <p>
-              Lorem ipsum dolor sit amet...
+              Na ekranie modyfikowania istniejącego sterownika dostępny jest
+              formularz zawierający następujące pola:
             </p>
+            <ul>
+              <li>nazwa sterownika - pole tekstowe, wymagane, maksymalnie 50 znaków,
+              <li>uruchom przy starcie systemu - pole wyboru, opcjonalne,
+              <li>typ sterownika - lista wyboru, wymagane.
+            </ul>
+            <p>
+              W zależności od wybranego typu sterownika, wypełnić trzeba także
+              pola parametrów połączenia. Dla sterowników typu <em>MODBUS TCP</em>
+              są to:
+            </p>
+            <ul>
+              <li>host - pole tekstowe, opcjonalne,
+                wartość musi być adresem IPv4 (domyślnie <em>127.0.0.1</em>),
+              <li>port - pole tekstowe, opcjonalne,
+                wartość musi być numerem portu, na którym nasłuchuje serwer MODBUS TCP (domyślnie <em>502</em>).
+            </ul>
+            <p>
+              Dla sterowników typu <em>libcoap</em> jest to:
+            </p>
+            <ul>
+              <li>URI - pole tekstowe, wymagane,
+                wartość musi być poprawnym <a href="#controllers-libcoap">URI protokułu CoAP</a>.
+            </ul>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Aby dokonane w sterowniku zmiany były
+                dostępne po opuszczeniu ekranu modyfikowania sterownika, należy je
+                wcześniej zapisać wciskając przycisk
+                <button class="action blue">Zapisz</button>!
+              </p>
+            </div>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Jeżeli sterownik jest uruchomiony, to nie można
+                go zmodyfikować. Aby zatrzymać uruchomiony sterownik, należy wcisnąć
+                przycisk <button class="action red">Stop</button> dostępny przy
+                danym sterowniku w module <a href="#diag">Diagnostyka</a>!
+              </p>
+            </div>
           </section>
           <section id="controllers-delete">
             <h1>Usuwanie sterowników <span class="privilege">Przeglądanie sterowników, Zarządzanie sterownikami</span></h1>
+            <div class="image">
+              <img class="screen" src="screens/controllers-delete.png" alt="Okno dialogowe usuwania istniejącego sterownika">
+              <br>
+              Okno dialogowe usuwania istniejącego sterownika
+            </div>
             <p>
-              Lorem ipsum dolor sit amet...
+              Aby usunąć istniejący sterownik, na <a href="#programs-view">ekranie wybranego sterownika</a>
+              należy wcisnąć przycisk <button class="action blue">Usuń</button>,
+              a następnie na oknie dialogowym, które się pojawi, należy potwierdzić
+              usunięcie sterownika poprzez wciśnięcie przycisku <button class="action red">Usuń</button>.
             </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Wciśnięcie przycisku
+                <button class="action red">Usuń</button> bezpowrotnie usunie
+                dany sterownik z aplikacji!
+              </p>
+            </div>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Jeżeli sterownik jest uruchomiony, to nie można
+                go usunąć. Aby zatrzymać uruchomiony sterownik, należy wcisnąć
+                przycisk <button class="action red">Stop</button> dostępny przy
+                danym sterowniku w module <a href="#diag">Diagnostyka</a>!
+              </p>
+            </div>
           </section>
         </section>
-        <section id="zones" class="todo">
+        <section id="zones" class="pbb">
           <h1>Strefy</h1>
           <p>
-            Lorem ipsum dolor sit amet...
+            Moduł <em>Strefy</em> pozwala na zarządzanie strefami wygrzewania.
+            Strefy można przeglądać, dodawać, modyfikować oraz usuwać.
+            Ponadto, strefom można przypisać program, który ma się uruchomić
+            w przypadku uruchomienia programu <a href="#control-start-cart">
+            z poziomu pulpitu sterującego</a> lub <a href="#control-start-app">z poziomu</a>
+            (przez użytkownika bez nadanego uprawnienia
+            <span class="privilege">Wybieranie programów do uruchomienia</span>).
           </p>
+          <p>
+            Każda strefa składa się z nazwy, flagi wskazującej,
+            czy strefa ma być uruchamiany wraz ze startem serwera aplikacji,
+            przypisanego programu, sterownika oraz parametrów sterownika, które różnią
+            się w zależności od typu wybranego sterownika.
+          </p>
+          <div class="info">
+            <p class="ok">
+              <strong>UWAGA!</strong> Jeżeli strefa nie ma zaznaczonej flagi
+              autostartu, to aby ją później uruchomić, należy skorzystać
+              z funkcji uruchamiania strefy dostępnej w module
+              <a href="#diag">Diagnostyka</a>.
+            </p>
+          </div>
+          <p>
+            W zależności od typu wybranego sterownika strefy, dla strefy
+            należy ustawić parametry sterownika, które odpowiadają fizycznym
+            wejściom oraz wyjściom na fizycznym sterowniku. W połączeniu
+            z parametrami połączenia zdefiniowanymi dla sterownika, parametry
+            sterownika wykorzystywane są do kontroli sterowania wózkiem wygrzewania
+            (zapalanie lampek, włączanie i wyłączanie wygrzewania).
+          </p>
+          <p>
+            Do kontrolowania wózkiem wygrzewania aplikacja potrzebuje sterownika
+            z następującymi wejściami oraz wyjściami:
+          </p>
+          <ul id="zones-controllerInfo">
+            <li>wyjście stanu strefy - <code>0</code> - wyłącza wygrzewanie,
+              <code>1</code> - włącza wygrzewanie,
+            <li>wyjście zielonej lampki - <code>0</code> - wyłącza świecenie lampki,
+              <code>1</code> - włącza świecenie lampki,
+            <li>wyjście czerwonej lampki - <code>1</code> - wyłącza świecenie lampki,
+              <code>0</code> - włącza świecenie lampki,
+            <li>wejście przycisku stop (przełącznik na pulpicie sterującym wózka) -
+              <code>1</code> - przycisk jest wciśnięty (przełącznik ustawiony na pozycję <code>0</code>),
+              <code>0</code> - przycisk nie jest wciśnięty (przełącznik ustawiony na pozycję <code>1</code>),
+            <li>wejście zasilania wózka (sprzężenie zwrotne informujące aplikację,
+              czy wózek wygrzewania jest podłączony) -
+              <code>1</code> - wózek nie jest podłączony,
+              <code>0</code> - wózek jest podłączony.
+          </ul>
+          <p>
+            W zależności od typu sterownika strefy, wejścia i wyjścia opisywane
+            są w inny sposób.
+          </p>
+          <p>
+            Dla sterowników typu <em>MODBUS TCP</em> należy podać
+            adresy wejść i wyjść oraz numery urządzeń MODBUS, na których te
+            są zdefiniowane.
+          </p>
+          <p>
+            Dla sterowników typu <em>libcoap</em> należy podać absolutne ścieżki
+            do zasobów CoAP pełniących funkcję ww. wejść i wyjść.
+          </p>
+          <div class="info">
+            <p class="warn">
+              <strong>UWAGA!</strong> W aplikacji dodane jest siedem stref,
+              odpowiadających siedmiu dodanym sterownikom typu <em>libcoap</em>.
+              Nieostrożna zmiana parametrów sterownika tych
+              stref może doprowadzić do błędnego działania kontrolera
+              strefy!
+            </p>
+          </div>
           <section id="zones-browse">
             <h1>Przeglądanie listy stref <span class="privilege">Przeglądanie stref</span></h1>
-            <p>
-              Lorem ipsum dolor sit amet...
+            <p class="image">
+              <img class="screen" src="screens/zones-browse.png" alt="Ekran przeglądania listy wszystkich stref"><br>
+              Ekran listy wszystkich stref
             </p>
-          </section>
-          <section id="zones-view">
-            <h1>Przeglądanie wybranej strefy <span class="privilege">Przeglądanie stref</span></h1>
             <p>
-              Lorem ipsum dolor sit amet...
+              Po kliknięciu odnośnika <a>STREFY</a> w menu głównym, na ekranie
+              wyświetlona zostanie lista dostępnych stref oraz przycisk
+              akcji dodania nowej strefy.
+            </p>
+            <p>
+              Kliknięcie nazwy strefy na liście, przeniesie użytkownika do
+              <a href="#zones-view">ekranu ze szczegółami danej strefy</a>.
+            </p>
+            <p>
+              Po kliknięciu przycisku <button class="action blue">Dodaj</button>,
+              użytkownik przeniesiony zostanie do <a href="#zones-add">ekranu
+              z formularzem dodawania nowej strefy</a>. Przycisk ten
+              pojawia się użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie strefami</span>.
+            </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> W przypadku, gdy maksymalna ilość stref
+                możliwych do dodania została osiągnięta, przycisk dodania nowej
+                strefy będzie zablokowany. Aby móc dodać nową strefę, należy
+                wtedy usunąć jedną z istniejących stref.
+              </p>
+            </div>
+          </section>
+          <section id="zones-view" class="pbb">
+            <h1>Przeglądanie wybranej strefy <span class="privilege">Przeglądanie stref</span></h1>
+            <p class="image">
+              <img class="screen" src="screens/zones-view.png" alt="Ekran przeglądania wybranej strefy"><br>
+              Ekran wybranej strefy
+            </p>
+            <p>
+              Na ekranie wybranej strefy dostępne są szczegółowe informacje
+              o danej strefie: nazwa, informacja, czy strefa uruchamiana jest
+              wraz ze startem serwera aplikacji, przypisany program,
+              sterownik strefy oraz parametry sterownika (różniące się w zależności
+              od typu tego sterownika).
+              Ponadto, jeżeli użytkownik posiada uprawnienie
+              <span class="privilege">Przeglądanie historii</span>, to
+              wyświetlana jest lista 5 ostatnich wpisów z historii dotyczących
+              danej strefy.
+            </p>
+            <p>
+              Wybranie akcji <button class="action blue">Programuj</button> sprawi,
+              że użytkownik przeniesiony zostanie do <a href="#zones-program">ekranu
+              z formularzem przypisywania programu do strefy</a>. Przycisk ten pojawia się
+              użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Przypisywanie programów do stref</span>.
+            </p>
+            <p>
+              Wybranie akcji <button class="action blue">Edytuj</button> sprawi,
+              że użytkownik przeniesiony zostanie do <a href="#zones-edit">ekranu
+              z formularzem modyfikacji strefy</a>. Przycisk ten pojawia się
+              użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie strefami</span>.
+            </p>
+            <p>
+              Wybranie akcji <button class="action blue">Usuń</button> sprawi,
+              że wyświetlone zostanie <a href="#zones-delete">okno dialogowe
+              pytające o potwierdzenie usunięcia strefy</a>. Przycisk ten pojawia się
+              użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
+              <span class="privilege">Zarządzanie strefami</span>.
             </p>
           </section>
           <section id="zones-add">
             <h1>Dodawanie stref <span class="privilege">Przeglądanie stref, Zarządzanie strefami</span></h1>
-            <p>
-              Lorem ipsum dolor sit amet...
+            <p class="image">
+              <img class="screen" src="screens/zones-add.png" alt="Ekran dodawania nowej strefy"><br>
+              Ekran dodawania nowej strefy
             </p>
+            <p>
+              Na ekranie dodawania nowej strefy dostępny jest formularz zawierający
+              następujące pola:
+            </p>
+            <ul>
+              <li>nazwa strefy - pole tekstowe, wymagane, maksymalnie 25 znaków,
+              <li>uruchom przy starcie systemu - pole wyboru, opcjonalne,
+              <li>sterownik - lista wyboru, wymagane.
+            </ul>
+            <p>
+              W zależności od typu wybranego sterownika, wypełnić trzeba także
+              pola parametrów sterownika. Dla sterowników typu <em>MODBUS TCP</em>,
+              są to adresy wejść i wyjść oraz jednostki urządzeń MODBUS, na których
+              te są zdefiniowane. Dla sterowników typu <em>libcoap</em>, są to
+              absolutne ścieżki do zasobów CoAP. Więcej informacji o wymaganych
+              wejściach i wyjściach znajduje się w sekcji <a href="#zones-controllerInfo">Strefy</a>.
+            </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Aby nowa strefa była dostępna po opuszczeniu
+                ekranu dodawania nowej strefy, należy ją zapisać
+                wciskając przycisk <button class="action blue">Zapisz</button>!
+              </p>
+            </div>
           </section>
-          <section id="zones-edit">
+          <section id="zones-edit" class="pbb">
             <h1>Modyfikacja stref <span class="privilege">Przeglądanie stref, Zarządzanie strefami</span></h1>
-            <p>
-              Lorem ipsum dolor sit amet...
+            <p class="image">
+              <img class="screen" src="screens/zones-edit.png" alt="Ekran modyfikowania istniejącej strefy"><br>
+              Ekran modyfikowania istniejącej strefy
             </p>
+            <p>
+              Na ekranie modyfikowania istniejącej strefy dostępny jest formularz zawierający
+              następujące pola:
+            </p>
+            <ul>
+              <li>nazwa strefy - pole tekstowe, wymagane, maksymalnie 25 znaków,
+              <li>uruchom przy starcie systemu - pole wyboru, opcjonalne,
+              <li>sterownik - lista wyboru, wymagane.
+            </ul>
+            <p>
+              W zależności od typu wybranego sterownika, wypełnić trzeba także
+              pola parametrów sterownika. Dla sterowników typu <em>MODBUS TCP</em>,
+              są to adresy wejść i wyjść oraz jednostki urządzeń MODBUS, na których
+              te są zdefiniowane. Dla sterowników typu <em>libcoap</em>, są to
+              absolutne ścieżki do zasobów CoAP. Więcej informacji o wymaganych
+              wejściach i wyjściach znajduje się w sekcji <a href="#zones-controllerInfo">Strefy</a>.
+            </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Aby dokonane w strefie zmiany były dostępne
+                po opuszczeniu ekranu modyfikowania istniejącej strefy, należy je zapisać
+                wciskając przycisk <button class="action blue">Zapisz</button>!
+              </p>
+            </div>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Jeżeli strefa jest aktywna, to nie można
+                jej zmodyfikować. Aby zatrzymać aktywną strefę, należy wcisnąć
+                przycisk <button class="action red">Stop</button> dostępny przy
+                danej strefie w module <a href="#diag">Diagnostyka</a>!
+              </p>
+            </div>
           </section>
           <section id="zones-delete">
             <h1>Usuwanie stref <span class="privilege">Przeglądanie stref, Zarządzanie strefami</span></h1>
+            <div class="image">
+              <img class="screen" src="screens/zones-delete.png" alt="Okno dialogowe usuwania istniejącej strefy">
+              <br>
+              Okno dialogowe usuwania istniejącej strefy
+            </div>
             <p>
-              Lorem ipsum dolor sit amet...
+              Aby usunąć istniejącą strefę, na <a href="#zones-view">ekranie wybranej strefy</a>
+              należy wcisnąć przycisk <button class="action blue">Usuń</button>,
+              a następnie na oknie dialogowym, które się pojawi, należy potwierdzić
+              usunięcie streft poprzez wciśnięcie przycisku <button class="action red">Usuń</button>.
             </p>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Wciśnięcie przycisku
+                <button class="action red">Usuń</button> bezpowrotnie usunie
+                daną strefę z aplikacji!
+              </p>
+            </div>
+            <div class="info">
+              <p class="warn">
+                <strong>UWAGA!</strong> Jeżeli strefa jest aktywna, to nie można
+                jej usunąć. Aby zatrzymać aktywną strefę, należy wcisnąć
+                przycisk <button class="action red">Stop</button> dostępny przy
+                danej strefie w module <a href="#diag">Diagnostyka</a>!
+              </p>
+            </div>
           </section>
-          <section id="zones-program">
+          <section id="zones-program" class="pbb">
             <h1>Programowanie stref <span class="privilege">Przeglądanie stref, Przypisywanie programów do stref</span></h1>
-            <p>
-              Lorem ipsum dolor sit amet...
+            <p class="image">
+              <img class="screen" src="screens/zones-program.png" alt="Ekran przypisywania programu do strefy"><br>
+              Ekran przypisywania programu do strefy
             </p>
+            <p>
+              Do każdej strefy w danym momencie może być przypisany jeden program.
+              Przypisany program wykorzystywany jest podczas uruchomienia programu
+              na aktywnej strefie <a href="#control-start-cart">z poziomu pulpitu
+              sterującego wózka</a> lub <a href="#control-start-app">z poziomu
+              aplikacji</a> (przez użytkownika bez nadanego uprawnienia
+              <span class="privilege">Wybieranie programów do uruchomienia</span>).
+            </p>
+            <p>
+              Aby przypisać program do strefy, należy wybrać program z listy,
+              a następnie kliknąć przycisk <button class="action blue">Programuj</button>.
+            </p>
+            <p>
+              Aby usunać przypisanie programu do strefy, na liście wyboru należy
+              kliknąć <strong>X</strong> (nazwa wybranego programu powinna
+              zmienić się na <em>Wybierz program...</em>),
+              a następnie kliknąć przycisk <button class="action blue">Programuj</button>.
+            </p>
+            <div class="info">
+              <p class="ok">
+                <strong>UWAGA!</strong> Programy można przypisywać nawet do aktywnych stref!
+              </p>
+            </div>
           </section>
         </section>
         <section id="programs">
           <h1>Programy</h1>
           <p>
-            Moduł <em>Programy</em> służy do zarządzania programami uruchamianymi
-            na strefach. Programy można przeglądać, dodawać, modyfikować oraz
-            usuwać.
+            Moduł <em>Programy</em> pozwala na zarządzanie programami, które
+            następnie uruchamiane są na strefach. Programy można przeglądać,
+            dodawać, modyfikować oraz usuwać.
           </p>
           <p>
             Każdy program składa się z nazwy, listy kroków oraz
@@ -435,7 +1092,7 @@
           <p class="centered">
             <code>czas trwania kroku = (czas włączenia + czas wyłączenia) * liczba powtórzeń</code>
           </p>
-          <section id="programs-browse">
+          <section id="programs-browse" class="pbb">
             <h1>Przeglądanie listy programów <span class="privilege">Przeglądanie programów</span></h1>
             <p class="image">
               <img class="screen" src="screens/programs-browse.png" alt="Ekran przeglądania listy wszystkich programów"><br>
@@ -453,7 +1110,7 @@
             <p>
               Po kliknięciu przycisku <button class="action blue">Dodaj</button>,
               użytkownik przeniesiony zostanie do <a href="#programs-add">ekranu
-              z formularzem dodawania nowego użytkownika</a>. Przycisk ten
+              z formularzem dodawania nowego programu</a>. Przycisk ten
               pojawia się użytkownikowi tylko wtedy, gdy ten posiada uprawnienie
               <span class="privilege">Zarządzanie programami</span>.
             </p>
@@ -466,7 +1123,7 @@
               </p>
             </div>
           </section>
-          <section id="programs-view">
+          <section id="programs-view" class="pbb">
             <h1>Przeglądanie wybranego programu <span class="privilege">Przeglądanie programów</span></h1>
             <p class="image">
               <img class="screen" src="screens/programs-view.png" alt="Ekran przeglądania wybranego programu"><br>
@@ -497,7 +1154,7 @@
               <span class="privilege">Zarządzanie programami</span>.
             </p>
           </section>
-          <section id="programs-add">
+          <section id="programs-add" class="pbb">
             <h1>Dodawanie programów <span class="privilege">Przeglądanie programów, Zarządzanie programami</span></h1>
             <div class="image">
               <div class="screen">
@@ -543,7 +1200,7 @@
               tabela przedstawia przykładowe wyniki konwersji:
             </p>
             <table class="table">
-              <caption>Przykłady wyników automatycznej konwersji czasu trwania</caption>
+              <caption>Przykłady wyników automatycznej konwersji czasu</caption>
               <thead>
                 <tr>
                   <th>Wpisany czas trwania
@@ -571,7 +1228,7 @@
               </p>
             </div>
           </section>
-          <section id="programs-edit">
+          <section id="programs-edit" class="pbb">
             <h1>Modyfikacja programów <span class="privilege">Przeglądanie programów, Zarządzanie programami</span></h1>
             <div class="image">
               <img class="screen" src="screens/programs-edit.png" alt="Ekran modyfikowania istniejącego programu">
@@ -628,7 +1285,7 @@
             </div>
           </section>
         </section>
-        <section id="history">
+        <section id="history" class="pbb">
           <h1>Historia</h1>
           <p>
             W module <em>Historia</em> dostępne są do wglądu wszystkie zapisane
@@ -724,7 +1381,7 @@
               <span class="privilege">Czyszczenie historii</span>.
             </p>
           </section>
-          <section id="history-view">
+          <section id="history-view" class="pbb">
             <h1>Przeglądanie wybranego wpisu <span class="privilege">Przeglądanie historii</span></h1>
             <div class="image">
               <img class="screen" src="screens/history-view.png" alt="Ekran wybranego wpisu historii">
@@ -757,7 +1414,7 @@
               </p>
             </div>
           </section>
-          <section id="history-purge">
+          <section id="history-purge" class="pbb">
             <h1>Czyszczenie historii <span class="privilege">Przeglądanie historii, Czyszczenie historii</span></h1>
             <div class="image">
               <img class="screen" src="screens/history-purge.png" alt="Okno dialogowe czyszczenia historii">
@@ -780,8 +1437,7 @@
         <section id="dashboard">
           <h1>Dashboard</h1>
           <div class="image">
-            <img class="screen" src="screens/dashboard.png" alt="Dashboard">
-            <br>
+            <img class="screen" src="screens/dashboard.png" alt="Dashboard"><br>
             Dashboard
           </div>
           <p>
@@ -789,7 +1445,7 @@
             aktywnych stref oraz uruchamianie i zatrzymywanie programów na tych
             strefach.
           </p>
-          <section id="dashboard-states">
+          <section id="dashboard-states" class="pbb">
             <h1>Stany aktywnych stref</h1>
             <p>
               Każda z aktywnych stref znajduje się w danym momencie w jednym
@@ -973,7 +1629,7 @@
                 </p>
               </div>
             </section>
-            <section id="dashboard-states-connected">
+            <section id="dashboard-states-connected" class="pbb">
               <h1>Gotowy do pracy</h1>
               <div class="activeZone">
                 <div class="connected">
@@ -1067,7 +1723,7 @@
                   - jeżeli program zostanie uruchomiony na danej strefie.
               </ul>
             </section>
-            <section id="dashboard-states-programRunning">
+            <section id="dashboard-states-programRunning" class="pbb">
               <h1>Program w trakcie wykonywania</h1>
               <div class="activeZone">
                 <div class="programRunning">
@@ -1169,7 +1825,7 @@
                   lub wózek strefy straci zasilanie (np. przez wyciągnięcie kabla).
               </ul>
             </section>
-            <section id="dashboard-states-programFinished">
+            <section id="dashboard-states-programFinished" class="pbb">
               <h1>Program pomyślnie ukończony</h1>
               <div class="activeZone">
                 <div class="programFinished">
@@ -1253,7 +1909,7 @@
                 </p>
               </div>
             </section>
-            <section id="dashboard-states-programStopped">
+            <section id="dashboard-states-programStopped" class="pbb">
               <h1>Program zatrzymany przez użytkownika</h1>
               <div class="activeZone">
                 <div class="programStopped">
@@ -1330,7 +1986,7 @@
                 </p>
               </div>
             </section>
-            <section id="dashboard-states-programErrored">
+            <section id="dashboard-states-programErrored" class="pbb">
               <h1>Program zatrzymany z błędem</h1>
               <div class="activeZone">
                 <div class="programErrored">
@@ -1421,15 +2077,90 @@
             </section>
           </section>
         </section>
-        <section id="diag" class="todo">
+        <section id="diag" class="pbb">
           <h1>Diagnostyka <span class="privilege">Moduł diagnostyczny</span></h1>
+          <div class="image">
+            <img class="screen" src="screens/diag.png" alt="Ekran modułu diagnostycznego"><br>
+            Ekran modułu diagnostycznego
+          </div>
           <p>
-            Lorem ipsum dolor sit amet...
+            Moduł diagnostyczny daje użytkownikowi ogólny widok na wszystkie
+            dodane sterowniki, wszystkie dodane strefy oraz aktualnie uruchomione
+            programy.
           </p>
+          <p>
+            Sekcja <em>Serwer aplikacji</em> zawiera takie informacje jak czas
+            uruchomienia serwera aplikacji, czas jaki minął od momentu uruchomienia
+            (uptime) oraz adresy IP komputera, na którym uruchomiono serwer aplikacji.
+          </p>
+          <p>
+            Adres IP na interfejsie <em>eth0</em>, to adres wewnętrznej sieci
+            Ethernet, służącej do komunikacji ze sterownikami firmy Walkner w celach
+            serwisowych.
+          </p>
+          <p>
+            Adres IP na interfejsie <em>wlan0</em>, to adres sieci bezprzewodowej
+            <em>ML_WLAN</em>. Korzystając z tego IP użytkownik może zdalnie połączyć się
+            z aplikacją (przez przeglądarkę internetową) lub z komputerem, na którym
+            uruchomiony jest serwer aplikacji (przez SSH lub VNC), z komputera znajdującego
+            się w tej samej sieci.
+          </p>
+          <p>
+            W sekcji <em>Uruchomione programy</em> wyświetlane są aktualnie
+            wykonywane programy. Programy te można zatrzymać wciskając przycisk
+            <button class="action red">Stop</button>. Wciśnięcie tego przycisku
+            równoważne jest z wciśnięciem przycisku <button class="action red">Stop</button>
+            wyświetlanym na belce aktywnej strefy w module <a href="#dashboard">Dashboard</a>
+            przez użytkownika z nadanym uprawnieniem
+            <span class="privilege">Uruchamianie i zatrzymywanie programów</span>.
+          </p>
+          <p>
+            W sekcji <em>Strefy</em> wyświetlane są wszystkie strefy istniejące
+            w bazie danych aplikacji. Obramowanie boksu strefy wskazuje czy
+            dana strefa jest aktualnie aktywna. Aktywna strefa ma obramowanie
+            zielone i może zostać zatrzymana przez wciśnięcie przycisku
+            <button class="action red">Stop</button>, a nieaktywna - czerwone
+            i może zostać uruchomiona przez wciśnięcie przycisku
+            <button class="action green">Start</button>. Aby można było uruchomić
+            strefę, jej sterownik także musi być uruchomiony.
+          </p>
+          <div class="info">
+            <p class="warn">
+              <strong>UWAGA!</strong> Zatrzymanie aktywnej strefy spowoduje
+              zatrzymanie uruchomionego na niej programu!
+            </p>
+          </div>
+          <p>
+            W sekcji <em>Sterowniki</em> wyświetlane są wszystkie sterowniki
+            istniejące w bazie danych aplikacji. Obramowanie boksu sterownika
+            wskazuje czy dany sterownik jest aktualnie uruchomiony. Uruchomiony
+            sterownik ma obramowanie zielone i może zostać zatrzymany przez
+            wciśnięcie przycisku <button class="action red">Stop</button>, a
+            nieuruchomiony - czerwone i może zostać uruchomiony przez wciśnięcie
+            przycisku <button class="action green">Start</button>.
+          </p>
+          <p>
+            <em>Czas wykonania żądania</em> w boksie sterownika informuje o czasie
+            jaki trwa <a href="#zones-controllerInfo">odczytanie wejścia lub ustawienie wyjścia</a>
+            fizycznego sterownika. Wartość ta powinna aktualizować się co 2 sekundy.
+            Jeżeli się ona nie aktualizuje lub wyświetlany jest <code>?</code>,
+            oznacza to, że komunikacja aplikacji z fizycznym sterownikiem nie działa.
+          </p>
+          <div class="info">
+            <p class="warn">
+              <strong>UWAGA!</strong> Zatrzymanie sterownika spowoduje
+              zatrzymanie wszystkich aktywnych stref uruchomionych na tym sterowniku,
+              a co za tym idzie, wszystkich uruchomionych programów na tych strefach!
+            </p>
+          </div>
         </section>
       </section>
-      <section id="control">
+      <section id="control" class="pbb">
         <h1>Sterowanie</h1>
+        <div class="image">
+          <img class="screen" src="screens/control-cart.png" alt="Pulpit sterujący wózkiem wygrzewania"><br>
+          Pulpit sterujący wózkiem wygrzewania
+        </div>
         <p>
           Aktywne strefy mogą być sterowane przez użytkownika z poziomu aplikacji
           lub pulpitu sterującego wózka strefy.
@@ -1501,34 +2232,189 @@
             z powrotem na pozycję <code>0</code>.
           </p>
         </section>
-        <section id="control-start-cart" class="todo">
+        <section id="control-start-cart">
           <h1>Uruchamianie programu z poziomu pulpitu sterującego</h1>
-        </section>
-        <section id="control-start-app" class="todo">
-          <h1>Uruchamianie programu z poziomu aplikacji</h1>
-        </section>
-        <section id="control-stop-cart" class="todo">
-          <h1>Zatrzymywanie programu z poziomu pulpitu sterującego</h1>
-        </section>
-        <section id="control-stop-app" class="todo">
-          <h1>Zatrzymywanie programu z poziomu aplikacji</h1>
-        </section>
-      </section>
-      <section id="faq" class="todo">
-        <h1>F.A.Q.</h1>
-        <section id="faq-1">
-          <h1>Lorem ipsum?</h1>
           <p>
-            Lorem ipsum dolor sit amet...
+            Z pulpitu sterującego wózkiem wygrzewania można uruchomić program
+            przypisany do strefy, do której podłączony jest dany wózek.
+          </p>
+          <p>
+            Aby można było uruchomić program z pulpitu sterującego na strefie,
+            do której podłączony jest wózek, to muszą być spełnione następujące warunki:
+          </p>
+          <ol>
+            <li>strefa musi mieć przypisany jakikolwiek program,
+            <li>strefa musi znajdować się w stanie
+              <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
+              (zielona lampka na pulpicie sterującym jest wyłączona, a czerwona - miga),
+            <li>przełącznik na pulpicie sterującym musi wskazywać na pozycję <code>0</code>.
+          </ol>
+          <p>
+            Jeżeli powyższe warunki są spełnione, to przypisany program może
+            zostać uruchomiony przez ustawienie przełącznika na pulpicie sterującym
+            na pozycję <code>1</code>.
+          </p>
+          <p>
+            Po uruchomieniu programu, strefa przejdzie do stanu
+            <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
+            (zielona lampka na pulpicie sterującym jest włączona, a czerwona - wyłączona).
+          </p>
+          <p>
+            Program uruchomiony z poziomu pulpitu sterującego wózkiem wygrzewania
+            można zatrzymać <a href="#control-stop-app">z poziomu aplikacji</a>
+            jak i <a href="#control-stop-cart">z poziomu pulpitu sterującego</a>.
+          </p>
+        </section>
+        <section id="control-stop-cart">
+          <h1>Zatrzymywanie programu z poziomu pulpitu sterującego</h1>
+          <p>
+            Z poziomu pulpitu sterującego wózkiem wygrzewania można zakończyć
+            program aktualnie wykonywany na strefie, do której
+            podłączony jest dany wózek.
+          </p>
+          <p>
+            Aby można było zakończyć z pulpitu sterującego program uruchomiony na strefie,
+            do której podłączony jest wózek, to strefa ta musi znajdować się w stanie
+            <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
+            (zielona lampka na pulpicie sterującym jest włączona, a czerwona - wyłączona).
+          </p>
+          <p>
+            Jeżeli powyższy warunek jest spełniony, to w zależności od metody
+            uruchomienia programu, może on zostać zatrzymany z wykorzystaniem
+            przełącznika znajdującego się na pulpicie sterującym.
+          </p>
+          <p>
+            Jeżeli <a href="#control-start-app">program został uruchomiony z poziomu aplikacji</a>,
+            to przełącznik będzie wskazywał na pozycję <code>0</code>. Aby
+            zatrzymać taki program, należy na chwilę ustawić przełącznik na pozycję
+            <code>1</code>, a następnie z powrotem na pozycję <code>0</code>.
+          </p>
+          <p>
+            Jeżeli <a href="#control-start-cart">program został uruchomiony z poziomu pulpitu sterującego</a>,
+            to przełącznik będzie wskazywał na pozycję <code>1</code>. Aby
+            zatrzymać taki program, należy ustawić przełącznik na pozycję <code>0</code>.
+          </p>
+          <p>
+            Po zatrzymaniu programu, strefa przejdzie do stanu
+            <a class="programStopped" href="#dashboard-states-programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</a>
+            (zielona i czerwona lampka migają na przemian).
+            Aby można było uruchomić na tej strefie kolejny program, należy wykonać
+            <a href="#control-reset">ręczny reset strefy</a> w celu zmiany stanu strefy na
+            <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>.
+          </p>
+        </section>
+        <section id="control-start-app">
+          <h1>Uruchamianie programu z poziomu aplikacji</h1>
+          <p>
+            Proces uruchamiania programu z poziomu aplikacji rozpoczyna się
+            po kliknięciu przez użytkownika na przycisk <button class="action green">Start</button>,
+            znajdujący się na belce aktywnej strefy w module <a href="#dashboard">Dashboard</a>.
+            Aby przycisk ten był widoczny, spełnione muszą być następujące warunki:
+          </p>
+          <ol>
+            <li>strefa musi znajdować się w stanie
+              <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
+              (zielona lampka na pulpicie sterującym jest wyłączona, a czerwona - miga),
+            <li>wózek strefy musi być podłączony do zasilania,
+            <li>przełącznik na pulpicie sterującym musi wskazywać na pozycję <code>0</code>.
+          </ol>
+          <p>
+            Jeżeli powyższe warunki są spełnione, to można rozpocząć proces uruchamiania
+            programu z poziomu aplikacji, który przebiega różnie, w zależności od tego, czy
+            użytkownik jest zalogowany oraz od jego uprawnień.
+          </p>
+          <p>
+            Jeżeli użytkownik nie jest zalogowany, to po kliknięciu przycisku
+            <button class="action green">Start</button> pokaże się okno dialogowe
+            z konsolą numeryczną umożliwiającą wprowadzenie PINu i uruchomienie
+            programu bez logowania się na swoje konto za pomocą loginu i hasła.
+            Po wprowadzeniu poprawnego PINu i kliknięciu akcji <button class="action green">Start</button>,
+            uruchomiony zostanie program przypisany do danej strefy.
+          </p>
+          <div class="image">
+            <img class="screen" src="screens/control-start-pin.png" alt="Konsola numeryczna do wprowadzania PINu użytkownika"><br>
+            Konsola numeryczna do wprowadzania PINu użytkownika
+          </div>
+          <p class="pbb">
+            Jeżeli użytkownik jest zalogowany i posiada uprawnienie
+            <span class="privilege">Uruchamianie i zatrzymywanie programów</span>,
+            ale nie posiada uprawnienia <span class="privilege">Wybieranie programów do uruchomienia</span>,
+            to po kliknięciu przycisku <button class="action green">Start</button>
+            pokaże się okno dialogowe z podglądem programu przypisanego do danej strefy.
+            Aby uruchomić ten program, należy kliknąć akcję <button class="action green">Start</button>
+            znajdującą się na tym oknie dialogowym.
+          </p>
+          <div class="image">
+            <img class="screen" src="screens/control-start-assigned.png" alt="Uruchamianie przypisanego programu"><br>
+            Uruchamianie przypisanego programu
+          </div>
+          <p class="pbb">
+            Jeżeli użytkownik jest zalogowany i posiada uprawnienia
+            <span class="privilege">Uruchamianie i zatrzymywanie programów</span>
+            oraz <span class="privilege">Wybieranie programów do uruchomienia</span>,
+            to po kliknięciu przycisku <button class="action green">Start</button>
+            pokaże się okno dialogowe z listą wszystkich programów. Aby uruchomić dany program,
+            należy wybrać go z listy (co sprawi, że pokazany zostanie w bloku <em>Wybrany program</em>),
+            a następnie wcisnąć akcję <button class="action green">Start</button>.
+            Jeżeli strefa ma przypisany jakikolwiek program, to zostanie on
+            domyślnie wybrany.
+          </p>
+          <div class="image">
+            <img class="screen" src="screens/control-start-all.png" alt="Uruchamianie dowolnego programu"><br>
+            Uruchamianie dowolnego programu
+          </div>
+          <p>
+            Po uruchomieniu programu, strefa przejdzie do stanu
+            <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>.
+          </p>
+          <p>
+            Program uruchomiony z poziomu aplikacji
+            można zatrzymać <a href="#control-stop-cart">z poziomu pulpitu sterującego</a>
+            jak i <a href="#control-stop-app">z poziomu aplikacji</a>.
+          </p>
+        </section>
+        <section id="control-stop-app" class="pbb" data-page="33">
+          <h1>Zatrzymywanie programu z poziomu aplikacji</h1>
+          <p>
+            Aby zakończyć wykonywanie programu z poziomu aplikacji, należy
+            kliknąć przycisk <button class="action red">Stop</button>, znajdujący
+            się na belce aktywnej strefy w module <a href="#dashboard">Dashboard</a>.
+          </p>
+          <p>
+            Przycisk ten widoczny jest tylko wtedy, gdy strefa znajduje się w stanie
+            <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
+            oraz użytkownik posiada uprawnienie <span class="privilege">Uruchamianie i zatrzymywanie programów</span>.
+          </p>
+          <p>
+            Jeżeli użytkownik jest zalogowany, to wciśnięcie przycisku
+            <button class="action red">Stop</button> zatrzyma program natychmiast.
+          </p>
+          <p>
+            Jeżeli użytkownik nie jest zalogowany, to po wciśnięciu przycisku
+            <button class="action red">Stop</button> pokaże się okno dialogowe
+            z konsolą numeryczną służącą do podania PINu użytkownika.
+            Po wprowadzeniu poprawnego PINu oraz kliknięciu akcji
+            <button class="action green">Stop</button> program zostanie zatrzymany.
+          </p>
+          <div class="image">
+            <img class="screen" src="screens/control-stop-pin.png" alt="Konsola numeryczna do wprowadzania PINu użytkownika"><br>
+            Konsola numeryczna do wprowadzania PINu użytkownika
+          </div>
+          <p>
+            Po zatrzymaniu programu, strefa przejdzie do stanu
+            <a class="programStopped" href="#dashboard-states-programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</a>.
+            Aby można było uruchomić na tej strefie kolejny program, należy wykonać
+            <a href="#control-reset">ręczny reset strefy</a> w celu zmiany stanu strefy na
+            <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>.
           </p>
         </section>
       </section>
       <section id="appendix-a">
         <h1>Informacje o sprzęcie</h1>
         <dl>
-          <dt>Adres IP i port aplikacji w sieci bezprzewodowej <em>ML_WLAN</em>
+          <dt>Adres IP i port serwera aplikacji w sieci bezprzewodowej <em>ML_WLAN</em>
           <dd><code>192.168.21.58:80</code>
-          <dt>Adres IP i port aplikacji w sieci przewodowej
+          <dt>Adres IP i port serwera aplikacji w sieci przewodowej
           <dd><code>161.87.64.20:8081</code>
         </dl>
       </section>

@@ -19,6 +19,7 @@ $(function()
   }
 
   var helpContainerEl = $('#helpContainer');
+  var currentPage = 1;
 
   function buildToc(tocEl, sections, level)
   {
@@ -34,7 +35,30 @@ $(function()
       var sectionId = sectionEl.attr('id');
       var sectionName = sectionEl.find('h1').first().contents()[0].nodeValue;
 
-      var sectionLiEl = $('<li><a href="#' + sectionId + '">' + sectionName + '</a></li>');
+      if (sectionEl.hasClass('pbb'))
+      {
+        var sectionPage = parseInt(sectionEl.attr('data-page'));
+
+        if (isNaN(sectionPage))
+        {
+          currentPage += 1;
+        }
+        else
+        {
+          currentPage = sectionPage;
+        }
+      }
+      else
+      {
+        var pbbEl = sectionEl.find('.pbb').first();
+
+        if (pbbEl.closest('section')[0] === sectionEl[0])
+        {
+          currentPage += 1;
+        }
+      }
+
+      var sectionLiEl = $('<li><a href="#' + sectionId + '"><span class="sectionName">' + sectionName + '</span> <span class="pageNumber">' + currentPage + '</span></a></li>');
 
       tocEl.append(sectionLiEl);
 
@@ -86,16 +110,6 @@ $(function()
     {
       tooltips[i]();
     }
-  });
-
-  var exampleMessageEl = $('#exampleMessage');
-
-  exampleMessageEl.click(function()
-  {
-    exampleMessageEl.slideUp(function()
-    {
-      setTimeout(function() { exampleMessageEl.slideDown(); }, 1000);
-    });
   });
 
   $('#back').click(function()

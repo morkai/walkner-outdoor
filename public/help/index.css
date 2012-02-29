@@ -83,12 +83,14 @@ body {
   margin: 0;
   font-size: 2em;
 }
+#toc ol {
+  margin-left: 2em;
+}
 #toc > ol {
   margin: 1em 0;
 }
-#toc ol {
-  list-style-type: upper-roman;
-  margin-left: 2em;
+#toc .pageNumber {
+  display: none;
 }
 #browsers {
   text-align: center;
@@ -201,10 +203,12 @@ body {
   border-radius: 2px;
 }
 .help section > ol {
+  margin: 1em 0;
   padding-left: 2.5em;
   list-style: decimal;
 }
 .help section > ul {
+  margin: 1em 0;
   padding-left: 2.5em;
   list-style: square;
 }
@@ -281,8 +285,14 @@ body {
 #control-reset .activeZone {
   margin: 0 0 1em 0;
 }
+#privileges td {
+  text-align: left;
+}
 
 @media print {
+  * {
+    box-shadow: none!important;
+  }
   a {
     color: inherit;
   }
@@ -292,11 +302,13 @@ body {
     color: #000;
   }
   #helpContainer {
-    box-shadow: none;
     padding: 0;
   }
   #toolbar {
     display: none;
+  }
+  #toc h1 {
+    margin-top: 0;
   }
   .todo {
     color: inherit;
@@ -304,4 +316,39 @@ body {
   .noprint {
     display: none;
   }
+  .help section {
+    border-top: none;
+  }
+  .help .screen,
+  .help .pageLayout {
+    border: 1px solid #666;
+  }
+  .pba {
+    page-break-after: always;
+  }
+  .pbb {
+    page-break-before: always;
+  }
+  #toc a {
+    display: block;
+    position: relative;
+    clear: both;
+    height: 1em;
+    background: url(images/dots.png) repeat-x bottom left;
+  }
+  #toc .sectionName {
+    background: #FFF;
+    float: left;
+    padding-right: .25em;
+  }
+  #toc .pageNumber {
+    display: inline;
+    background: #FFF;
+    float: right;
+    padding-left: .25em;
+  }
+  #privileges {
+    margin: 1em;
+  }
 }
+
