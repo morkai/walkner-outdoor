@@ -209,6 +209,11 @@ function(
    */
   ProgramPickerView.prototype.onClickStartProgram = function()
   {
+    if (!this.programDetailsView || !this.programDetailsView.model)
+    {
+      return;
+    }
+
     this.onProgramSelect(this.programDetailsView.model.id, undefined);
   };
 
