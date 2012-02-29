@@ -248,7 +248,7 @@ app.put('/zones/:id', function(req, res, next)
           'zone changed', {_id: zoneId, changes: data}
         );
 
-        if (data.program)
+        if (!_.isUndefined(data.program))
         {
           emitNewZoneProgram(zoneId, data.program);
         }
@@ -610,6 +610,11 @@ function emitNewZoneProgram(zoneId, programId)
   if (!activeZone)
   {
     return;
+  }
+
+  if (!programId)
+  {
+    return activeZone.programmed();
   }
 
   app.db.model('Program').findById(programId, function(err, program)

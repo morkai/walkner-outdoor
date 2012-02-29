@@ -190,9 +190,12 @@ ActiveZone.prototype.wasPlugIn = function()
   this.emitState({needsPlugIn: false});
 };
 
+/**
+ * @param {Program} [program]
+ */
 ActiveZone.prototype.programmed = function(program)
 {
-  this.zone.program = program.toObject();
+  this.zone.program = program ? program.toObject() : null;
 
   this.emitState({assignedProgram: this.zone.program});
 };
