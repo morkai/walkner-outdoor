@@ -199,7 +199,8 @@
   display: inline-block;
   box-shadow: 0 1px 3px #333;
 }
-.programPicker .allProgramsContainer {
+.programPicker .allProgramsContainer,
+.programPicker .assignedProgramContainer {
   padding: 1em;
 }
 .programPicker .allProgramsContainer .content {
@@ -216,12 +217,9 @@
   width: 69%;
   float: right;
 }
-.programPicker .assignedProgramContainer .pickedProgram {
-  margin: 0 1em;
-}
 .programPicker .assignedProgramContainer .content {
   max-width: none;
-  margin: 1em;
+  margin-bottom: 1em;
   box-shadow: 0 1px 3px #333;
 }
 .programPicker .properties {
