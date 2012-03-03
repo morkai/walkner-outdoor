@@ -50,6 +50,7 @@ function getDateString()
   str += ' ' + pad0(now.getUTCHours());
   str += ':' + pad0(now.getUTCMinutes());
   str += ':' + pad0(now.getUTCSeconds());
+  str += '.' + pad0(now.getUTCMilliseconds());
 
   return str;
 }
