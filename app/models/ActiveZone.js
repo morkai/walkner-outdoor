@@ -208,7 +208,7 @@ ActiveZone.prototype.needsPlugIn = function()
 
   this.emitState({needsPlugIn: true});
 
-  console.debug('Zone [%s] cart was unplugged.')
+  console.debug('Zone [%s] cart was unplugged.', this.zone.name);
 };
 
 ActiveZone.prototype.wasPlugIn = function()
@@ -217,7 +217,7 @@ ActiveZone.prototype.wasPlugIn = function()
 
   this.emitState({needsPlugIn: false});
 
-  console.debug('Zone [%s] cart was plugged in.');
+  console.debug('Zone [%s] cart was plugged in.', this.zone.name);
 };
 
 /**
