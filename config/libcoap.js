@@ -3,7 +3,7 @@ var normalize = require('path').normalize;
 /**
  * How many times to retry the command before giving up.
  */
-exports.maxRetries = 2;
+exports.maxRetries = 10;
 
 /**
  * Assume the connection if after the specified number of milliseconds no

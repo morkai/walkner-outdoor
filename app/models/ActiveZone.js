@@ -42,26 +42,30 @@ ActiveZone.prototype.toJSON = function()
 
 ActiveZone.prototype.connected = function(fromDisconnect)
 {
-  this.state = 'connected';
-
   if (fromDisconnect)
   {
     this.lastConnectTime = Date.now();
   }
 
-  this.emitNewState({
+  this.emitNewState('connected', {
     lastConnectTime: this.lastConnectTime
   });
+
+  if (fromDisconnect)
+  {
+    console.debug('Zone [%s] connected to its controller.', this.zone.name);
+  }
 };
 
 ActiveZone.prototype.disconnected = function()
 {
-  this.state = 'disconnected';
   this.lastDisconnectTime = Date.now();
 
-  this.emitNewState({
+  this.emitNewState('disconnected', {
     lastDisconnectTime: this.lastDisconnectTime
   });
+
+  console.debug('Zone [%s] disconnected from its controller.', this.zone.name);
 };
 
 /**
@@ -70,8 +74,6 @@ ActiveZone.prototype.disconnected = function()
  */
 ActiveZone.prototype.programRunning = function(program, user)
 {
-  this.state = 'programRunning';
-
   this.program = program.toObject();
   this.program.startTime = Date.now();
   this.program.startUser = user;
@@ -92,17 +94,21 @@ ActiveZone.prototype.programRunning = function(program, user)
 
   this.historyEntry.save(function(err, historyEntry)
   {
-    activeZone.emitNewState({
+    activeZone.emitNewState('programRunning', {
       program: activeZone.program,
       historyEntry: historyEntry.id
     });
   });
+
+  console.info(
+    'Program [%s] was started on zone [%s].',
+    this.program.name,
+    this.zone.name
+  );
 };
 
 ActiveZone.prototype.programFinished = function()
 {
-  this.state = 'programFinished';
-
   this.program.stopTime = Date.now();
 
   this.historyEntry.set({
@@ -111,15 +117,19 @@ ActiveZone.prototype.programFinished = function()
   });
   this.historyEntry.save();
 
-  this.emitNewState({
+  this.emitNewState('programFinished', {
     program: this.program
   });
+
+  console.info(
+    'Program [%s] on zone [%s] finished successfully.',
+    this.program.name,
+    this.zone.name
+  );
 };
 
 ActiveZone.prototype.programStopped = function(user)
 {
-  this.state = 'programStopped';
-
   this.program.stopTime = Date.now();
   this.program.stopUser = user;
 
@@ -131,15 +141,20 @@ ActiveZone.prototype.programStopped = function(user)
   });
   this.historyEntry.save();
 
-  this.emitNewState({
+  this.emitNewState('programStopped', {
     program: this.program
   });
+
+  console.info(
+    'Program [%s] on zone [%s] was stopped by a user%s.',
+    this.program.name,
+    this.zone.name,
+    user ? (': ' + user.name) : 'manually'
+  );
 };
 
 ActiveZone.prototype.programErrored = function(errorMessage)
 {
-  this.state = 'programErrored';
-
   this.program.stopTime = Date.now();
   this.program.errorMessage = errorMessage;
 
@@ -150,9 +165,16 @@ ActiveZone.prototype.programErrored = function(errorMessage)
   });
   this.historyEntry.save();
 
-  this.emitNewState({
+  this.emitNewState('programErrored', {
     program: this.program
   });
+
+  console.info(
+    'Program [%s] on zone [%s] stopped with an error: %s',
+    this.program.name,
+    this.zone.name,
+    errorMessage
+  );
 };
 
 ActiveZone.prototype.updateProgress = function(progress)
@@ -167,6 +189,8 @@ ActiveZone.prototype.needsReset = function()
   this.doesNeedReset = true;
 
   this.emitState({needsReset: true});
+
+  console.debug('Zone [%s] needs a reset.', this.zone.name);
 };
 
 ActiveZone.prototype.wasReset = function()
@@ -174,6 +198,8 @@ ActiveZone.prototype.wasReset = function()
   this.doesNeedReset = false;
 
   this.emitState({needsReset: false});
+
+  console.debug('Zone [%s] was reset.', this.zone.name);
 };
 
 ActiveZone.prototype.needsPlugIn = function()
@@ -181,6 +207,8 @@ ActiveZone.prototype.needsPlugIn = function()
   this.doesNeedPlugIn = true;
 
   this.emitState({needsPlugIn: true});
+
+  console.debug('Zone [%s] cart was unplugged.')
 };
 
 ActiveZone.prototype.wasPlugIn = function()
@@ -188,6 +216,8 @@ ActiveZone.prototype.wasPlugIn = function()
   this.doesNeedPlugIn = false;
 
   this.emitState({needsPlugIn: false});
+
+  console.debug('Zone [%s] cart was plugged in.');
 };
 
 /**
@@ -229,12 +259,15 @@ ActiveZone.prototype.fetchAssignedProgram = function(done)
 
 /**
  * @private
+ * @param {String} newState
  * @param {Object} [data]
  */
-ActiveZone.prototype.emitNewState = function(data)
+ActiveZone.prototype.emitNewState = function(newState, data)
 {
+  this.state = newState;
+
   this.emitState(_.extend(data, {
-    state: this.state
+    state: newState
   }));
 };
 

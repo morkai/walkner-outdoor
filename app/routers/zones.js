@@ -455,14 +455,6 @@ function startProgram(req, res, next, zone, user)
           err
         );
       }
-      else
-      {
-        console.debug(
-          'Started program <%s> on zone <%s>',
-          historyEntry.programName,
-          zone.get('name')
-        );
-      }
 
       if (err instanceof Error)
       {

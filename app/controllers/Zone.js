@@ -505,6 +505,14 @@ Zone.prototype.startAssignedProgram = function()
  */
 Zone.prototype.onInputChange = function(input, newValue, oldValue)
 {
+  console.debug(
+    'Input [%s] on zone [%s] changed from [%d] to [%d].',
+    input,
+    this.zone.name,
+    oldValue,
+    newValue
+  );
+
   if (input === 'connected')
   {
     return newValue === 1 ? this.wasPlugIn() : this.needsPlugIn();
