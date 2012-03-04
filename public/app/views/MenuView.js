@@ -35,7 +35,8 @@ function(require, $, _, Backbone, user, touch, menuTpl)
       'click .login-link': 'onLoginLinkClick',
       'click .logout-link': 'onLogoutLinkClick',
       'click .refresh-link': 'onRefreshLinkClick',
-      'click .help-link': 'onHelpLinkClick'
+      'click .help-link': 'onHelpLinkClick',
+      'click .back-link': 'onBackLinkClick'
     }
   });
 
@@ -89,6 +90,7 @@ function(require, $, _, Backbone, user, touch, menuTpl)
 
     if (touch.enabled)
     {
+      this.showLink('back');
       this.showLink('refresh');
     }
 
@@ -224,6 +226,17 @@ function(require, $, _, Backbone, user, touch, menuTpl)
         window.location.href = href;
       }
     );
+
+    return false;
+  };
+
+  /**
+   * @private
+   * @return {Boolean}
+   */
+  MenuView.prototype.onBackLinkClick = function(e)
+  {
+    window.history.back();
 
     return false;
   };

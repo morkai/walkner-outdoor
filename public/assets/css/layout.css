@@ -60,6 +60,10 @@ strong {
   float: right;
   width: 4em;
 }
+.menu .back-link {
+  float: left;
+  width: 4em;
+}
 .menu .refresh-link a {
   cursor: pointer;
 }
