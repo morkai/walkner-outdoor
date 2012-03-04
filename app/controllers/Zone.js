@@ -1,7 +1,7 @@
 const BLINK_FREQUENCY = 1000;
-
 const STOP_BUTTON_MONITOR_INTERVAL = 100;
 const CONNECTED_INPUT_MONITOR_INTERVAL = 500;
+const INPUT_CHANGE_AFTER_MIN_READS = 2;
 
 var util = require('util');
 var step = require('step');
@@ -17,6 +17,7 @@ function Zone(controller, zone)
   this.program = null;
   this.currentState = 'disconnected';
   this.inputs = {stopButton: -1, connected: -1};
+  this.inputChanges = {stopButton: 0, connected: 0};
   this.timers = {};
   this.inputChangeListener = null;
   this.doesNeedReset = false;
@@ -117,15 +118,25 @@ Zone.prototype.getInput = function(input, done)
 
     var oldValue = zone.inputs[input];
 
-    if (oldValue !== newValue)
+    if (oldValue === newValue)
     {
-      zone.inputs[input] = newValue;
+      zone.inputChanges[input] = 0;
+    }
+    else
+    {
+      zone.inputChanges[input] += 1;
 
-      zone.onInputChange(input, newValue, oldValue);
-
-      if (zone.inputChangeListener)
+      if (zone.inputChanges[input] === INPUT_CHANGE_AFTER_MIN_READS)
       {
-        zone.inputChangeListener.call(zone, input, newValue, oldValue);
+        zone.inputChanges[input] = 0;
+        zone.inputs[input] = newValue;
+
+        zone.onInputChange(input, newValue, oldValue);
+
+        if (zone.inputChangeListener)
+        {
+          zone.inputChangeListener.call(zone, input, newValue, oldValue);
+        }
       }
     }
 

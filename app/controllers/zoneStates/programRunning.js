@@ -1,9 +1,6 @@
 var _ = require('underscore');
 var step = require('step');
 
-const PLUGGED_OFF_TIMEOUT = 2000;
-const PROGRAM_STOPPED_TIMEOUT = 2000;
-
 exports.validLeaveStates = [
   'disconnected',
   'stopped',
@@ -50,12 +47,6 @@ exports.leave = function(newState, options, done)
   clearTimeout(this.timers.nextProgramStep);
   delete this.timers.nextProgramStep;
 
-  clearTimeout(this.timers.zonePluggedOff);
-  delete this.timers.zonePluggedOff;
-
-  clearTimeout(this.timers.programStopped);
-  delete this.timers.programStopped;
-
   delete this.program.remainingTime;
   delete this.program.running;
 
@@ -94,31 +85,10 @@ function handleStopButtonChange(zone, newValue, oldValue)
     return;
   }
 
-  var timers = zone.timers;
-
-  // If the stop button is pressed (newValue=1)
-  // then start the program stopped timer
+  // If the stop button is pressed (newValue=1) then stop the running program
   if (newValue === 1)
   {
-    clearTimeout(timers.programStopped);
-
-    timers.programStopped = setTimeout(function()
-    {
-      delete timers.programStopped;
-
-      zone.programStopped();
-    }, PROGRAM_STOPPED_TIMEOUT);
-
-    return;
-  }
-
-  // If the stop button is released and the program stopped timer is running
-  // then stop it
-  if (newValue === 0 && timers.programStopped)
-  {
-    clearTimeout(timers.programStopped);
-
-    delete timers.programStopped;
+    return zone.programStopped();
   }
 }
 
@@ -129,30 +99,13 @@ function handleStopButtonChange(zone, newValue, oldValue)
  */
 function handleConnectedChange(zone, newValue, oldValue)
 {
-  var timers = zone.timers;
-
-  // If the zone cart was plugged off, start the plugged off timer
+  // If the zone cart was plugged off then stop the running program
+  // with an error
   if (newValue === 0)
   {
-    clearTimeout(timers.zonePluggedOff);
-
-    timers.zonePluggedOff = setTimeout(function()
-    {
-      delete timers.zonePluggedOff;
-
-      zone.changeState('programErrored', {error: 'Odłączenie wózka strefy.'});
-    }, PLUGGED_OFF_TIMEOUT);
-
-    return;
-  }
-
-  // If the zone cart was plugged in and the plugged off timer is running
-  // then stop it
-  if (newValue === 1 && timers.zonePluggedOff)
-  {
-    clearTimeout(timers.zonePluggedOff);
-
-    delete timers.zonePluggedOff;
+    return zone.changeState('programErrored', {
+      error: "Odłączenie wózka strefy."
+    });
   }
 }
 

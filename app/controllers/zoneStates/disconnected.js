@@ -15,6 +15,7 @@ exports.enter = function(oldState, options, done)
   for (var input in this.inputs)
   {
     this.inputs[input] = -1;
+    this.inputChanges[input] = 0;
   }
 
   this.finishProgram("Utracono połączenie ze sterownikiem.");
