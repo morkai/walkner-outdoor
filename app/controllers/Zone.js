@@ -438,38 +438,50 @@ Zone.prototype.connected = function()
 
 Zone.prototype.needsReset = function()
 {
-  this.doesNeedReset = true;
+  if (!this.doesNeedReset)
+  {
+    this.doesNeedReset = true;
 
-  this.controller.sendMessage('zoneNeedsReset', {
-    zoneId: this.zone._id
-  });
+    this.controller.sendMessage('zoneNeedsReset', {
+      zoneId: this.zone._id
+    });
+  }
 };
 
 Zone.prototype.wasReset = function()
 {
-  this.doesNeedReset = false;
+  if (this.doesNeedReset)
+  {
+    this.doesNeedReset = false;
 
-  this.controller.sendMessage('zoneWasReset', {
-    zoneId: this.zone._id
-  });
+    this.controller.sendMessage('zoneWasReset', {
+      zoneId: this.zone._id
+    });
+  }
 };
 
 Zone.prototype.needsPlugIn = function()
 {
-  this.doesNeedPlugIn = true;
+  if (!this.doesNeedPlugIn)
+  {
+    this.doesNeedPlugIn = true;
 
-  this.controller.sendMessage('zoneNeedsPlugIn', {
-    zoneId: this.zone._id
-  });
+    this.controller.sendMessage('zoneNeedsPlugIn', {
+      zoneId: this.zone._id
+    });
+  }
 };
 
 Zone.prototype.wasPlugIn = function()
 {
-  this.doesNeedPlugIn = false;
+  if (this.doesNeedPlugIn)
+  {
+    this.doesNeedPlugIn = false;
 
-  this.controller.sendMessage('zoneWasPlugIn', {
-    zoneId: this.zone._id
-  });
+    this.controller.sendMessage('zoneWasPlugIn', {
+      zoneId: this.zone._id
+    });
+  }
 };
 
 Zone.prototype.programStopped = function()
