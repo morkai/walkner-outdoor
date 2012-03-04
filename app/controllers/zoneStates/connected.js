@@ -57,13 +57,6 @@ function onInputChange(input, newValue, oldValue)
  */
 function handleStopButtonChange(zone, newValue, oldValue)
 {
-  // If somehow stop button is changed while the zone cart is not plugged in
-  // to a power supply then the zone needs to be reset
-  if (zone.doesNeedPlugIn)
-  {
-    return zone.needsReset();
-  }
-
   // If the stop button is released (newValue=0) right after
   // connect (oldValue=-1) then the zone needs to be reset
   if (newValue === 0 && oldValue === -1)
@@ -71,42 +64,32 @@ function handleStopButtonChange(zone, newValue, oldValue)
     return zone.needsReset();
   }
 
-  // If the stop button is pressed (newValue=1) and the zone needs a reset
-  // (doesNeedReset=true) then consider the zone to be reset
-  if (zone.doesNeedReset && newValue === 1)
+  var timers = zone.timers;
+
+  // If the stop button is released (newValue=0 and oldValue=1)
+  // then start the start assigned program timer
+  if (newValue === 0 && oldValue === 1)
   {
-    return zone.wasReset();
-  }
+    clearTimeout(timers.startAssignedProgram);
 
-  if (!zone.doesNeedReset)
-  {
-    var timers = zone.timers;
-
-    // If the stop button is released (newValue=0 and oldValue=1)
-    // then start the start assigned program timer
-    if (newValue === 0 && oldValue === 1)
+    timers.startAssignedProgram = setTimeout(function()
     {
-      clearTimeout(timers.startAssignedProgram);
-
-      timers.startAssignedProgram = setTimeout(function()
-      {
-        delete timers.startAssignedProgram;
-
-        zone.startAssignedProgram();
-      }, START_ASSIGNED_PROGRAM_TIMEOUT);
-
-      return;
-    }
-
-    // If the stop button is pressed (newValue=1 and oldValue=0) and the start
-    // assigned program timer is running then stop it
-    if (newValue === 1 && oldValue === 0)
-    {
-      clearTimeout(timers.startAssignedProgram);
-
       delete timers.startAssignedProgram;
 
-      return;
-    }
+      zone.startAssignedProgram();
+    }, START_ASSIGNED_PROGRAM_TIMEOUT);
+
+    return;
+  }
+
+  // If the stop button is pressed (newValue=1 and oldValue=0) and the start
+  // assigned program timer is running then stop it
+  if (newValue === 1 && oldValue === 0)
+  {
+    clearTimeout(timers.startAssignedProgram);
+
+    delete timers.startAssignedProgram;
+
+    return;
   }
 }

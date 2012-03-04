@@ -125,6 +125,18 @@ exports.stopZone = function(zoneId, done)
   });
 };
 
+exports.resetZone = function(zoneId, done)
+{
+  var controllerId = zoneToControllerMap[zoneId];
+
+  if (!controllerId)
+  {
+    return done();
+  }
+
+  controllerProcesses[controllerId].resetZone(zoneId, done);
+};
+
 exports.startProgram = function(program, zoneId, user, done)
 {
   var controllerId = zoneToControllerMap[zoneId];

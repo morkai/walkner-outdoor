@@ -49,13 +49,28 @@ Zone.prototype.finalize = function(stopReason, done)
 };
 
 /**
+ * @param {Function} done
+ */
+Zone.prototype.reset = function(done)
+{
+  done();
+
+  this.connected();
+
+  if (this.doesNeedReset)
+  {
+    this.wasReset();
+  }
+};
+
+/**
  * @param {Object} data
  * @param {Function} done
  */
 Zone.prototype.startProgram = function(data, done)
 {
   var options = {
-    manual: data.user ? true : false,
+    manual: data.user ? false : true,
     program: data.program
   };
 
@@ -473,7 +488,7 @@ Zone.prototype.programStopped = function()
  * @param {Number} remainingTime
  * @param {String} state
  * @param {Number} stepIndex
- * @param {NumbeR} stepIteration
+ * @param {Number} stepIteration
  */
 Zone.prototype.updateProgress = function(
   remainingTime, state, stepIndex, stepIteration)
@@ -490,8 +505,6 @@ Zone.prototype.updateProgress = function(
 
 Zone.prototype.startAssignedProgram = function()
 {
-  this.needsReset();
-
   this.controller.sendMessage('startAssignedProgram', {
     zoneId: this.zone._id
   });
@@ -512,6 +525,11 @@ Zone.prototype.onInputChange = function(input, newValue, oldValue)
     oldValue,
     newValue
   );
+
+  if (input === 'stopButton')
+  {
+    return newValue === 1 ? this.wasReset() : this.needsReset();
+  }
 
   if (input === 'connected')
   {

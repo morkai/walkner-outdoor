@@ -166,6 +166,22 @@ Controller.prototype.stopZone = function(zoneId, done)
 };
 
 /**
+ * @param {String} zoneId
+ * @param {Function} done
+ */
+Controller.prototype.resetZone = function(zoneId, done)
+{
+  var zone = this.zones[zoneId];
+
+  if (!zone)
+  {
+    return done();
+  }
+
+  zone.reset(done);
+};
+
+/**
  * @param {Object} data
  * @param {Function} done
  */
@@ -319,6 +335,10 @@ var messageHandlers = {
   stopZone: function(req, res)
   {
     this.stopZone(req, res);
+  },
+  resetZone: function(req, res)
+  {
+    this.resetZone(req, res);
   },
   startProgram: function(req, res)
   {

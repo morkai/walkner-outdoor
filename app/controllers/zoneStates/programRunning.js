@@ -17,6 +17,7 @@ exports.enter = function(oldState, options, done)
   var zone = this;
 
   zone.program = _.clone(options.program);
+  zone.program.manual = options.manual;
   zone.program.remainingTime = zone.program.totalTime;
   zone.program.running = true;
 
@@ -86,6 +87,13 @@ function onInputChange(input, newValue, oldValue)
  */
 function handleStopButtonChange(zone, newValue, oldValue)
 {
+  // Ignore the stop button input changes if the program was not started
+  // manually
+  if (!zone.program.manual)
+  {
+    return;
+  }
+
   var timers = zone.timers;
 
   // If the stop button is pressed (newValue=1)

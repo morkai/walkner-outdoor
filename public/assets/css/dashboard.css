@@ -50,6 +50,8 @@
   top: .25em;
   right: .25em;
   font-size: 2em;
+  padding-top: .5em;
+  text-align: center;
 }
 .activeZone .actionMessage {
   box-sizing: border-box;

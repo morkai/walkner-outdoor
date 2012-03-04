@@ -128,6 +128,22 @@ _.extend(ControllerProcess.prototype, {
   },
 
   /**
+   * @param {String} zoneId
+   * @param {Function} done
+   */
+  resetZone: function(zoneId, done)
+  {
+    var activeZone = this.zones[zoneId];
+
+    if (!activeZone)
+    {
+      return done();
+    }
+
+    this.sendMessage('resetZone', zoneId, done);
+  },
+
+  /**
    * @param {Program} program
    * @param {String} zoneId
    * @param {?Object} user

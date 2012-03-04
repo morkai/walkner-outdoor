@@ -5,6 +5,7 @@ define(
   'Backbone',
 
   'app/models/Program',
+  'app/views/dashboard/ZoneNeedsResetMixin',
 
   'text!app/templates/dashboard/programStoppedState.html'
 ],
@@ -13,9 +14,10 @@ define(
  * @param {Underscore} _
  * @param {Backbone} Backbone
  * @param {function(new:Program)} Program
+ * @param {Object} ZoneNeedsResetMixin
  * @param {String} programStoppedStateTpl
  */
-function($, _, Backbone, Program, programStoppedStateTpl)
+function($, _, Backbone, Program, ZoneNeedsResetMixin, programStoppedStateTpl)
 {
   /**
    * @class ProgramStoppedStateView
@@ -26,16 +28,23 @@ function($, _, Backbone, Program, programStoppedStateTpl)
   var ProgramStoppedStateView = Backbone.View.extend({
     tagName: 'div',
     className: 'programStopped',
-    template: _.template(programStoppedStateTpl)
+    template: _.template(programStoppedStateTpl),
+    events: {
+      'click .resetZone': 'resetZone'
+    }
   });
+
+  _.extend(ProgramStoppedStateView.prototype, ZoneNeedsResetMixin);
 
   ProgramStoppedStateView.prototype.initialize = function()
   {
-
+    this.model.bind('change:needsReset', this.toggleResetAction, this);
   };
 
   ProgramStoppedStateView.prototype.destroy = function()
   {
+    this.model.unbind('change:needsReset', this.toggleResetAction, this);
+
     this.remove();
   };
 
@@ -51,6 +60,8 @@ function($, _, Backbone, Program, programStoppedStateTpl)
     );
 
     this.el.innerHTML = this.template(data);
+
+    this.toggleResetAction();
 
     return this;
   };

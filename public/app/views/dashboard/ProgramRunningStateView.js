@@ -84,12 +84,29 @@ function(
   {
     this.el.innerHTML = this.template(this.model.toJSON());
 
-    if (!user.isAllowedTo('startStop'))
+    var program = this.model.get('program');
+
+    if (!user.isAllowedTo('startStop') || !program.startUser)
     {
-      this.$('.stopProgram').hide();
+      var zoneName = this.model.get('name');
+
+      this.$('.stopProgram').addClass('disabled', true).click(function()
+      {
+        console.log(this);
+
+        viewport.msg.show({
+          type: 'error',
+          time: 5000,
+          text: 'Program &lt;' + program.name + '&gt; na strefie '
+            + '&lt;' + zoneName + '&gt; może być zatrzymany tylko '
+            + 'z pulpitu sterującego wózkiem!'
+        });
+
+        return false;
+      });
     }
 
-    this.totalTime = this.model.get('program').totalTime;
+    this.totalTime = program.totalTime;
     this.remainingTime = this.calcRemainingTime();
 
     this.updateProgressBar();

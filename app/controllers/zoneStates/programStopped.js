@@ -33,14 +33,13 @@ function onInputChange(input, newValue, oldValue)
   // reset and restore it to the connected state
   if (input === 'stopButton' && newValue === 1)
   {
-    this.connected();
-    this.wasReset();
+    return this.connected();
   }
 
   // If the zone cart was plugged off a power supply then switch to
   // the connected state
   if (input === 'connected' && newValue === 0)
   {
-    this.connected();
+    return this.connected();
   }
 }

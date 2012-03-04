@@ -149,7 +149,7 @@ ActiveZone.prototype.programStopped = function(user)
     'Program [%s] on zone [%s] was stopped by a user%s.',
     this.program.name,
     this.zone.name,
-    user ? (': ' + user.name) : 'manually'
+    user ? (': ' + user.name) : ' manually'
   );
 };
 

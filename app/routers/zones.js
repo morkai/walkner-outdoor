@@ -140,6 +140,7 @@ app.post('/zones/:id', function(req, res, next)
   var actionPrivileges = {
     'startProgram': 'startStop',
     'stopProgram': 'startStop',
+    'reset': 'startStop',
     'start': 'diag',
     'stop': 'diag'
   };
@@ -174,6 +175,10 @@ app.post('/zones/:id', function(req, res, next)
 
         case 'stopProgram':
           stopProgram(req, res, next, zone, user);
+          break;
+
+        case 'reset':
+          resetZone(res, next, zone);
           break;
 
         case 'start':
@@ -590,6 +595,32 @@ function stopZone(res, next, zone)
     {
       console.debug('Stopped zone <%s>', zone.name);
 
+      res.send(201);
+    }
+  });
+}
+
+function resetZone(res, next, zone)
+{
+  zone.reset(function(err)
+  {
+    if (err)
+    {
+      console.debug(
+        'Resetting zone <%s> failed: %s', zone.name, err.message || err
+      );
+
+      if (err instanceof Error)
+      {
+        next(err);
+      }
+      else
+      {
+        res.send(err, 400);
+      }
+    }
+    else
+    {
       res.send(201);
     }
   });
