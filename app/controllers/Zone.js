@@ -138,6 +138,17 @@ Zone.prototype.getInput = function(input, done)
           zone.inputChangeListener.call(zone, input, newValue, oldValue);
         }
       }
+      else
+      {
+        console.debug(
+          'Possible change #%d of input [%s] on zone [%s] from [%d] to [%d].',
+          zone.inputChanges[input],
+          input,
+          zone.zone.name,
+          oldValue,
+          newValue
+        );
+      }
     }
 
     done && done(null, newValue);
@@ -498,8 +509,11 @@ Zone.prototype.wasPlugIn = function()
 Zone.prototype.programStopped = function()
 {
   var zone = this;
+  var manual = zone.program.startUser ? false : true;
 
-  this.changeState('programStopped', null, function()
+  zone.program = null;
+
+  this.changeState('programStopped', {manual: manual}, function()
   {
     zone.controller.sendMessage('programStopped', {
       zoneId: zone.zone._id

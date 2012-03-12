@@ -12,6 +12,16 @@ exports.enter = function(oldState, options, done)
   this.cancelProgramStoppedLedBlinking = this.blinkLeds(false);
 
   done();
+
+  if (options.manual)
+  {
+    var zone = this;
+
+    process.nextTick(function()
+    {
+      zone.connected();
+    });
+  }
 };
 
 exports.leave = function(newState, options, done)
