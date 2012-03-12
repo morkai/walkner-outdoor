@@ -251,6 +251,9 @@ body {
 .help .activeZone {
   margin-bottom: 2em;
 }
+.help .activeZone .action {
+  padding-top: .25em;
+}
 .help .activeZone .programRunning,
 .help .activeZone .programFinished,
 .help .activeZone .programStopped,

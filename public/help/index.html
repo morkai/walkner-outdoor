@@ -208,7 +208,13 @@
             w module Dashboard nie pokaże się okno dialogowe z listą programów).
           </p>
           <p>
-            Po trzecie, jeżeli w danym momencie na ekranie aplikacji dostępne
+            Po trzecie, w menu pojawia się odnośnik <a>⇦</a>,
+            po kliknięciu którego użytkownik zostanie przeniesiony do poprzednio
+            wyświetlanego ekranu. To samo stanie się, gdy na klawiaturze wciśnięty
+            zostanie klawisz <kbd>Backspace</kbd>.
+          </p>
+          <p>
+            Po czwarte, jeżeli w danym momencie na ekranie aplikacji dostępne
             jest pole formularza, to na dole ekranu pokaże się przycisk
             <button class="button">Pokaż klawiaturę</button>, po kliknięciu
             którego pojawi się wirtualna klawiatura:
@@ -226,7 +232,7 @@
             (klawiatura i przycisk same znikną).
           </p>
           <p>
-            Po czwarte, w prawym górnym rogu każdego okna dialogowego
+            Po piąte, w prawym górnym rogu każdego okna dialogowego
             pojawia się przycisk
             <button class="action red" title="Zamknij dialog">X</button>,
             po kliknięciu którego okno to zostanie zamknięte.
@@ -262,7 +268,8 @@
             <tbody>
               <tr>
                 <td>Uruchamianie i zatrzymywanie programów
-                <td>Użytkownik ma dostęp do akcji <button class="action green">Start</button>
+                <td>Użytkownik ma dostęp do akcji <button class="action green">Start</button>,
+                  <button class="action blue">Reset</button>
                   oraz <button class="action red">Stop</button> w module <a href="#dashboard">Dashboard</a>.
                 <td>Użytkownik nie ma dostępu do ww. akcji.
               <tr>
@@ -1638,7 +1645,7 @@
                     <span data-tooltip="bottom, top" title="Nazwa strefy">Strefa ABC</span>:
                     <a data-tooltip="bottom, top" title="Nazwa przypisanego programu">Program XYZ</a>
                   </h1>
-                  <input class="action green" type="button" value="Start" data-tooltip="bottom, top" title="Obszar akcji">
+                  <a class="action green" data-tooltip="bottom, top" title="Obszar akcji">Start</a>
                 </div>
               </div>
               <p>
@@ -1655,7 +1662,7 @@
                 Na belce strefy znajdują się takie informacje jak: identyfikator
                 strefy (<span class="connected"><span class="state"></span></span>),
                 nazwa strefy, nazwa przypisanego programu (jeżeli strefa ma
-                przypisany program) oraz przycisk <button class="action blue">Start</button>
+                przypisany program) oraz przycisk <button class="action green">Start</button>
                 (jeżeli użytkownik posiada uprawnienie
                 <span class="privilege">Uruchamianie i zatrzymywanie programów</span>,
                 wózek jest podłączony do zasilania oraz przełącznik na pulpicie
@@ -1667,7 +1674,7 @@
                 (zobacz <a href="#programs-view">Przeglądanie wybranego programu</a>).
               </p>
               <p>
-                Kliknięcie przycisku <button class="action blue">Start</button>
+                Kliknięcie przycisku <button class="action green">Start</button>
                 rozpocznie procedurę <a href="#control-start-app">Uruchamiania programu z poziomu aplikacji</a>.
               </p>
               <div class="info">
@@ -1675,7 +1682,7 @@
                   <strong>UWAGA!</strong> Jeżeli strefa będzie znajdować się w stanie
                   <em class="connected"><span class="state"></span> Gotowy do pracy</em>,
                   i wózek wygrzewania opraw nie będzie podłączony do zasilania,
-                  to przycisk <button class="action blue">Start</button>
+                  to przycisk <button class="action green">Start</button>
                   nie będzie dostępny. Zamiast niego, na obszarze akcji wyświetlony
                   zostanie komunikat informujący użytkownika o potrzebie
                   podłączenia wózka strefy do zasilania.
@@ -1686,7 +1693,7 @@
                   <strong>UWAGA!</strong> Jeżeli strefa będzie znajdować w stanie
                   <em class="connected"><span class="state"></span> Gotowy do pracy</em>,
                   podczas gdy przełącznik na pulpicie sterującym wózka nie będzie wskazywał
-                  na pozycję <code>0</code>, to przycisk <button class="action blue">Start</button>
+                  na pozycję <code>0</code>, to przycisk <button class="action green">Start</button>
                   nie będzie dostępny. Zamiast niego, na obszarze akcji wyświetlony
                   zostanie komunikat informujący użytkownika o potrzebie
                   wykonania <a href="#control-reset">ręcznego resetu strefy</a>.
@@ -1782,10 +1789,6 @@
                 (zobacz <a href="#programs-view">Przeglądanie wybranego programu</a>),
                 gdzie można podejrzeć, który krok programu jest aktualnie wykonywany.
               </p>
-              <p>
-                Kliknięcie przycisku <button class="action red">Stop</button>
-                rozpocznie procedurę <a href="#control-stop-app">Zatrzymywania programu z poziomu aplikacji</a>.
-              </p>
               <div class="image">
                 <div class="screen">
                   <object type="application/x-shockwave-flash" data="screens/dashboard-programRunning.swf" width=615 height=420>
@@ -1798,6 +1801,20 @@
                 </div>
                 <br>
                 Podgląd uruchomionego programu
+              </div>
+              <p>
+                Kliknięcie przycisku <button class="action red">Stop</button>
+                rozpocznie procedurę <a href="#control-stop-app">Zatrzymywania programu z poziomu aplikacji</a>.
+              </p>
+              <div class="info">
+                <p class="warn">
+                  <strong>UWAGA!</strong> Przycisk <button class="action red">Stop</button>
+                  zostanie zablokowany, jeżeli program został uruchomiony z poziomu
+                  pulpitu sterującego wózkiem. Program uruchomiony z poziomu pulpitu
+                  sterującego, może być zatrzymany tylko z poziomu pulpitu sterującego.
+                  Program uruchomiony z poziomu aplikacji, może być zatrzymany tylko z
+                  poziomu aplikacji.
+                </p>
               </div>
               <p>
                 Do stanu <em class="programRunning"><span class="state"></span> Program w trakcie wykonywania</em>
@@ -1875,12 +1892,25 @@
                 okna dialogowego ze szczegółowymi informacjami o tym programie
                 (zobacz <a href="#programs-view">Przeglądanie wybranego programu</a>).
               </p>
+              <p>
+                Jeżeli zakończony program został uruchomiony z poziomu aplikacji,
+                to na obszarze akcji wyświetlony zostanie przycisk
+                <button class="action blue">Reset</button>, po kliknięciu którego
+                strefa przejdzie do stanu <a class="connected"><span class="state"></span> Gotowy do pracy</a>.
+              </p>
+              <p>
+                Jeżeli zakończony program został uruchomiony z poziomu pulpitu
+                sterującego lub z poziomu aplikacji, ale w trakcie trwania programu,
+                przełącznik na pulpicie sterującym został ustawiony na pozycję
+                <code>1</code>, to na obszarze akcji wyświetlony zostanie komunikat
+                informujący użytkownika o wymaganym <a href="#control-reset">ręcznym resecie strefy</a>.
+              </p>
               <div class="info">
                 <p class="warn">
                   <strong>UWAGA!</strong> Aby uruchomić następny program na strefie
                   znajdującej się w stanie
                   <em class="programFinished"><span class="state"></span> Program pomyślnie ukończony</em>
-                  należy wykonać <a href="#control-reset">ręczny reset strefy</a>,
+                  należy wykonać <a href="#control-reset">reset strefy</a>,
                   aby ta przeszła do stanu
                   <a class="connected"><span class="state"></span> Gotowy do pracy</a>.
                 </p>
@@ -1900,7 +1930,7 @@
                   - jeżeli połączenie ze sterownikiem strefy zostanie utracone,
                 <li class="connected">
                   <a href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
-                  - jeżeli wykonany zostanie <a href="#control-reset">ręczny reset strefy</a>.
+                  - jeżeli wykonany zostanie <a href="#control-reset">reset strefy</a>.
               </ul>
               <div class="info">
                 <p class="ok">
@@ -1952,12 +1982,25 @@
                 okna dialogowego ze szczegółowymi informacjami o tym programie
                 (zobacz <a href="#programs-view">Przeglądanie wybranego programu</a>).
               </p>
+              <p>
+                Jeżeli zakończony program został uruchomiony z poziomu aplikacji,
+                to na obszarze akcji wyświetlony zostanie przycisk
+                <button class="action blue">Reset</button>, po kliknięciu którego
+                strefa przejdzie do stanu <a class="connected"><span class="state"></span> Gotowy do pracy</a>.
+              </p>
+              <p>
+                Jeżeli zakończony program został uruchomiony z poziomu pulpitu
+                sterującego lub z poziomu aplikacji, ale w trakcie trwania programu,
+                przełącznik na pulpicie sterującym został ustawiony na pozycję
+                <code>1</code>, to na obszarze akcji wyświetlony zostanie komunikat
+                informujący użytkownika o wymaganym <a href="#control-reset">ręcznym resecie strefy</a>.
+              </p>
               <div class="info">
                 <p class="warn">
                   <strong>UWAGA!</strong> Aby uruchomić następny program na strefie
                   znajdującej się w stanie
                   <em class="programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</em>
-                  należy wykonać <a href="#control-reset">ręczny reset strefy</a>,
+                  należy wykonać <a href="#control-reset">reset strefy</a>,
                   aby ta przeszła do stanu
                   <a class="connected"><span class="state"></span> Gotowy do pracy</a>.
                 </p>
@@ -1977,7 +2020,7 @@
                   - jeżeli połączenie ze sterownikiem strefy zostanie utracone,
                 <li class="connected">
                   <a href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
-                  - jeżeli wykonany zostanie <a href="#control-reset">ręczny reset strefy</a>.
+                  - jeżeli wykonany zostanie <a href="#control-reset">reset strefy</a>.
               </ul>
               <div class="info">
                 <p class="ok">
@@ -2028,12 +2071,25 @@
                 okna dialogowego ze szczegółowymi informacjami o tym programie
                 (zobacz <a href="#programs-view">Przeglądanie wybranego programu</a>).
               </p>
+              <p>
+                Jeżeli zakończony program został uruchomiony z poziomu aplikacji,
+                to na obszarze akcji wyświetlony zostanie przycisk
+                <button class="action blue">Reset</button>, po kliknięciu którego
+                strefa przejdzie do stanu <a class="connected"><span class="state"></span> Gotowy do pracy</a>.
+              </p>
+              <p>
+                Jeżeli zakończony program został uruchomiony z poziomu pulpitu
+                sterującego lub z poziomu aplikacji, ale w trakcie trwania programu,
+                przełącznik na pulpicie sterującym został ustawiony na pozycję
+                <code>1</code>, to na obszarze akcji wyświetlony zostanie komunikat
+                informujący użytkownika o wymaganym <a href="#control-reset">ręcznym resecie strefy</a>.
+              </p>
               <div class="info">
                 <p class="warn">
                   <strong>UWAGA!</strong> Aby uruchomić następny program na strefie
                   znajdującej się w stanie
                   <em class="programErrored"><span class="state"></span> Program zatrzymany z błędem</em>
-                  należy wykonać <a href="#control-reset">ręczny reset strefy</a>,
+                  należy wykonać <a href="#control-reset">reset strefy</a>,
                   aby ta przeszła do stanu
                   <a class="connected"><span class="state"></span> Gotowy do pracy</a>.
                 </p>
@@ -2066,7 +2122,7 @@
                   - jeżeli połączenie ze sterownikiem strefy zostanie utracone,
                 <li class="connected">
                   <a href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
-                  - jeżeli wykonany zostanie <a href="#control-reset">ręczny reset strefy</a>.
+                  - jeżeli wykonany zostanie <a href="#control-reset">reset strefy</a>.
               </ul>
               <div class="info">
                 <p class="ok">
@@ -2175,18 +2231,37 @@
           danego wózka oraz może wykonać ręczny reset tej strefy.
         </p>
         <section id="control-reset">
-          <h1>Ręczny reset strefy</h1>
+          <h1>Reset strefy</h1>
+          <p>
+            W zależności od stanu zakończenia programu, strefa przechodzi w jeden
+            z następujących stanów:
+            <a class="programFinished" href="#dashboard-states-programFinished"><span class="state"></span> Program pomyślnie ukończony</a>,
+            <a class="programStopped" href="#dashboard-states-programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</a>
+            lub <a class="programErrored" href="#dashboard-states-programErrored"><span class="state"></span> Program zatrzymany z błędem</a>.
+            Aby uruchomić następny program na danej strefie, należy ją zresetować,
+            aby ta przeszła do stanu <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>.
+          </p>
+          <p>
+            Jeżeli zakończony program uruchomiony został <a href="#control-start-app">z poziomu aplikacji</a>,
+            to na obszarze akcji na belce strefy dla użytkowników z uprawnieniem
+            <span class="privilege">Uruchamianie i zatrzymywanie programów</span>
+            dostępna będzie akcja <button class="action blue">Reset</button>, po
+            kliknięciu której, stan strefy zostanie zmieniony na
+            <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>.
+          </p>
+          <p>
+            Jeżeli zakończony program uruchomiony został <a href="#control-start-cart">z poziomu pulpitu sterującego</a>
+            lub <a href="#control-start-app">z poziomu aplikacji</a>, ale w trakcie trwania programu, przełącznik
+            na pulpicie sterującym został ustawiony na pozycję <code>1</code>, to
+            na obszarze akcji na belce strefy wyświetlony zostanie komunikat
+            informujący użytkownika o wymaganym ręcznym resecie strefy.
+          </p>
           <div class="image">
             <div class="activeZone">
               <p class="actionMessage needsReset">Wymagany<br>ręczny<br>reset</p>
             </div>
             <p>Komunikat widoczny na belce strefy na obszarze akcji</p>
           </div>
-          <p>
-            W module <a href="#dashboard">Dashboard</a> na belce strefy,
-            w obszarze akcji może pojawić się komunikat informujący użytkownika
-            o wymaganym ręcznym resecie strefy.
-          </p>
           <p>
             Komunikat ten widoczny jest, jeżeli spełnione zostanie jedne
             z następujących kryteriów:
@@ -2198,6 +2273,7 @@
               na pulpicie sterującym wózka wskazuje na pozycję <code>1</code>.
               Należy wykonać ręczny reset strefy, aby można było na niej uruchomić program.
             <li>na danej strefie ukończone zostało wykonywanie programu
+              uruchomionego z poziomu pulpitu sterującego
               (tzn. strefa przeszła ze stanu
               <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
               do stanu
@@ -2206,6 +2282,7 @@
               <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
               i można było uruchomić na niej kolejny program.
             <li>na danej strefie użytkownik zatrzymał wykonywanie programu
+              uruchomionego z poziomu pulpitu sterującego
               (tzn. strefa przeszła ze stanu
               <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
               do stanu
@@ -2213,7 +2290,8 @@
               Należy wykonać ręczny reset strefy, aby strefa przeszła do stanu
               <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>
               i można było uruchomić na niej kolejny program.
-            <li>na danej strefie wykonywanie programu zostało zatrzymane z powodu błędu
+            <li>na danej strefie wykonywanie programu uruchomionego z poziomu pulpitu sterującego
+              zostało zatrzymane z powodu błędu
               (tzn. strefa przeszła ze stanu
               <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
               do stanu
@@ -2261,8 +2339,7 @@
           </p>
           <p>
             Program uruchomiony z poziomu pulpitu sterującego wózkiem wygrzewania
-            można zatrzymać <a href="#control-stop-app">z poziomu aplikacji</a>
-            jak i <a href="#control-stop-cart">z poziomu pulpitu sterującego</a>.
+            można zatrzymać tylko <a href="#control-stop-cart">z poziomu pulpitu sterującego</a>.
           </p>
         </section>
         <section id="control-stop-cart">
@@ -2276,12 +2353,17 @@
             Aby można było zakończyć z pulpitu sterującego program uruchomiony na strefie,
             do której podłączony jest wózek, to strefa ta musi znajdować się w stanie
             <a class="programRunning" href="#dashboard-states-programRunning"><span class="state"></span> Program w trakcie wykonywania</a>
-            (zielona lampka na pulpicie sterującym jest włączona, a czerwona - wyłączona).
+            (zielona lampka na pulpicie sterującym jest włączona, a czerwona - wyłączona),
+            a wykonywany program musi być uruchomiony z poziomu pulpitu sterującego.
           </p>
           <p>
-            Jeżeli powyższy warunek jest spełniony, to w zależności od metody
-            uruchomienia programu, może on zostać zatrzymany z wykorzystaniem
-            przełącznika znajdującego się na pulpicie sterującym.
+            Jeżeli powyższe waruneki są spełnione, to program może zostać zatrzymany
+            z wykorzystaniem przełącznika znajdującego się na pulpicie sterującym.
+          </p>
+          <p>
+            W celu zatrzymania programu uruchomionego z poziomu pulpitu sterującego,
+            należy ustawić przełącznik znajdujący się na pulpicie sterującym na
+            pozycję <code>0</code>.
           </p>
           <p>
             Jeżeli <a href="#control-start-app">program został uruchomiony z poziomu aplikacji</a>,
@@ -2299,7 +2381,7 @@
             <a class="programStopped" href="#dashboard-states-programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</a>
             (zielona i czerwona lampka migają na przemian).
             Aby można było uruchomić na tej strefie kolejny program, należy wykonać
-            <a href="#control-reset">ręczny reset strefy</a> w celu zmiany stanu strefy na
+            <a href="#control-reset">reset strefy</a> w celu zmiany stanu strefy na
             <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>.
           </p>
         </section>
@@ -2369,8 +2451,7 @@
           </p>
           <p>
             Program uruchomiony z poziomu aplikacji
-            można zatrzymać <a href="#control-stop-cart">z poziomu pulpitu sterującego</a>
-            jak i <a href="#control-stop-app">z poziomu aplikacji</a>.
+            można zatrzymać tylko <a href="#control-stop-app">z poziomu aplikacji</a>.
           </p>
         </section>
         <section id="control-stop-app" class="pbb" data-page="33">
@@ -2404,7 +2485,7 @@
             Po zatrzymaniu programu, strefa przejdzie do stanu
             <a class="programStopped" href="#dashboard-states-programStopped"><span class="state"></span> Program zatrzymany przez użytkownika</a>.
             Aby można było uruchomić na tej strefie kolejny program, należy wykonać
-            <a href="#control-reset">ręczny reset strefy</a> w celu zmiany stanu strefy na
+            <a href="#control-reset">reset strefy</a> w celu zmiany stanu strefy na
             <a class="connected" href="#dashboard-states-connected"><span class="state"></span> Gotowy do pracy</a>.
           </p>
         </section>
@@ -2421,7 +2502,6 @@
     </div>
     <script src="../vendor/jquery-min.js"></script>
     <script src="scripts/jquery-ui.min.js"></script>
-    <script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script>
     <script src="index.js"></script>
   </body>
 </html>
