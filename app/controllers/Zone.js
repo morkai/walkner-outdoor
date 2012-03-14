@@ -19,6 +19,7 @@ function Zone(controller, zone)
   this.inputs = {stopButton: -1, connected: -1};
   this.inputChanges = {stopButton: 0, connected: 0};
   this.timers = {};
+  this.callbacks = {};
   this.inputChangeListener = null;
   this.doesNeedReset = false;
   this.doesNeedPlugIn = false;
@@ -97,7 +98,9 @@ Zone.prototype.stopProgram = function(done)
  */
 Zone.prototype.setState = function(newState, done)
 {
-  return this.controller.setZoneState(newState, this.zone.controllerInfo, done);
+  return this.controller.setZoneState(
+    newState, this.zone.controllerInfo, this.makeCancellable(done)
+  );
 };
 
 /**
@@ -162,7 +165,9 @@ Zone.prototype.getInput = function(input, done)
  */
 Zone.prototype.setLeds = function(leds, done)
 {
-  return this.controller.setZoneLeds(leds, this.zone.controllerInfo, done);
+  return this.controller.setZoneLeds(
+    leds, this.zone.controllerInfo, this.makeCancellable(done)
+  );
 };
 
 /**
@@ -401,6 +406,8 @@ Zone.prototype.changeState = function(newStateName, options, done)
 
   options || (options = {});
 
+  this.cancelCallbacks();
+
   step(
     function leaveOldStateStep()
     {
@@ -572,6 +579,48 @@ Zone.prototype.onInputChange = function(input, newValue, oldValue)
   {
     return newValue === 1 ? this.wasPlugIn() : this.needsPlugIn();
   }
+};
+
+/**
+ * @private
+ * @param {?Function} callback
+ * @return {?Function}
+ */
+Zone.prototype.makeCancellable = function(callback)
+{
+  if (typeof callback !== 'function')
+  {
+    return undefined;
+  }
+
+  var callbacks = this.callbacks;
+  var callbackId = Math.random().toString();
+  var cancellableCallback = function()
+  {
+    delete callbacks[callbackId];
+
+    if (!cancellableCallback.cancelled)
+    {
+      callback.apply(null, arguments);
+    }
+  };
+
+  callbacks[callbackId] = cancellableCallback;
+
+  return cancellableCallback;
+};
+
+/**
+ * @private
+ */
+Zone.prototype.cancelCallbacks = function()
+{
+  for (var callbackId in this.callbacks)
+  {
+    this.callbacks[callbackId].cancelled = true;
+  }
+
+  this.callbacks = {};
 };
 
 module.exports = Zone;

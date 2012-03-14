@@ -202,7 +202,7 @@ LibcoapController.prototype.getResource = function(resource, done)
 {
   var cmd = config.coapClientPath + ' ' + this.getResourceUri(resource);
 
-  this.execCmd(cmd, done, config.maxRetries);
+  this.execCmd(cmd, done);
 };
 
 /**
@@ -233,6 +233,11 @@ LibcoapController.prototype.setResource = function(resource, state, done)
 LibcoapController.prototype.execCmd = function(
   cmd, done, maxRetries, count, startTime)
 {
+  if (done && done.cancelled)
+  {
+    return;
+  }
+
   if (typeof maxRetries === 'undefined')
   {
     maxRetries = 0;
@@ -274,7 +279,10 @@ LibcoapController.prototype.execCmd = function(
         controller.stopDisconnectTimer();
       }
 
-      return done && done(err, stdout);
+      if (done && !done.cancelled)
+      {
+        return done(err, stdout);
+      }
     }
   });
 };
@@ -338,6 +346,6 @@ LibcoapController.prototype.stopDisconnectTimer = function()
     clearTimeout(this.timers.disconnect);
     delete this.timers.disconnect;
   }
-}
+};
 
 module.exports = LibcoapController;

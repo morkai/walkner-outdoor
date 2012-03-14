@@ -109,7 +109,13 @@ ModbusTcpController.prototype.setZoneState = function(
     unit: controllerInfo.stateUnit,
     address: controllerInfo.stateOutput,
     value: newState ? true : false,
-    handler: done
+    handler: function(err, data)
+    {
+      if (done && !done.cancelled)
+      {
+        done(err, data);
+      }
+    }
   });
 };
 
@@ -138,7 +144,13 @@ ModbusTcpController.prototype.setZoneLeds = function(leds, controllerInfo, done)
         });
       }
     },
-    done || function() {}
+    function callBackStep(err)
+    {
+      if (done && !done.cancelled)
+      {
+        done(err);
+      }
+    }
   );
 };
 
@@ -177,7 +189,13 @@ ModbusTcpController.prototype.getZoneInput = function(
         }
       });
     },
-    done
+    function callBackStep(err, state)
+    {
+      if (done && !done.cancelled)
+      {
+        done(err, state);
+      }
+    }
   );
 };
 
