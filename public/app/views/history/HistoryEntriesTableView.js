@@ -47,14 +47,14 @@ function(
 
   HistoryEntriesTableView.prototype.render = function()
   {
-    this.el.innerHTML = this.template({
+    $(this.el).html(this.template({
       showZoneName: this.options.showZoneName === false ? false : true,
       showProgramName: this.options.showProgramName === false ? false : true,
       entries: this.collection.map(function(entry)
       {
         return entry.toTemplateData();
       })
-    });
+    }));
 
     return this;
   };
