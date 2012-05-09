@@ -3,7 +3,7 @@ var normalize = require('path').normalize;
 /**
  * How many times to retry the command before giving up.
  */
-exports.maxRetries = 10;
+exports.maxRetries = 3;
 
 /**
  * Assume the connection if after the specified number of milliseconds no
@@ -15,7 +15,7 @@ exports.disconnectTimeout = 10000;
 /**
  * Path to `coap-client` executable.
  */
-exports.coapClientPath = '/home/walkner/ipv6_project/ipv6_projects/libcoap-0.1.9/examples/coap-client';
+exports.coapClientPath = '/home/walkner/ipv6_project/coap-client';
 
 /**
  * Path to directory with `one.bin` and `zero.bin` files.
