@@ -167,19 +167,10 @@ LibcoapController.prototype.getZoneInput = function(input, controllerInfo, done)
       return done && done("Nie udało się odczytać wejścia: " + err.message);
     }
 
-    var matches = stdout.match(/data:'\\x0([0-9])'/);
+    var state = stdout === '\1';
+    var value = Controller.INPUT_STATE_VALUES[input][state];
 
-    if (matches)
-    {
-      var state = Boolean(parseInt(matches[1]));
-      var value = Controller.INPUT_STATE_VALUES[input][state];
-
-      done && done(null, value);
-    }
-    else
-    {
-      done && done("Couldn't find data in the response.");
-    }
+    done && done(null, value);
   });
 };
 
@@ -200,7 +191,7 @@ LibcoapController.prototype.getResourceUri = function(resource)
  */
 LibcoapController.prototype.getResource = function(resource, done)
 {
-  var cmd = config.coapClientPath + ' ' + this.getResourceUri(resource);
+  var cmd = config.coapClientPath + ' -o - ' + this.getResourceUri(resource);
 
   this.execCmd(cmd, done);
 };
