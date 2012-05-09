@@ -1,29 +1,16 @@
 exports.validLeaveStates = [
-  'disconnected',
-  'stopped',
-  'connected'
+  'remote/disconnected',
+  'remote/stopped',
+  'remote/connected'
 ];
 
 exports.enter = function(oldState, options, done)
 {
   var zone = this;
 
-  if (options.skip)
-  {
-    process.nextTick(function()
-    {
-      zone.changeState('connected');
-    });
-  }
-  else
-  {
-    zone.inputChangeListener = onInputChange;
+  zone.inputChangeListener = onInputChange;
 
-    zone.cancelProgramErroredStateReset = this.turnOff();
-    zone.cancelProgramErroredLedBlinking = this.blinkLeds(false);
-
-    zone.finishProgram(options.error.message || options.error);
-  }
+  zone.finishProgram(null, true);
 
   done();
 };
@@ -31,12 +18,6 @@ exports.enter = function(oldState, options, done)
 exports.leave = function(newState, options, done)
 {
   this.inputChangeListener = null;
-
-  this.cancelProgramErroredStateReset();
-  delete this.cancelProgramErroredStateReset;
-
-  this.cancelProgramErroredLedBlinking();
-  delete this.cancelProgramErroredLedBlinking;
 
   done();
 };

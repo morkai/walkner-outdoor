@@ -47,6 +47,12 @@ function(_, Backbone, controllerTypes)
         });
         break;
 
+      case 'remote-libcoap':
+        data.connectionInfo = _.defaults(data.connectionInfo || {}, {
+          uri: 'coap://127.0.0.1'
+        });
+        break;
+
       default:
         data.connectionInfo = {};
     }

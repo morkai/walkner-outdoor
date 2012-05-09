@@ -115,6 +115,15 @@ Controller.prototype.stopController = function(done)
 
 /**
  * @param {Object} zone
+ * @return {Zone}
+ */
+Controller.prototype.createZone = function(zone)
+{
+  return new Zone(this, zone);
+};
+
+/**
+ * @param {Object} zone
  * @param {Function} done
  */
 Controller.prototype.startZone = function(zone, done)
@@ -122,7 +131,7 @@ Controller.prototype.startZone = function(zone, done)
   var controller = this;
   var zoneId = zone._id;
 
-  zone = new Zone(this, zone);
+  zone = this.createZone(zone);
 
   zone.initialize(function(err)
   {

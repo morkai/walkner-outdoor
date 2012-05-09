@@ -2,6 +2,7 @@ define(function()
 {
   return {
     'modbus-tcp': 'MODBUS TCP',
-    'libcoap': 'libcoap'
+    'libcoap': 'libcoap',
+    'remote-libcoap': 'Zdalny libcoap'
   };
 });

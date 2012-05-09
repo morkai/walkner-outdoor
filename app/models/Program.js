@@ -1,5 +1,4 @@
 var mongoose = require('mongoose');
-var controllerProcesses = require('./controllerProcesses');
 
 var Step = new mongoose.Schema({
   timeOn: {
@@ -58,6 +57,10 @@ Program.virtual('totalTime').get(function()
   return totalTime;
 });
 
+/**
+ * @param {Object} [options]
+ * @return {Object}
+ */
 Program.methods.toObject = function(options)
 {
   var obj = mongoose.Document.prototype.toObject.call(this, options);

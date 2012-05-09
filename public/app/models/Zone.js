@@ -86,6 +86,12 @@ function(_, Backbone, Controller, Program)
             redLedResource: '/io/redLed'
           });
           break;
+
+        case 'remote-libcoap':
+          data.controllerInfo = _.defaults(data.controllerInfo || {}, {
+            // TODO: Remote libcoap resources
+          });
+          break;
       }
     }
     else

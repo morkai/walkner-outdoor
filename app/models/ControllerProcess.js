@@ -495,6 +495,7 @@ _.extend(messageHandlers, {
   /**
    * @param {Object} data
    * @param {String} data.zoneId
+   * @param {Boolean} data.remote
    */
   programFinished: function(data)
   {
@@ -505,7 +506,7 @@ _.extend(messageHandlers, {
       return;
     }
 
-    zone.programFinished();
+    zone.programFinished(data.remote);
   },
 
   /**
@@ -522,7 +523,7 @@ _.extend(messageHandlers, {
       return;
     }
 
-    zone.programErrored(data.errorMessage);
+    zone.programErrored(data.errorMessage, data.programId);
   },
 
   /**
@@ -538,7 +539,7 @@ _.extend(messageHandlers, {
       return;
     }
 
-    zone.programStopped();
+    zone.programStopped(null, data.programId);
   },
 
   updateProgress: function(data)

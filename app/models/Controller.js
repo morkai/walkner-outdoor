@@ -10,7 +10,7 @@ var Controller = module.exports = new mongoose.Schema({
   type: {
     type: String,
     required: true,
-    enum: ['modbus-tcp', 'libcoap']
+    enum: ['modbus-tcp', 'libcoap', 'remote-libcoap']
   },
   connectionInfo: {},
   autostart: {

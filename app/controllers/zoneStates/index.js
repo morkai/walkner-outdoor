@@ -5,7 +5,14 @@
   'programRunning',
   'programFinished',
   'programStopped',
-  'programErrored'
+  'programErrored',
+  'remote/stopped',
+  'remote/disconnected',
+  'remote/connected',
+  'remote/programRunning',
+  'remote/programFinished',
+  'remote/programStopped',
+  'remote/programErrored'
 ].forEach(function(stateName)
 {
   exports[stateName] = require('./' + stateName);

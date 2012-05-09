@@ -70,7 +70,7 @@ ActiveZone.prototype.disconnected = function()
 
 /**
  * @param {Program} program
- * @param {?Object} user
+ * @param {Object} [user]
  */
 ActiveZone.prototype.programRunning = function(program, user)
 {
@@ -107,13 +107,18 @@ ActiveZone.prototype.programRunning = function(program, user)
   );
 };
 
-ActiveZone.prototype.programFinished = function()
+/**
+ * @param {Boolean} remote
+ */
+ActiveZone.prototype.programFinished = function(remote)
 {
-  this.program.stopTime = Date.now();
+  this.program.stopTime = remote
+    ? this.program.startTime + this.program.totalTime * 1000
+    : Date.now();
 
   this.historyEntry.set({
     finishState: 'finish',
-    finishedAt: new Date()
+    finishedAt: new Date(this.program.stopTime)
   });
   this.historyEntry.save();
 
@@ -135,7 +140,7 @@ ActiveZone.prototype.programStopped = function(user)
 
   this.historyEntry.set({
     finishState: 'stop',
-    finishedAt: new Date(),
+    finishedAt: new Date(this.program.stopTime),
     stopUserId: user ? user._id : null,
     stopUserName: user ? user.name : null
   });

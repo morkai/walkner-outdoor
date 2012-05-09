@@ -1,42 +1,41 @@
 exports.validLeaveStates = [
-  'disconnected',
-  'stopped',
-  'connected'
+  'remote/disconnected',
+  'remote/stopped',
+  'remote/connected'
 ];
 
 exports.enter = function(oldState, options, done)
 {
   var zone = this;
 
-  if (options.skip)
+  if (options.manual)
   {
     process.nextTick(function()
     {
-      zone.changeState('connected');
+      zone.connected();
     });
+
+    done();
   }
   else
   {
-    zone.inputChangeListener = onInputChange;
+    zone.stopRemoteProgram(function(err)
+    {
+      if (err)
+      {
+        throw err;
+      }
 
-    zone.cancelProgramErroredStateReset = this.turnOff();
-    zone.cancelProgramErroredLedBlinking = this.blinkLeds(false);
+      zone.inputChangeListener = onInputChange;
 
-    zone.finishProgram(options.error.message || options.error);
+      done();
+    })
   }
-
-  done();
 };
 
 exports.leave = function(newState, options, done)
 {
   this.inputChangeListener = null;
-
-  this.cancelProgramErroredStateReset();
-  delete this.cancelProgramErroredStateReset;
-
-  this.cancelProgramErroredLedBlinking();
-  delete this.cancelProgramErroredLedBlinking;
 
   done();
 };

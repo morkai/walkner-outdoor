@@ -20,6 +20,10 @@ switch (controllerType)
     Controller = require('./LibcoapController');
     break;
 
+  case 'remote-libcoap':
+    Controller = require('./RemoteLibcoapController');
+    break;
+
   default:
     console.error('Unknown controller type: %s', controllerType);
     process.exit(1);

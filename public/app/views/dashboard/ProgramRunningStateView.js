@@ -237,6 +237,7 @@ function(
     {
       programRunningStateView.remainingTime -= 1;
       programRunningStateView.updateProgressBar();
+      programRunningStateView.updateProgramPreviewProgress(true);
     });
 
     var timeToEnd = Program.calcDuration(this.remainingTime);
@@ -244,6 +245,10 @@ function(
     if (timeToEnd === '')
     {
       return;
+    }
+    else if (timeToEnd === '1 s')
+    {
+      timeToEnd = 'chwila...';
     }
 
     var program = this.model.get('program');
@@ -272,8 +277,10 @@ function(
 
   /**
    * @private
+   * @param {Boolean} [recalcProgress]
    */
-  ProgramRunningStateView.prototype.updateProgramPreviewProgress = function()
+  ProgramRunningStateView.prototype.updateProgramPreviewProgress
+    = function(recalcProgress)
   {
     if (!this.programPreviewView)
     {
@@ -285,6 +292,11 @@ function(
     if (!programStepsEl.length)
     {
       return;
+    }
+
+    if (recalcProgress)
+    {
+      this.recalcProgress();
     }
 
     var progress = this.model.get('progress');
@@ -317,6 +329,67 @@ function(
       .eq(progress.stepIndex)
       .find(progress.state === 'on' ? '.timeOn' : '.timeOff')
         .addClass('focused');
+  };
+
+  /**
+   * @private
+   */
+  ProgramRunningStateView.prototype.recalcProgress = function()
+  {
+    if (this.remainingTime < 1)
+    {
+      return;
+    }
+
+    var model = this.model;
+    var program = model.get('program');
+    var progress = model.get('progress');
+
+    progress.remainingTime = this.remainingTime;
+
+    var elapsedTime = program.totalTime - progress.remainingTime;
+    var cumulativeTime = 0;
+    var steps = program.steps;
+
+    for (var i = 0, l = steps.length; i < l; ++i)
+    {
+      progress.stepIndex = i;
+      progress.stepIteration = 0;
+
+      var step = steps[i];
+      var stepIterationTime = step.timeOn + step.timeOff;
+      var stepTotalTime = stepIterationTime * step.iterations;
+
+      if (cumulativeTime + stepTotalTime <= elapsedTime)
+      {
+        cumulativeTime += stepTotalTime;
+      }
+      else
+      {
+        for (; progress.stepIteration < step.iterations; progress.stepIteration += 1)
+        {
+          if (cumulativeTime + stepIterationTime <= elapsedTime)
+          {
+            cumulativeTime += stepIterationTime;
+          }
+          else if (cumulativeTime + step.timeOn <= elapsedTime)
+          {
+            cumulativeTime += step.timeOn;
+            progress.state = 'off';
+            i = Number.Infinity;
+
+            break;
+          }
+          else
+          {
+            progress.state = 'on';
+            i = Number.Infinity;
+
+            break;
+          }
+        }
+      }
+    }
   };
 
   /**

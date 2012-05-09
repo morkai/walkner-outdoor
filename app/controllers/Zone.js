@@ -1,6 +1,6 @@
 const BLINK_FREQUENCY = 1000;
-const STOP_BUTTON_MONITOR_INTERVAL = 100;
-const CONNECTED_INPUT_MONITOR_INTERVAL = 500;
+const STOP_BUTTON_MONITOR_INTERVAL = 300;
+const CONNECTED_INPUT_MONITOR_INTERVAL = 1000;
 const INPUT_CHANGE_AFTER_MIN_READS = 2;
 
 var util = require('util');
@@ -376,7 +376,7 @@ Zone.prototype.stopInputMonitor = function()
 
 /**
  * @param {String} newStateName
- * @param {?Object} options
+ * @param {?Object} [options]
  * @param {?Function} [done]
  */
 Zone.prototype.changeState = function(newStateName, options, done)
@@ -402,11 +402,15 @@ Zone.prototype.changeState = function(newStateName, options, done)
     ));
   }
 
+  this.cancelCallbacks();
+
+  console.debug(
+    "Zone [%s] entered state [%s].", this.zone.name, newStateName
+  );
+
   var zone = this;
 
   options || (options = {});
-
-  this.cancelCallbacks();
 
   step(
     function leaveOldStateStep()
@@ -428,8 +432,9 @@ Zone.prototype.changeState = function(newStateName, options, done)
 
 /**
  * @param {?Error|?String} [error]
+ * @param {Boolean} [remote]
  */
-Zone.prototype.finishProgram = function(error)
+Zone.prototype.finishProgram = function(error, remote)
 {
   if (!this.program)
   {
@@ -446,7 +451,8 @@ Zone.prototype.finishProgram = function(error)
   else
   {
     this.controller.sendMessage('programFinished', {
-      zoneId: this.zone._id
+      zoneId: this.zone._id,
+      remote: remote
     });
   }
 
@@ -462,6 +468,21 @@ Zone.prototype.connected = function()
     zone.controller.sendMessage('connected', {
       zoneId: zone.zone._id
     })
+  });
+};
+
+Zone.prototype.programStopped = function()
+{
+  var zone = this;
+  var manual = zone.program.startUser ? false : true;
+
+  zone.program = null;
+
+  this.changeState('programStopped', {manual: manual}, function()
+  {
+    zone.controller.sendMessage('programStopped', {
+      zoneId: zone.zone._id
+    });
   });
 };
 
@@ -511,21 +532,6 @@ Zone.prototype.wasPlugIn = function()
       zoneId: this.zone._id
     });
   }
-};
-
-Zone.prototype.programStopped = function()
-{
-  var zone = this;
-  var manual = zone.program.startUser ? false : true;
-
-  zone.program = null;
-
-  this.changeState('programStopped', {manual: manual}, function()
-  {
-    zone.controller.sendMessage('programStopped', {
-      zoneId: zone.zone._id
-    });
-  });
 };
 
 /**
@@ -583,11 +589,18 @@ Zone.prototype.onInputChange = function(input, newValue, oldValue)
 
 /**
  * @private
- * @param {?Function} callback
- * @return {?Function}
+ * @param {Boolean} [multi]
+ * @param {Function} callback
+ * @return {Function}
  */
-Zone.prototype.makeCancellable = function(callback)
+Zone.prototype.makeCancellable = function(multi, callback)
 {
+  if (arguments.length === 1)
+  {
+    callback = multi;
+    multi = false;
+  }
+
   if (typeof callback !== 'function')
   {
     return undefined;
@@ -597,7 +610,10 @@ Zone.prototype.makeCancellable = function(callback)
   var callbackId = Math.random().toString();
   var cancellableCallback = function()
   {
-    delete callbacks[callbackId];
+    if (!multi)
+    {
+      delete callbacks[callbackId];
+    }
 
     if (!cancellableCallback.cancelled)
     {

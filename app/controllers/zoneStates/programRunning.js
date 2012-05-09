@@ -25,7 +25,7 @@ exports.enter = function(oldState, options, done)
       process.nextTick(function()
       {
         zone.changeState('programErrored', {
-          error: "Nie udało się ustawić lamp."
+          skip: true
         });
       });
     }
