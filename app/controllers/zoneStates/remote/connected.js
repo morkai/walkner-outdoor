@@ -19,26 +19,10 @@ exports.enter = function(oldState, options, done)
   var zone = this;
 
   zone.inputChangeListener = onInputChange;
-  zone.uploadAssignedProgram = true;
 
   if (oldState === 'remote/disconnected')
   {
-    zone.getRemoteState(zone.makeCancellable(function(err, remoteState)
-    {
-      if (err)
-      {
-        process.nextTick(function()
-        {
-          zone.changeState('disconnected');
-        });
-      }
-      else
-      {
-        handleRemoteStateChange(zone, remoteState);
-      }
-
-      done();
-    }));
+    handleReconnect(zone, done);
   }
   else
   {
@@ -75,7 +59,7 @@ function onInputChange(input, newValue, oldValue)
 }
 
 /**
- * @param {Zone} zone
+ * @param {RemoteZone} zone
  * @param {Number} newValue
  * @param {Number} oldValue
  */
@@ -90,8 +74,38 @@ function handleStopButtonChange(zone, newValue, oldValue)
 }
 
 /**
- * @param {Zone} zone
- * @param {Object} remoteState
+ * @param {RemoteZone} zone
+ */
+function handleReconnect(zone, done)
+{
+  function getRemoteState()
+  {
+    zone.getRemoteState(
+      zone.makeCancellable(function(err, remoteState)
+      {
+        if (err)
+        {
+          process.nextTick(getRemoteState);
+        }
+        else
+        {
+          done();
+
+          process.nextTick(function()
+          {
+            handleRemoteStateChange(zone, remoteState);
+          });
+        }
+      })
+    );
+  }
+
+  getRemoteState();
+}
+
+/**
+ * @param {RemoteZone} zone
+ * @param {RemoteState} remoteState
  */
 function handleRemoteStateChange(zone, remoteState)
 {
@@ -123,6 +137,9 @@ function handleRemoteStateChange(zone, remoteState)
   }
 }
 
+/**
+ * @param {RemoteZone} zone
+ */
 function handleNotConnectedState(zone)
 {
   function handleResponse(err)
@@ -142,26 +159,30 @@ function handleNotConnectedState(zone)
   );
 }
 
+/**
+ * @param {RemoteZone} zone
+ */
 function handleConnectedState(zone)
 {
   zone.startRemoteStateMonitor(
     zone.makeCancellable(true, function(remoteState)
     {
-      if (remoteState.code !== RemoteZone.STATE_CONNECTED)
+      if (remoteState.code === RemoteZone.STATE_CONNECTED)
+      {
+        zone.uploadAssignedProgram();
+      }
+      else
       {
         handleRemoteStateChange(zone, remoteState);
       }
     })
   );
-
-  if (zone.uploadAssignedProgram)
-  {
-    zone.uploadAssignedProgram = false;
-
-    uploadAssignedProgram(zone);
-  }
 }
 
+/**
+ * @param {RemoteZone} zone
+ * @param {RemoteState} remoteState
+ */
 function handleProgramRunningState(zone, remoteState)
 {
   zone.stopRemoteStateMonitor();
@@ -174,6 +195,9 @@ function handleProgramRunningState(zone, remoteState)
   });
 }
 
+/**
+ * @param {RemoteZone} zone
+ */
 function handleProgramFinishedState(zone)
 {
   zone.stopRemoteStateMonitor();
@@ -194,6 +218,9 @@ function handleProgramFinishedState(zone)
   });
 }
 
+/**
+ * @param {RemoteZone} zone
+ */
 function handleProgramStoppedState(zone)
 {
   zone.stopRemoteStateMonitor();
@@ -214,6 +241,9 @@ function handleProgramStoppedState(zone)
   });
 }
 
+/**
+ * @param {RemoteZone} zone
+ */
 function handleDownloadingState(zone)
 {
   function getNewRemoteState()
@@ -229,9 +259,4 @@ function handleDownloadingState(zone)
   }
 
   setTimeout(zone.makeCancellable(getNewRemoteState), 1000);
-}
-
-function uploadAssignedProgram(zone)
-{
-
 }

@@ -1,8 +1,19 @@
+var util = require('util');
+var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
 var mongoose = require('mongoose');
 
+/**
+ * @constructor
+ * @extends {EventEmitter}
+ * @param {Zone} zone
+ * @param {String} initialState
+ * @param {Function} done
+ */
 function ActiveZone(zone, initialState, done)
 {
+  EventEmitter.call(this);
+
   this.startTime = Date.now();
   this.lastConnectTime = null;
   this.lastDisconnectTime = null;
@@ -22,6 +33,13 @@ function ActiveZone(zone, initialState, done)
   this.fetchAssignedProgram(done);
 }
 
+util.inherits(ActiveZone, EventEmitter);
+
+ActiveZone.prototype.destroy = function()
+{
+  this.removeAllListeners();
+};
+
 ActiveZone.prototype.toJSON = function()
 {
   return {
@@ -36,7 +54,7 @@ ActiveZone.prototype.toJSON = function()
     progress: this.progress,
     needsReset: this.doesNeedReset,
     needsPlugIn: this.doesNeedPlugIn,
-    historyEntry: this.historyEntry ? this.historyEntry.id : null
+    historyEntry: this.historyEntry ? this.historyEntry._id : null
   };
 };
 
@@ -96,7 +114,7 @@ ActiveZone.prototype.programRunning = function(program, user)
   {
     activeZone.emitNewState('programRunning', {
       program: activeZone.program,
-      historyEntry: historyEntry.id
+      historyEntry: historyEntry._id
     });
   });
 
@@ -105,6 +123,21 @@ ActiveZone.prototype.programRunning = function(program, user)
     this.program.name,
     this.zone.name
   );
+};
+
+/**
+ * @param {RemoteState} remoteState
+ */
+ActiveZone.prototype.remoteProgramRunning = function(remoteState)
+{
+  if (this.program && this.program._id.toString() === remoteState.programId)
+  {
+    this.handleInterruptedProgram(remoteState);
+  }
+  else
+  {
+    this.handleUnknownProgram(remoteState);
+  }
 };
 
 /**
@@ -230,9 +263,13 @@ ActiveZone.prototype.wasPlugIn = function()
  */
 ActiveZone.prototype.programmed = function(program)
 {
-  this.zone.program = program ? program.toObject() : null;
+  var zone = this.zone;
 
-  this.emitState({assignedProgram: this.zone.program});
+  zone.program = program ? program.toObject() : null;
+
+  this.emitState({assignedProgram: zone.program});
+
+  this.emit('programmed', zone._id, zone.program);
 };
 
 /**
@@ -240,7 +277,8 @@ ActiveZone.prototype.programmed = function(program)
  */
 ActiveZone.prototype.fetchAssignedProgram = function(done)
 {
-  var zone = this.zone;
+  var activeZone = this;
+  var zone = activeZone.zone;
 
   if (zone.program === null)
   {
@@ -259,6 +297,11 @@ ActiveZone.prototype.fetchAssignedProgram = function(done)
     }
 
     done();
+
+    process.nextTick(function()
+    {
+      activeZone.emit('programmed', zone._id, zone.program);
+    });
   });
 };
 
@@ -285,6 +328,16 @@ ActiveZone.prototype.emitState = function(data)
   app.io.sockets.emit('zone state changed', _.extend(data, {
     _id: this.zone._id
   }));
+};
+
+/**
+ * @param {RemoteState} remoteState
+ */
+ActiveZone.prototype.handleInterruptedProgram = function(remoteState)
+{
+  this.emitNewState('programRunning', {
+    program: this.program
+  });
 };
 
 module.exports = ActiveZone;

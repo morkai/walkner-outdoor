@@ -39,7 +39,7 @@ Controller.INPUT_STATE_VALUES = {
 
 /**
  * @param {String} type
- * @param {?Object} data
+ * @param {Object} [data]
  */
 Controller.prototype.sendMessage = function(type, data)
 {
@@ -222,6 +222,24 @@ Controller.prototype.stopProgram = function(zoneId, done)
   zone.stopProgram(done);
 };
 
+/**
+ * @param {Object} data
+ * @param {String} data.zoneId
+ * @param {?Object} data.assignedProgram
+ * @param {Function} done
+ */
+Controller.prototype.programZone = function(data, done)
+{
+  var zone = this.zones[data.zoneId];
+
+  if (!zone)
+  {
+    return done();
+  }
+
+  zone.assignProgram(data.assignedProgram, done);
+};
+
 Controller.prototype.connected = function()
 {
   this.isConnected = true;
@@ -356,6 +374,10 @@ var messageHandlers = {
   stopProgram: function(req, res)
   {
     this.stopProgram(req, res);
+  },
+  programZone: function(req, res)
+  {
+    this.programZone(req, res)
   }
 };
 

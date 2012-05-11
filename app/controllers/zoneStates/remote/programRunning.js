@@ -26,40 +26,18 @@ exports.enter = function(oldState, options, done)
     zone.program = zone.interruptedProgram;
     zone.interruptedProgram = null;
 
-    if (zone.program)
+    if (zone.program && zone.program._id === remoteState.programId)
     {
-      // TODO: change client state
-
-      startRemoteStateMonitor(zone);
-
-      process.nextTick(function()
-      {
-        updateRemoteProgress(zone, remoteState);
-      });
-
-      done();
+      handleInterruptedProgram(zone, remoteState, done);
     }
     else
     {
-      zone.setRemoteState(RemoteZone.STATE_CONNECTED, function(err)
-      {
-        if (err)
-        {
-          throw err;
-        }
-
-        process.nextTick(function()
-        {
-          zone.changeState('programErrored', {skip: true});
-        });
-
-        done();
-      });
+      handleUnknownProgram(zone, remoteState, done);
     }
   }
   else
   {
-    startRemoteProgram(this, _.clone(options.program), done);
+    startRemoteProgram(zone, _.clone(options.program), done);
   }
 };
 
@@ -140,6 +118,54 @@ function handleConnectedChange(zone, newValue, oldValue)
 
 /**
  * @param {RemoteZone} zone
+ * @param {RemoteState} remoteState
+ * @param {Function} done
+ */
+function handleInterruptedProgram(zone, remoteState, done)
+{
+  zone.remoteProgramRunning(remoteState);
+
+  startRemoteStateMonitor(zone);
+
+  process.nextTick(function()
+  {
+    updateRemoteProgress(zone, remoteState);
+  });
+
+  done();
+}
+
+/**
+ * @param {RemoteZone} zone
+ * @param {RemoteState} remoteState
+ * @param {Function} done
+ */
+function handleUnknownProgram(zone, remoteState, done)
+{
+  console.debug(
+    'Possible manual start of program [%s] on zone [%s]',
+    remoteState.programId,
+    zone.zone.name
+  );
+
+  zone.setRemoteState(RemoteZone.STATE_CONNECTED, function(err)
+  {
+    if (err)
+    {
+      throw err;
+    }
+
+    process.nextTick(function()
+    {
+      zone.changeState('programErrored', {skip: true});
+    });
+
+    done();
+  });
+}
+
+/**
+ * @param {RemoteZone} zone
  * @param {Object} program
  * @param {Function} done
  */
@@ -201,6 +227,10 @@ function startRemoteStateMonitor(zone)
   }));
 }
 
+/**
+ * @param {RemoteZone} zone
+ * @param {RemoteState} remoteState
+ */
 function handleProgramRunningState(zone, remoteState)
 {
   if (!zone.progressUpdated
@@ -229,6 +259,9 @@ function handleProgramRunningState(zone, remoteState)
   }
 }
 
+/**
+ * @param {RemoteZone} zone
+ */
 function handleProgramFinishedState(zone)
 {
   zone.stopRemoteStateMonitor();
@@ -239,6 +272,9 @@ function handleProgramFinishedState(zone)
   });
 }
 
+/**
+ * @param {RemoteZone} zone
+ */
 function handleProgramStoppedState(zone)
 {
   zone.stopRemoteStateMonitor();
@@ -249,6 +285,10 @@ function handleProgramStoppedState(zone)
   });
 }
 
+/**
+ * @param {RemoteZone} zone
+ * @param {RemoteState} remoteState
+ */
 function updateRemoteProgress(zone, remoteState)
 {
   var program = zone.program;

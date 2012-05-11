@@ -1,15 +1,41 @@
 var util = require('util');
 var Zone = require('./Zone');
 
+var EMPTY_PROGRAM = {
+  _id: 'NULL-24 BYTES PROGRAM ID',
+  name: 'NULL',
+  infinite: false,
+  steps: []
+};
+
 /**
  * @constructor
+ * @param {Controller} controller
+ * @param {Object} zone
  */
 function RemoteZone(controller, zone)
 {
   Zone.call(this, controller, zone);
-  
+
+  /**
+   * @type {String}
+   */
   this.currentState = 'remote/disconnected';
+
+  /**
+   * @type {?Object}
+   */
   this.interruptedProgram = null;
+
+  /**
+   * @type {?Object}
+   */
+  this.assignedProgram = null;
+
+  /**
+   * @type {Boolean}
+   */
+  this.shouldUploadAssignedProgram = false;
 }
 
 util.inherits(RemoteZone, Zone);
@@ -54,6 +80,63 @@ RemoteZone.prototype.reset = function(done)
 };
 
 /**
+ * @param {?Object} assignedProgram
+ * @param {Function} done
+ */
+RemoteZone.prototype.assignProgram = function(assignedProgram, done)
+{
+  this.shouldUploadAssignedProgram = true;
+  this.assignedProgram = assignedProgram ? assignedProgram : EMPTY_PROGRAM;
+
+  console.debug(
+    "Assigned program [%s] to zone [%s].",
+    this.assignedProgram.name,
+    this.zone.name
+  );
+
+  done();
+};
+
+/**
+ * @param {Function} [done]
+ */
+RemoteZone.prototype.uploadAssignedProgram = function(done)
+{
+  var remoteZone = this;
+
+  if (!remoteZone.shouldUploadAssignedProgram)
+  {
+    return done && done();
+  }
+
+  remoteZone.shouldUploadAssignedProgram = false;
+
+  remoteZone.controller.program(remoteZone.assignedProgram, function(err)
+  {
+    if (err)
+    {
+      remoteZone.shouldUploadAssignedProgram = true;
+
+      console.error(
+        "Failed to upload assigned program [%s] to zone [%s].",
+        remoteZone.assignedProgram.name,
+        remoteZone.zone.name
+      );
+    }
+    else
+    {
+      console.debug(
+        "Uploaded assigned program [%s] to zone [%s].",
+        remoteZone.assignedProgram.name,
+        remoteZone.zone.name
+      );
+    }
+
+    done && done(err);
+  });
+};
+
+/**
  * @param {Function} done
  */
 RemoteZone.prototype.getRemoteState = function(done)
@@ -68,6 +151,17 @@ RemoteZone.prototype.getRemoteState = function(done)
 RemoteZone.prototype.setRemoteState = function(remoteState, done)
 {
   this.controller.setRemoteState(remoteState, done);
+};
+
+/**
+ * @param {RemoteState} remoteState
+ */
+RemoteZone.prototype.remoteProgramRunning = function(remoteState)
+{
+  this.controller.sendMessage('remoteProgramRunning', {
+    zoneId: this.zone._id,
+    remoteState: remoteState
+  });
 };
 
 RemoteZone.prototype.remoteProgramStopped = function()
@@ -124,5 +218,41 @@ RemoteZone.prototype.stopRemoteStateMonitor = function()
 {
   this.controller.stopRemoteStateMonitor();
 };
+
+/**
+ * @constructor
+ */
+function RemoteState()
+{
+  /**
+   * @type {Number}
+   */
+  this.code = 0;
+
+  /**
+   * @type {Number}
+   */
+  this.stepIndex = 0;
+
+  /**
+   * @type {Number}
+   */
+  this.stepIteration = 0;
+
+  /**
+   * @type {Number}
+   */
+  this.stepState = 0;
+
+  /**
+   * @type {Number}
+   */
+  this.elapsedTime = 0;
+
+  /**
+   * @type {String}
+   */
+  this.programId = null;
+}
 
 module.exports = RemoteZone;

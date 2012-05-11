@@ -93,6 +93,15 @@ Zone.prototype.stopProgram = function(done)
 };
 
 /**
+ * @param {?Object} assignedProgram
+ * @param {Function} done
+ */
+Zone.prototype.assignProgram = function(assignedProgram, done)
+{
+  done();
+};
+
+/**
  * @param {Boolean} newState
  * @param {?Function} [done]
  */
@@ -404,10 +413,6 @@ Zone.prototype.changeState = function(newStateName, options, done)
 
   this.cancelCallbacks();
 
-  console.debug(
-    "Zone [%s] entered state [%s].", this.zone.name, newStateName
-  );
-
   var zone = this;
 
   options || (options = {});
@@ -424,6 +429,22 @@ Zone.prototype.changeState = function(newStateName, options, done)
     function setCurrentStateStep(err)
     {
       zone.currentState = newStateName;
+
+      if (err)
+      {
+        console.debug(
+          "Zone [%s] entered state [%s] with error: %s",
+          zone.zone.name,
+          newStateName,
+          err
+        );
+      }
+      else
+      {
+        console.debug(
+          "Zone [%s] entered state [%s].", zone.zone.name, newStateName
+        );
+      }
 
       done && done(err);
     }

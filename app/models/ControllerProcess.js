@@ -7,6 +7,10 @@ var messageHandlers = {};
 
 var ControllerProcess = function(controller)
 {
+  _.bindAll(
+    this, 'onChildProcessExit', 'onChildProcessMessage', 'onZoneProgram'
+  );
+
   this.requests = {};
   this.zones = {};
   this.controller = {
@@ -89,11 +93,15 @@ _.extend(ControllerProcess.prototype, {
         return done(err);
       }
 
-      controllerProcess.zones[zone._id] = new ActiveZone(
+      var activeZone = new ActiveZone(
         zone,
         controllerProcess.isConnected ? 'connected' : 'disconnected',
         done
       );
+
+      activeZone.on('programmed', controllerProcess.onZoneProgram);
+
+      controllerProcess.zones[zone._id] = activeZone;
     });
   },
 
@@ -103,14 +111,13 @@ _.extend(ControllerProcess.prototype, {
    */
   stopZone: function(zoneId, done)
   {
-    var activeZone = this.zones[zoneId];
+    var zones = this.zones;
+    var activeZone = zones[zoneId];
 
     if (!activeZone)
     {
       return done();
     }
-
-    var controllerProcess = this;
 
     this.sendMessage('stopZone', zoneId, function(err)
     {
@@ -120,7 +127,9 @@ _.extend(ControllerProcess.prototype, {
       }
       else
       {
-        delete controllerProcess.zones[zoneId];
+        activeZone.destroy();
+
+        delete zones[zoneId];
 
         done();
       }
@@ -258,8 +267,8 @@ _.extend(ControllerProcess.prototype, {
 
     var childProcess = fork(file, arguments, options);
 
-    childProcess.on('exit', this.onChildProcessExit.bind(this));
-    childProcess.on('message', this.onChildProcessMessage.bind(this));
+    childProcess.on('exit', this.onChildProcessExit);
+    childProcess.on('message', this.onChildProcessMessage);
 
     this.childProcess = childProcess;
   },
@@ -289,6 +298,8 @@ _.extend(ControllerProcess.prototype, {
       }
 
       app.io.sockets.emit('zone stopped', activeZone.zone._id);
+
+      activeZone.destroy();
     }
 
     this.zones = {};
@@ -349,6 +360,7 @@ _.extend(ControllerProcess.prototype, {
   },
 
   /**
+   * @private
    * @param {Object} message
    */
   onChildProcessMessage: function(message)
@@ -370,6 +382,19 @@ _.extend(ControllerProcess.prototype, {
     {
       return messageHandlers[type].call(this, message.data);
     }
+  },
+
+  /**
+   * @private
+   * @param {String} zoneId
+   * @param {?Object} assignedProgram
+   */
+  onZoneProgram: function(zoneId, assignedProgram)
+  {
+    this.sendMessage('programZone', {
+      zoneId: zoneId,
+      assignedProgram: assignedProgram
+    });
   }
 
 });
@@ -495,18 +520,31 @@ _.extend(messageHandlers, {
   /**
    * @param {Object} data
    * @param {String} data.zoneId
+   * @param {Object} data.remoteState
+   */
+  remoteProgramRunning: function(data)
+  {
+    var zone = this.zones[data.zoneId];
+
+    if (zone)
+    {
+      zone.remoteProgramRunning(data.remoteState);
+    }
+  },
+
+  /**
+   * @param {Object} data
+   * @param {String} data.zoneId
    * @param {Boolean} data.remote
    */
   programFinished: function(data)
   {
     var zone = this.zones[data.zoneId];
 
-    if (!zone)
+    if (zone)
     {
-      return;
+      zone.programFinished(data.remote);
     }
-
-    zone.programFinished(data.remote);
   },
 
   /**
@@ -518,12 +556,10 @@ _.extend(messageHandlers, {
   {
     var zone = this.zones[data.zoneId];
 
-    if (!zone)
+    if (zone)
     {
-      return;
+      zone.programErrored(data.errorMessage, data.programId);
     }
-
-    zone.programErrored(data.errorMessage, data.programId);
   },
 
   /**
@@ -534,26 +570,22 @@ _.extend(messageHandlers, {
   {
     var zone = this.zones[data.zoneId];
 
-    if (!zone)
+    if (zone)
     {
-      return;
+      zone.programStopped(null, data.programId);
     }
-
-    zone.programStopped(null, data.programId);
   },
 
   updateProgress: function(data)
   {
     var zone = this.zones[data.zoneId];
 
-    if (!zone)
+    if (zone)
     {
-      return;
+      delete data.zoneId;
+
+      zone.updateProgress(data);
     }
-
-    delete data.zoneId;
-
-    zone.updateProgress(data);
   },
 
   startAssignedProgram: function(data)

@@ -320,6 +320,8 @@ LibcoapController.prototype.startDisconnectTimer = function()
   this.timers.disconnect = setTimeout(
     function()
     {
+      delete controller.timers.disconnect;
+
       controller.disconnected();
       controller.startConnectionMonitor();
     },

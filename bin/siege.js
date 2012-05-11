@@ -1,4 +1,5 @@
 var exec = require('child_process').exec;
+var util = require('util');
 var readFileSync = require('fs').readFileSync;
 var express = require('express');
 var io = require('socket.io');
@@ -164,7 +165,12 @@ function handleSuccess(client, stdout)
     client.lastResult = 'success';
   }
 
-  var log = {type: 'success', text: stdout.toString()};
+  var log = {
+    type: 'success',
+    text: client.args.indexOf('-o -') === -1
+      ? stdout.toString()
+      : prettyBuffer(new Buffer(stdout, 'binary'))
+  };
 
   sockets.emit('client stats', {
     id: client.id,
@@ -189,4 +195,23 @@ function addLog(client, log)
   }
 
   logs.push(log);
+}
+
+function prettyBuffer(buf)
+{
+  var str = '(' + buf.length + ' bytes) ';
+
+  for (var i = 0; i < buf.length; ++i)
+  {
+    var hex = buf[i].toString(16);
+
+    if (hex.length === 1)
+    {
+      str += '0';
+    }
+
+    str += hex + ' ';
+  }
+
+  return str;
 }
