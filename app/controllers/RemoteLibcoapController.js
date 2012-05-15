@@ -2,6 +2,7 @@ var util = require('util');
 var spawn = require('child_process').spawn;
 var _ = require('underscore');
 var step = require('step');
+var Controller = require('./Controller');
 var LibcoapController = require('./LibcoapController');
 var RemoteZone = require('./RemoteZone');
 var config = require('../../config/libcoap');
@@ -14,6 +15,12 @@ var compileProgram = require('../utils/program').compileProgram;
 function RemoteLibcoapController(process)
 {
   LibcoapController.call(this, process);
+
+  this.lastInputsUpdate = 0;
+  this.inputs = {
+    connected: -1,
+    stopButton: -1
+  };
 }
 
 util.inherits(RemoteLibcoapController, LibcoapController);
@@ -44,10 +51,42 @@ RemoteLibcoapController.prototype.createZone = function(zone)
 };
 
 /**
+ * @param {String} input
+ * @param {Object} controllerInfo
+ * @param {Function} [done]
+ */
+RemoteLibcoapController.prototype.getZoneInput =
+  function(input, controllerInfo, done)
+{
+  var inputs = this.inputs;
+
+  if (this.lastInputsUpdate < Date.now() - 2000)
+  {
+    this.getRemoteState(function(err)
+    {
+      if (err)
+      {
+        done && done(err);
+      }
+      else
+      {
+        done && done(null, inputs[input]);
+      }
+    });
+  }
+  else
+  {
+    done && done(null, inputs[input]);
+  }
+};
+
+/**
  * @param {Function} done
  */
 RemoteLibcoapController.prototype.getRemoteState = function(done)
 {
+  var controller = this;
+
   var cmd = config.coapClientPath
     + ' -o -'
     + ' -T ' + this.nextToken()
@@ -62,13 +101,19 @@ RemoteLibcoapController.prototype.getRemoteState = function(done)
 
     var buf = new Buffer(stdout, 'binary');
 
-    if (buf.length !== 20)
+    if (buf.length !== 22)
     {
       return done(util.format(
-        "Invalid remote state buffer length. Expected [20] bytes, got [%d]",
+        "Invalid remote state buffer length. Expected [22] bytes, got [%d]",
         buf.length
       ));
     }
+
+    controller.lastInputsUpdate = Date.now();
+    controller.inputs = {
+      connected: Controller.INPUT_STATE_VALUES.connected[buf[8] === 1],
+      stopButton: Controller.INPUT_STATE_VALUES.stopButton[buf[9] === 1]
+    };
 
     var state = {
       code: buf[0],
@@ -77,7 +122,9 @@ RemoteLibcoapController.prototype.getRemoteState = function(done)
       stepState: buf[4] === 1,
       elapsedTime: buf.readUInt16BE(5),
       manual: buf[7] === 1,
-      programId: buf.length >= 20 ? buf.toString('hex', 8, 20) : null
+      connected: buf[8] === 1,
+      stopButton: buf[9] === 1,
+      programId: buf.length >= 20 ? buf.toString('hex', 10, 22) : null
     };
 
     done(null, state);
