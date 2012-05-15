@@ -36,6 +36,11 @@ function RemoteZone(controller, zone)
    * @type {Boolean}
    */
   this.shouldUploadAssignedProgram = false;
+
+  /**
+   * @type {Boolean}
+   */
+  this.progressUpdated = false;
 }
 
 util.inherits(RemoteZone, Zone);
@@ -104,7 +109,7 @@ RemoteZone.prototype.uploadAssignedProgram = function(done)
 {
   var remoteZone = this;
 
-  if (!remoteZone.shouldUploadAssignedProgram)
+  if (!remoteZone.shouldUploadAssignedProgram || !remoteZone.assignedProgram)
   {
     return done && done();
   }

@@ -1,11 +1,11 @@
 var util = require('util');
-var createHash = require('crypto').createHash;
 var spawn = require('child_process').spawn;
 var _ = require('underscore');
 var step = require('step');
 var LibcoapController = require('./LibcoapController');
 var RemoteZone = require('./RemoteZone');
 var config = require('../../config/libcoap');
+var compileProgram = require('../utils/program').compileProgram;
 
 /**
  * @constructor
@@ -14,8 +14,6 @@ var config = require('../../config/libcoap');
 function RemoteLibcoapController(process)
 {
   LibcoapController.call(this, process);
-
-  this.token = 0;
 }
 
 util.inherits(RemoteLibcoapController, LibcoapController);
@@ -50,7 +48,10 @@ RemoteLibcoapController.prototype.createZone = function(zone)
  */
 RemoteLibcoapController.prototype.getRemoteState = function(done)
 {
-  var cmd = config.coapClientPath + ' -o - -t ' + this.nextToken() + ' ' + this.getResourceUri('/state');
+  var cmd = config.coapClientPath
+    + ' -o -'
+    + ' -T ' + this.nextToken()
+    + ' ' + this.getResourceUri('/state');
 
   this.execCmd(cmd, function(err, stdout)
   {
@@ -61,16 +62,22 @@ RemoteLibcoapController.prototype.getRemoteState = function(done)
 
     var buf = new Buffer(stdout, 'binary');
 
+    if (buf.length !== 20)
+    {
+      return done(util.format(
+        "Invalid remote state buffer length. Expected [20] bytes, got [%d]",
+        buf.length
+      ));
+    }
+
     var state = {
       code: buf[0],
       stepIndex: buf[1] - 1,
       stepIteration: buf.readUInt16BE(2) - 1,
-      stepState: buf[4],
+      stepState: buf[4] === 1,
       elapsedTime: buf.readUInt16BE(5),
-      manual: buf[7],
-      programId: buf.length >= 20
-        ? buf.slice(8, 20).toString('hex')
-        : null
+      manual: buf[7] === 1,
+      programId: buf.length >= 20 ? buf.toString('hex', 8, 20) : null
     };
 
     done(null, state);
@@ -84,7 +91,12 @@ RemoteLibcoapController.prototype.getRemoteState = function(done)
 RemoteLibcoapController.prototype.setRemoteState = function(remoteState, done)
 {
   this.execCmdWithData(
-    ['-m', 'put', '-f', '-', this.getResourceUri('/state')],
+    [
+      '-m', 'put',
+      '-f', '-',
+      '-t', this.nextToken(),
+      this.getResourceUri('/state')
+    ],
     new Buffer([remoteState]),
     done
   );
@@ -97,8 +109,14 @@ RemoteLibcoapController.prototype.setRemoteState = function(remoteState, done)
 RemoteLibcoapController.prototype.startRemoteProgram = function(program, done)
 {
   this.execCmdWithData(
-    ['-m', 'put', '-b', '64', '-f', '-', this.getResourceUri('/start')],
-    this.compileProgram(program),
+    [
+      '-m', 'put',
+      '-b', '64',
+      '-f', '-',
+      '-t', this.nextToken(),
+      this.getResourceUri('/start')
+    ],
+    compileProgram(program),
     done
   );
 };
@@ -110,8 +128,14 @@ RemoteLibcoapController.prototype.startRemoteProgram = function(program, done)
 RemoteLibcoapController.prototype.program = function(assignedProgram, done)
 {
   this.execCmdWithData(
-    ['-m', 'put', '-b', '64', '-f', '-', this.getResourceUri('/program')],
-    this.compileProgram(assignedProgram),
+    [
+      '-m', 'put',
+      '-b', '64',
+      '-f', '-',
+      '-t', this.nextToken(),
+      this.getResourceUri('/program')
+    ],
+    compileProgram(assignedProgram),
     done
   );
 };
@@ -121,7 +145,10 @@ RemoteLibcoapController.prototype.program = function(assignedProgram, done)
  */
 RemoteLibcoapController.prototype.stopRemoteProgram = function(done)
 {
-  var cmd = config.coapClientPath + ' -m put ' + this.getResourceUri('/stop');
+  var cmd = config.coapClientPath
+    + ' -m put '
+    + ' -T ' + this.nextToken()
+    + ' ' + this.getResourceUri('/stop');
 
   this.execCmd(cmd, done);
 };
@@ -247,66 +274,8 @@ RemoteLibcoapController.prototype.execCmdWithData =
     }
   });
 
-  console.log('PUT %d bytes:', data.length, data);
-
   client.stdin.write(data);
   client.stdin.end();
-};
-
-/**
- * @param {Object} program
- * @return {String}
- */
-RemoteLibcoapController.prototype.compileProgram = function(program)
-{
-  var idBuf = new Buffer(program._id.toString(), 'hex');
-  var txt = '\r{\n';
-
-  txt += 'global_loops = ' + (program.infinite ? '0' : '1') + '\n';
-  txt += 'FOR global_loops\n';
-  txt += '{';
-
-  program.steps.forEach(function(step, i)
-  {
-    txt += '\nstep = ' + (i + 1) + '\n';
-    txt += 'loop = ' + step.iterations + '\n';
-    txt += 'FOR loop\n';
-    txt += '{\n';
-    txt += 'WRITE io/state 1\n';
-    txt += 'SLEEP ' + step.timeOn + '\n';
-    txt += 'WRITE io/state 0\n';
-    txt += 'SLEEP ' + step.timeOff + '\n';
-    txt += '}';
-
-    return txt;
-  });
-
-  txt += '\n}\n}';
-
-  var hash = createHash('md5').update(idBuf).update(txt, 'utf8').digest();
-
-  var buf = new Buffer(hash.length + idBuf.length + txt.length);
-
-  buf.write(hash, 0, hash.length, 'binary');
-  idBuf.copy(buf, hash.length);
-  buf.write(txt, hash.length + idBuf.length, txt.length, 'utf8');
-
-  return buf;
-};
-
-/**
- * @return {Number}
- */
-RemoteLibcoapController.prototype.nextToken = function()
-{
-  this.token += 1;
-
-  if (this.token === 256)
-  {
-    this.token = 0;
-  }
-
-  return this.token;
 };
 
 module.exports = RemoteLibcoapController;

@@ -75,6 +75,7 @@ function handleStopButtonChange(zone, newValue, oldValue)
 
 /**
  * @param {RemoteZone} zone
+ * @param {Function} done
  */
 function handleReconnect(zone, done)
 {

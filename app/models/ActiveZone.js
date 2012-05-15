@@ -2,6 +2,7 @@ var util = require('util');
 var EventEmitter = require('events').EventEmitter;
 var _ = require('underscore');
 var mongoose = require('mongoose');
+var calcRemainingTime = require('../utils/program').calcRemainingTime;
 
 /**
  * @constructor
@@ -89,12 +90,18 @@ ActiveZone.prototype.disconnected = function()
 /**
  * @param {Program} program
  * @param {Object} [user]
+ * @param {Number} [startOffset]
  */
-ActiveZone.prototype.programRunning = function(program, user)
+ActiveZone.prototype.programRunning = function(program, user, startOffset)
 {
   this.program = program.toObject();
   this.program.startTime = Date.now();
   this.program.startUser = user;
+
+  if (startOffset)
+  {
+    this.program.startTime -= startOffset * 1000;
+  }
 
   this.historyEntry = new (mongoose.model('HistoryEntry'))({
     zoneId: this.zone._id,
@@ -105,7 +112,7 @@ ActiveZone.prototype.programRunning = function(program, user)
     infinite: program.infinite,
     startUserId: user ? user._id : null,
     startUserName: user ? user.name : null,
-    startedAt: new Date()
+    startedAt: new Date(this.program.startTime)
   });
 
   var activeZone = this;
@@ -166,6 +173,9 @@ ActiveZone.prototype.programFinished = function(remote)
   );
 };
 
+/**
+ * @param {?Object} user
+ */
 ActiveZone.prototype.programStopped = function(user)
 {
   this.program.stopTime = Date.now();
@@ -191,6 +201,9 @@ ActiveZone.prototype.programStopped = function(user)
   );
 };
 
+/**
+ * @param {String} errorMessage
+ */
 ActiveZone.prototype.programErrored = function(errorMessage)
 {
   this.program.stopTime = Date.now();
@@ -215,6 +228,9 @@ ActiveZone.prototype.programErrored = function(errorMessage)
   );
 };
 
+/**
+ * @param {Object} progress
+ */
 ActiveZone.prototype.updateProgress = function(progress)
 {
   this.progress = progress;
@@ -274,6 +290,7 @@ ActiveZone.prototype.programmed = function(program)
 
 /**
  * @private
+ * @param {Function} done
  */
 ActiveZone.prototype.fetchAssignedProgram = function(done)
 {
@@ -331,12 +348,36 @@ ActiveZone.prototype.emitState = function(data)
 };
 
 /**
+ * @private
  * @param {RemoteState} remoteState
  */
 ActiveZone.prototype.handleInterruptedProgram = function(remoteState)
 {
   this.emitNewState('programRunning', {
     program: this.program
+  });
+};
+
+/**
+ * @private
+ * @param {RemoteState} remoteState
+ */
+ActiveZone.prototype.handleUnknownProgram = function(remoteState)
+{
+  var activeZone = this;
+
+  app.db.model('Program').findById(remoteState.programId, function(err, program)
+  {
+    if (err)
+    {
+      throw err;
+    }
+
+    var totalTime = program.totalTime;
+    var remainingTime = calcRemainingTime(program, remoteState);
+    var elapsedTime = totalTime - remainingTime;
+
+    activeZone.programRunning(program, null, elapsedTime);
   });
 };
 

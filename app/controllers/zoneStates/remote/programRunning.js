@@ -1,6 +1,7 @@
 var util = require('util');
 var _ = require('underscore');
 var step = require('step');
+var calcRemainingTime = require('../../../utils/program').calcRemainingTime;
 var RemoteZone;
 
 process.nextTick(function()
@@ -20,6 +21,8 @@ exports.enter = function(oldState, options, done)
 {
   var zone = this;
   var remoteState = options.remoteState;
+
+  zone.progressUpdated = false;
 
   if (remoteState)
   {
@@ -54,8 +57,6 @@ exports.leave = function(newState, options, done)
     zone.interruptedProgram = zone.program;
     zone.program = null;
   }
-
-  delete zone.progressUpdated;
 
   done();
 };
@@ -142,26 +143,66 @@ function handleInterruptedProgram(zone, remoteState, done)
  */
 function handleUnknownProgram(zone, remoteState, done)
 {
-  console.debug(
-    'Possible manual start of program [%s] on zone [%s]',
-    remoteState.programId,
-    zone.zone.name
-  );
+  if (!zone.assignedProgram
+    || remoteState.programId !== zone.assignedProgram._id)
+  {
+    stopUnknownProgram(zone, done);
+  }
+  else
+  {
+    handleManualStart(zone, remoteState, done);
+  }
+}
 
-  zone.setRemoteState(RemoteZone.STATE_CONNECTED, function(err)
+/**
+ * @param {RemoteState} zone
+ * @param {Function} done
+ */
+function stopUnknownProgram(zone, done)
+{
+  zone.stopRemoteProgram(function(err)
   {
     if (err)
     {
       throw err;
     }
 
-    process.nextTick(function()
+    zone.setRemoteState(RemoteZone.STATE_CONNECTED, function(err)
     {
-      zone.changeState('programErrored', {skip: true});
-    });
+      if (err)
+      {
+        throw err;
+      }
 
-    done();
+      process.nextTick(function()
+      {
+        zone.changeState('programErrored', {skip: true});
+      });
+
+      done();
+    })
   });
+}
+
+/**
+ * @param {RemoteZone} zone
+ * @param {RemoteState} remoteState
+ * @param {Function} done
+ */
+function handleManualStart(zone, remoteState, done)
+{
+  zone.program = _.clone(zone.assignedProgram);
+
+  zone.remoteProgramRunning(remoteState);
+
+  startRemoteStateMonitor(zone);
+
+  process.nextTick(function()
+  {
+    updateRemoteProgress(zone, remoteState);
+  });
+
+  done();
 }
 
 /**
@@ -291,32 +332,8 @@ function handleProgramStoppedState(zone)
  */
 function updateRemoteProgress(zone, remoteState)
 {
-  var program = zone.program;
-  var remainingTime = program.totalTime;
-
-  for (var i = 0; i < remoteState.stepIndex; ++i)
-  {
-    var step = program.steps[i];
-
-    remainingTime -= (step.timeOn + step.timeOff) * step.iterations;
-  }
-
-  var currentStep = program.steps[remoteState.stepIndex];
-
-  remainingTime -=
-    (currentStep.timeOn + currentStep.timeOff) * remoteState.stepIteration;
-
-  if (remoteState.stepState)
-  {
-    remainingTime -= remoteState.elapsedTime;
-  }
-  else
-  {
-    remainingTime -= currentStep.timeOn + remoteState.elapsedTime;
-  }
-
   zone.updateProgress(
-    remainingTime,
+    calcRemainingTime(zone.program, remoteState),
     remoteState.stepState ? 'on' : 'off',
     remoteState.stepIndex,
     remoteState.stepIteration

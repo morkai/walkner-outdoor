@@ -23,6 +23,7 @@ function LibcoapController(process)
 {
   Controller.call(this, process);
 
+  this.token = 0;
   this.uri = '';
   this.timers = {};
 }
@@ -167,7 +168,21 @@ LibcoapController.prototype.getZoneInput = function(input, controllerInfo, done)
       return done && done("Nie udało się odczytać wejścia: " + err.message);
     }
 
-    var state = stdout === '\1';
+    var state;
+
+    if (stdout === '\1')
+    {
+      state = true;
+    }
+    else if (stdout === '\0')
+    {
+      state = false;
+    }
+    else
+    {
+      return done && done('Ignoring invalid response payload.');
+    }
+
     var value = Controller.INPUT_STATE_VALUES[input][state];
 
     done && done(null, value);
@@ -191,7 +206,10 @@ LibcoapController.prototype.getResourceUri = function(resource)
  */
 LibcoapController.prototype.getResource = function(resource, done)
 {
-  var cmd = config.coapClientPath + ' -o - ' + this.getResourceUri(resource);
+  var cmd = config.coapClientPath
+    + ' -o -'
+    + ' -T ' + this.nextToken()
+    + ' ' + this.getResourceUri(resource);
 
   this.execCmd(cmd, done);
 };
@@ -207,8 +225,11 @@ LibcoapController.prototype.setResource = function(resource, state, done)
   var stateFile = config.stateFilesDir + '/'
     + (state ? 'one' : 'zero') + '.bin';
 
-  var cmd = config.coapClientPath + ' -m put -f ' + stateFile + ' '
-    + this.getResourceUri(resource);
+  var cmd = config.coapClientPath
+    + ' -m put'
+    + ' -T ' + this.nextToken()
+    + ' -f ' + stateFile
+    + ' ' + this.getResourceUri(resource);
 
   this.execCmd(cmd, done, config.maxRetries);
 };
@@ -246,7 +267,7 @@ LibcoapController.prototype.execCmd = function(
 
   var controller = this;
 
-  exec(cmd, function(err, stdout)
+  exec(cmd, {encoding: 'binary'}, function(err, stdout)
   {
     count += 1;
 
@@ -287,7 +308,9 @@ LibcoapController.prototype.startConnectionMonitor = function()
 
   function ping()
   {
-    var cmd = config.coapClientPath + ' ' + controller.getResourceUri('/');
+    var cmd = config.coapClientPath
+      + ' -T ' + controller.nextToken()
+      + ' ' + controller.getResourceUri('/');
 
     controller.execCmd(cmd, function(err)
     {
@@ -339,6 +362,21 @@ LibcoapController.prototype.stopDisconnectTimer = function()
     clearTimeout(this.timers.disconnect);
     delete this.timers.disconnect;
   }
+};
+
+/**
+ * @return {Number}
+ */
+LibcoapController.prototype.nextToken = function()
+{
+  this.token += 1;
+
+  if (this.token === 256)
+  {
+    this.token = 0;
+  }
+
+  return this.token;
 };
 
 module.exports = LibcoapController;
