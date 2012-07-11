@@ -1,148 +1,141 @@
-# Wygrzewanie opraw LED
+# Outdoor LED Tester
 
-## Wymagania
+## Requirements
 
 ### node.js
 
-JavaScript po stronie serwera. Najlepiej najnowsza wersja produkcyjna.
+Server-side JavaScript.
 
-Do pobrania tutaj: http://nodejs.org/#download
+Download: http://nodejs.org/#download
 
-Opis instalacji tutaj: https://github.com/joyent/node/wiki/Installation
-
-### NPM
-
-Menadżer pakietów node.js. NPM dołączany jest od niedawna do node.js.
+Installation instructions: https://github.com/joyent/node/wiki/Installation
 
 ### MongoDB
 
-Baza danych NoSQL. Najlepiej najnowsza wersja produkcyjna.
+NoSQL database.
 
-Do pobrania tutaj: http://www.mongodb.org/downloads
+Download: http://www.mongodb.org/downloads
 
-## Instalacja
+Installation instructions: http://www.mongodb.org/display/DOCS/Quickstart
 
-Klonujemy repozytorium:
+## Installation
+
+Clone the repository:
 
     git clone git://github.com/morkai/walkner-outdoor.git
 
-Lub je [ściągamy](https://github.com/morkai/walkner-outdoor/zipball/master)
-i rozpakowujemy.
+or [download](https://github.com/morkai/walkner-outdoor/zipball/master)
+and extract it.
 
-Przechodzimy do głównego katalogu projektu:
+Go to the project's directory:
 
-    $ cd walkner-outdoor/
+    $ cd walkner-av/
 
-Instalujemy zależne pakiety:
+Install the dependencies:
 
     $ npm install
 
-## Konfiguracja
+## Configuration
 
-Pliki konfiguracyjne to pliki JavaScript znajdujące się w katalogu `config/`.
+Configuration files are the JavaScript files residing in the `config/`
+directory.
 
 ### express.js
 
-Konfiguracja serwera HTTP [express](http://expressjs.com/).
+Configuration of the HTTP server [express](http://expressjs.com/).
 
-  * `port` - port na jakim ma odpowiadać aplikacja.
+  * `port` - port on which the HTTP server should listen.
 
 ### mongoose.js
 
-Konfiguracja klienta bazy danych _MongoDB_.
+Configuration of the _MongoDB_ client.
 
-  * `uri` - URI zawierające informacje potrzebne do połączenia się z bazą
-    danych w formacie `mongodb://<host>[:<port>]/<nazwa bazy>`.
+  * `uri` - connection URI in the following format:
+    `mongodb://<host>[:<port>]/<dbname>`.
 
 ### libcoap.js
 
-Konfiguracja sterownika opartego na _libcoap_.
+Configuration of a controller based on [libcoap](http://sourceforge.net/projects/libcoap/).
 
-  * `maxRetries` - ile razy dane żądanie ma zostać ponownie wysłane zanim
-    zostanie ono uznane za zakończone błędem.
+  * `maxRetries` - how many times a request should be retried before it is
+    considered as failed.
 
-  * `disconnectTimeout` - liczba milisekund, po upływie których połączenie ze
-    sterownikiem jest uważane za utracone. Odliczanie czasu zaczyna się przy
-    każdym nieudanym żądaniu, aż do upływu tego czasu lub pomyślnym wykonaniu
-    innego żądania.
+  * `disconnectTimeout` - a number of milliseconds, after which a connection
+    with the controller is considered as lost. Countdown starts after every
+    failed request until it reaches 0 or any other request succeeds.
 
-  * `coapClientPath` - absolutna ścieżka do pliku wykonywalnego `coap-client`.
+  * `coapClientPath` - an absolute path to the `coap-client` executable.
 
-  * `stateFilesDir` - absolutna ścieżka do folderu z plikami `one.bin`
-    oraz `zero.bin`.
+  * `stateFilesDir` - an absolute path to a directory with `one.bin`
+    and `zero.bin` files.
 
 ### logging.js
 
-Konfiguracja logów. Do `stdout` przekazywane będą logi poziomów: `log`, `debug`,
-`info`, `warn` oraz `error`.
+Logs configuration. Logs of the following levels will be redirected to `stdout`:
+`log`, `debug`, `info`, `warn` and `error`.
 
-  * `productionLevels` - obiekt definiujący jakiego poziomu logi mają
-    przechodzić przez filtr, jeżeli `NODE_ENV` jest ustawione na `production`.
+  * `productionLevels` - object defining what logs should make it through
+    the log filter, if the `NODE_ENV` is set to `production`.
 
-  * `developmentLevels` - obiekt definiujący jakiego poziomu logi mają
-    przechodzić przez filtr, jeżeli `NODE_ENV` jest ustawione na `development`.
+  * `developmentLevels` - object defining what logs should make it through
+    the log filter, if the `NODE_ENV` is set to `development`.
 
 ### auth.js
 
-Konfiguracja uwierzytelniania i autoryzacji.
+Configuration of authentication and authorization.
 
-  * `superUser` - obiekt super użytkownika (ma wszystkie uprawnienia).
-    Można się na niego zalogować używając zdefiniowanego loginu i hasła mimo
-    tego, że nie znajduje się on w bazie danych. Przydatne przy uruchomieniu
-    na czystej bazie danych.
+  * `superUser` - object of a user with all privileges.
+    One can log in as a super user even if it's not in the database.
+    Handy, if run on an empty database.
 
-  * `guestUser` - obiekt użytkownika przypisywany do niezalogowanych klientów.
-    Można definiować, do jakich funkcji mają mieć dostęp niezalogowani
-    użytkownicy.
+  * `guestUser` - object of a user assigned to not logged in browser clients.
 
 ### limits.js
 
-Konfiguracja limitów.
+Features limit configuration.
 
-  * `maxZones` - maksymalna liczba stref jaka może zostać stworzona.
-    W przypadku osiągnięcia limitu, przycisk dodawania nowej strefy zostanie
-    zablokowany.
+  * `maxZones` - a maximum number of zones that can be created in the app.
+    After reaching the limit, action button to add new zones is disabled.
 
-  * `maxPrograms` - maksymalna liczba programów jaka może zostać stworzona.
-    W przypadku osiągnięcia limitu, przycisk dodawania nowego programu zostanie
-    zablokowany.
+  * `maxPrograms` - a maximum number of programs that can be created in the app.
+    After reaching the limit, action button to add new programs is disabled.
 
 ### browser.js
 
-Konfiguracja przeglądarki uruchamianej razem ze startem serwera
-w środowisku produkcyjnym.
+Configuration of a browser that is started by the server when run in
+the production environment.
 
-  * `cmd` - komenda otwierająca przeglądarkę internetową nakierowaną na
-    aplikację.
+  * `cmd` - command that opens a browser pointed to the application.
 
 ### mongod.conf
 
-Konfiguracja serwera bazy danych MongoDB. Opis poszczególnych opcji
-konfiguracyjnych znajduje się w
-[dokumentacji MongoDB](http://www.mongodb.org/display/DOCS/File+Based+Configuration).
-Szczególną uwagę należy zwrócić na ścieżkę do katalogu, w którym przechowywane
-mają być dane oraz ścieżkę do pliku z logami.
+Configuration of the MongoDB server. Description of the individual options can
+be found in
+[the MongoDB documentation](http://www.mongodb.org/display/DOCS/File+Based+Configuration).
 
-## Uruchomienie
+## Start
 
-Jeżeli jeszcze nie uruchomione, startujemy MongoDB:
+If not yet running, start the MongoDB:
 
     $ mongod -f walkner-outdoor/config/mongod.conf
 
-Dokładne informacje dot. uruchamiania MongoDB dostępne są w
-[dokumentacji MongoDB](http://www.mongodb.org/display/DOCS/Starting+and+Stopping+Mongo).
+Start the application server in `development` or `production` environment:
 
-Uruchamiamy serwer aplikacji w trybie `development` lub `production`:
+  * under *nix:
 
-  * pod *nix:
+        $ NODE_ENV=development node walkner-outdoor/server/index.js
 
-        $ NODE_ENV=development node walkner-outdoor/app/server.js
-
-  * pod Windows:
+  * under Windows:
 
         $ SET NODE_ENV=development
-        $ node walkner-outdoor/app/server.js
+        $ node walkner-outdoor/server/index.js
 
-Aplikacja powinna być dostępna na porcie, który jest ustawiony
-w `config/express.js` (domyślnie 8080). Wchodzimy w przeglądarce na adres
-http://127.0.0.1:8080/.
+To run the application in `production` environment one must have
+[r.js](https://github.com/jrburke/r.js) properly set up and then execute the
+following commands:
+
+    $ r.js walkner-outdoor/bin/build-client.js
+    $ r.js walkner-outdoor/bin/build-min.js
+
+Application should be available on a port defined in `config/express.js` file
+(`8080` by default). Point the Internet browser to http://127.0.0.1:8080/.
