@@ -233,11 +233,12 @@
 .programPicker .pickedProgram .action {
   position: absolute;
   bottom: 0;
+  left: 0;
   width: 50%;
   font-size: 28px;
   height: 84px;
 }
-.programPicker .startProgram {
+.programPicker .pickedProgram .startProgram {
   left: 50%;
 }
 .programPicker .box:first-child {
