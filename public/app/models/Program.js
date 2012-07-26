@@ -1,13 +1,16 @@
 define(
 [
   'Underscore',
-  'Backbone'
+  'Backbone',
+
+  'app/time'
 ],
 /**
  * @param {Underscore} _
  * @param {Backbone} Backbone
+ * @param {Object} time
  */
-function(_, Backbone)
+function(_, Backbone, time)
 {
   /**
    * @class Program
@@ -33,46 +36,11 @@ function(_, Backbone)
    */
   Program.calcDuration = function(startTimeOrTime, stopTime)
   {
-    var time;
-
-    if (arguments.length === 1)
-    {
-      time = startTimeOrTime;
-    }
-    else
-    {
-      time = (stopTime - startTimeOrTime) / 1000;
-    }
-
-    var duration = '';
-    var hours = Math.floor(time / 3600);
-
-    if (hours > 0)
-    {
-      duration += ' ' + hours + ' h';
-      time = time % 3600;
-    }
-
-    var minutes = Math.floor(time / 60);
-
-    if (minutes > 0)
-    {
-      duration += ' ' + minutes + ' min';
-      time = time % 60;
-    }
-
-    var seconds = time;
-
-    if (seconds >= 1)
-    {
-      duration += ' ' + Math.round(seconds) + ' s';
-    }
-    else if (seconds > 0 && duration === '')
-    {
-      duration += ' ' + seconds * 1000 + ' ms';
-    }
-
-    return duration.substr(1);
+    return time.toString(
+      arguments.length === 1
+        ? startTimeOrTime
+        : ((stopTime - startTimeOrTime) / 1000)
+    );
   };
 
   /**
@@ -170,7 +138,7 @@ function(_, Backbone)
       });
     }
 
-    data.duration = Program.calcDuration(data.totalTime);
+    data.duration = time.toString(data.totalTime);
 
     return data;
   };

@@ -4,15 +4,17 @@ define(
   'Backbone',
   'moment',
 
+  'app/time',
   'app/models/Program'
 ],
 /**
  * @param {Underscore} _
  * @param {Backbone} Backbone
  * @param {Function} moment
+ * @param {Object} time
  * @param {function(new:Program)} Program
  */
-function(_, Backbone, moment, Program)
+function(_, Backbone, moment, time, Program)
 {
   var STATE_TO_TEXT = {
     finish: 'Ukończony',
@@ -63,7 +65,7 @@ function(_, Backbone, moment, Program)
     if (data.startedAt && data.finishedAt)
     {
       data.totalTime = (moment(data.finishedAt).diff(data.startedAt) / 1000).toFixed(2);
-      data.duration = Program.calcDuration(data.totalTime);
+      data.duration = time.toString(parseFloat(data.totalTime));
     }
 
     return data;

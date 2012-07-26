@@ -4,6 +4,7 @@ define(
   'Underscore',
   'Backbone',
 
+  'app/time',
   'app/models/Program',
   'app/views/PageLayout',
 
@@ -13,11 +14,12 @@ define(
  * @param {jQuery} $
  * @param {Underscore} _
  * @param {Backbone} Backbone
+ * @param {Object} time
  * @param {function(new:Program)} Program
  * @param {function(new:PageLayout)} PageLayout
  * @param {String} stepsTableTpl
  */
-function($, _, Backbone, Program, PageLayout, stepsTableTpl)
+function($, _, Backbone, time, Program, PageLayout, stepsTableTpl)
 {
   /**
    * @class ProgramStepsTableView
@@ -153,31 +155,7 @@ function($, _, Backbone, Program, PageLayout, stepsTableTpl)
    */
   ProgramStepsTableView.prototype.changeTimeToSeconds = function(e)
   {
-    var multipliers = {
-      g: 3600,
-      h: 3600,
-      m: 60,
-      s: 1
-    };
-
-    var input = e.target;
-    var time = input.value.trim();
-    var seconds = time;
-
-    if (/^[0-9]+\.?[0-9]*$/.test(time) === false)
-    {
-      var re = /([0-9\.]+) *(h|m|s)[a-z]*/ig;
-      var match;
-
-      seconds = 0;
-
-      while (match = re.exec(time))
-      {
-        seconds += match[1] * multipliers[match[2].toLowerCase()];
-      }
-    }
-
-    input.value = seconds === 0 ? '' : seconds;
+    e.target.value = time.toSeconds(e.target.value.trim());
   };
 
   return ProgramStepsTableView;
