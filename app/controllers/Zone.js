@@ -1,7 +1,7 @@
 const BLINK_FREQUENCY = 1000;
 const STOP_BUTTON_MONITOR_INTERVAL = 300;
 const CONNECTED_INPUT_MONITOR_INTERVAL = 1000;
-const INPUT_CHANGE_AFTER_MIN_READS = 2;
+const INPUT_CHANGE_AFTER_MIN_READS = 1;
 
 var util = require('util');
 var step = require('step');
