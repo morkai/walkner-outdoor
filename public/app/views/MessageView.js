@@ -60,7 +60,7 @@ function($, _, Backbone, user)
     clearTimeout(this.showTimeout);
 
     var messageEl = $(this.el);
-    var hide = this.hide;
+    var self = this;
 
     function show()
     {
@@ -85,12 +85,12 @@ function($, _, Backbone, user)
         {
           if (messageEl.attr('data-id') == id)
           {
-            hide();
+            self.hide();
           }
         }, options.time + delay);
       }
 
-      this.showTimeout = _.timeout(delay, function()
+      self.showTimeout = _.timeout(delay, function()
       {
         messageEl.slideDown('fast');
       });
