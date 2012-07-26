@@ -2,7 +2,7 @@ var util = require('util');
 var Zone = require('./Zone');
 
 var EMPTY_PROGRAM = {
-  _id: 'NULL-24 BYTES PROGRAM ID',
+  _id: '1234567890abcdef12345678',
   name: 'NULL',
   infinite: false,
   steps: []
