@@ -1,3 +1,4 @@
+var step = require('step');
 var auth = require('../utils/middleware').auth;
 
 app.get('/history', auth('viewHistory'), function(req, res, next)
@@ -77,6 +78,155 @@ app.get('/history;page', auth('viewHistory'), function(req, res, next)
       });
     });
   });
+});
+
+app.get('/history;stats', auth('stats'), function(req, res, next)
+{
+  var HistoryEntry = app.db.model('HistoryEntry');
+
+  var reduceTotalTime = (function(entry, prev)
+  {
+    var finishTime = entry.finishedAt.getTime();
+    var startTime = entry.startedAt.getTime();
+
+    prev.totalTime += Math.round((finishTime - startTime) / 1000);
+    prev.totalCount += 1;
+  }).toString();
+
+  var stats = {
+    idToNameMap: {}
+  };
+
+  step(
+    function groupProgramTotals()
+    {
+      var keys = ['programId', 'finishState', 'programName'];
+      var condition = {finishState: {$exists: true}};
+      var initial = {totalTime: 0, totalCount: 0};
+
+      HistoryEntry.collection.group(
+        keys, condition, initial, reduceTotalTime, this
+      );
+    },
+    function assignProgramTotals(err, results)
+    {
+      if (err)
+      {
+        throw err;
+      }
+
+      stats.programCounts = {
+        $total: {
+          $total: 0,
+          finish: 0,
+          stop: 0,
+          error: 0
+        }
+      };
+
+      stats.programTimes = {
+        $total: {
+          $total: 0,
+          finish: 0,
+          stop: 0,
+          error: 0
+        }
+      };
+
+      results.forEach(function(result)
+      {
+        if (!stats.programTimes.hasOwnProperty(result.programId))
+        {
+          stats.idToNameMap[result.programId] = result.programName;
+
+          stats.programCounts[result.programId] = {
+            $total: 0,
+            finish: 0,
+            stop: 0,
+            error: 0
+          };
+
+          stats.programTimes[result.programId] = {
+            $total: 0,
+            finish: 0,
+            stop: 0,
+            error: 0
+          };
+        }
+
+        stats.programCounts[result.programId][result.finishState] =
+          result.totalCount;
+        stats.programCounts[result.programId].$total += result.totalCount;
+        stats.programCounts.$total[result.finishState] += result.totalCount;
+        stats.programCounts.$total.$total += result.totalCount;
+
+        stats.programTimes[result.programId][result.finishState] =
+          result.totalTime;
+        stats.programTimes[result.programId].$total += result.totalTime;
+        stats.programTimes.$total[result.finishState] += result.totalTime;
+        stats.programTimes.$total.$total += result.totalTime;
+      });
+
+      return true;
+    },
+    function groupTotalTimesByZone()
+    {
+      var keys = ['zoneId', 'finishState', 'zoneName'];
+      var condition = {finishState: {$exists: true}};
+      var initial = {totalTime: 0, totalCount: 0};
+
+      HistoryEntry.collection.group(
+        keys, condition, initial, reduceTotalTime, this
+      );
+    },
+    function assignTotalTimesByZone(err, results)
+    {
+      if (err)
+      {
+        throw err;
+      }
+
+      stats.zoneTimes = {
+        $total: {
+          $total: 0,
+          finish: 0,
+          stop: 0,
+          error: 0
+        }
+      };
+
+      results.forEach(function(result)
+      {
+        if (!stats.zoneTimes.hasOwnProperty(result.zoneId))
+        {
+          stats.idToNameMap[result.zoneId] = result.zoneName;
+
+          stats.zoneTimes[result.zoneId] = {
+            $total: 0,
+            finish: 0,
+            stop: 0,
+            error: 0
+          };
+        }
+
+        stats.zoneTimes[result.zoneId][result.finishState] = result.totalTime;
+        stats.zoneTimes[result.zoneId].$total += result.totalTime;
+        stats.zoneTimes.$total[result.finishState] += result.totalTime;
+        stats.zoneTimes.$total.$total += result.totalTime;
+      });
+
+      return true;
+    },
+    function sendResponse(err)
+    {
+      if (err)
+      {
+        return next(err);
+      }
+
+      res.send(stats);
+    }
+  );
 });
 
 app.get('/history/:id', auth('viewHistory'), function(req, res, next)

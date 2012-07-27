@@ -9,7 +9,8 @@ define(
   'app/views/viewport',
   'app/views/history/HistoryListView',
   'app/views/history/HistoryEntryView',
-  'app/views/history/PurgeHistoryFormView'
+  'app/views/history/PurgeHistoryFormView',
+  'app/views/history/StatsView'
 ],
 /**
  * @param {jQuery} $
@@ -21,6 +22,7 @@ define(
  * @param {function(new:HistoryListView)} HistoryListView
  * @param {function(new:HistoryEntryView)} HistoryEntryView
  * @param {function(new:PurgeHistoryFormView)} PurgeHistoryFormView
+ * @param {function(new:StatsView)} StatsView
  */
 function(
   $,
@@ -31,7 +33,8 @@ function(
   viewport,
   HistoryListView,
   HistoryEntryView,
-  PurgeHistoryFormView)
+  PurgeHistoryFormView,
+  StatsView)
 {
   /**
    * @class HistoryRouter
@@ -44,7 +47,8 @@ function(
       'history': 'list',
       'history/:id': 'view',
       'history?page=:page': 'list',
-      'history;purge': 'purge'
+      'history;purge': 'purge',
+      'history;stats': 'stats'
     }
   });
 
@@ -105,6 +109,30 @@ function(
     }
 
     viewport.showView(new PurgeHistoryFormView());
+  };
+
+  HistoryRouter.prototype.stats = function()
+  {
+    if (viewport.msg.auth('stats'))
+    {
+      return;
+    }
+
+    viewport.msg.loading();
+
+    $.ajax({
+      url: '/history;stats',
+      success: function(data)
+      {
+        viewport.showView(new StatsView({
+          model: data
+        }));
+      },
+      error: function()
+      {
+        viewport.msg.loadingFailed();
+      }
+    });
   };
 
   return HistoryRouter;

@@ -21,7 +21,8 @@ exports.superUser = {
     "manageControllers": "1",
     "viewUsers": "1",
     "manageUsers": "1",
-    "diag": "1"
+    "diag": "1",
+    "stats": "1"
   }
 };
 

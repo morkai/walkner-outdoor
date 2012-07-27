@@ -1,0 +1,83 @@
+<div class="properties">
+  <div class="property">
+    <span class="property-name">Łączna ilość uruchomień programów:</span>
+    <span class="property-value">
+      <%- totalRunPrograms %>x
+      (<span class="programFinished"><span class="finalState"><%- totalFinishedPrograms %> pomyślnych</span></span> +
+      <span class="programStopped"><span class="finalState"><%- totalStoppedPrograms %> zatrzymanych</span></span> +
+      <span class="programErrored"><span class="finalState"><%- totalErroredPrograms %> błędnych</span></span>)
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Łączny czas wygrzewania:</span>
+    <span class="property-value">
+      <%- totalTime %>
+      (<span class="programFinished"><span class="finalState"><%- totalFinishedTime %></span></span> +
+      <span class="programStopped"><span class="finalState"><%- totalStoppedTime %></span></span> +
+      <span class="programErrored"><span class="finalState"><%- totalErroredTime %></span></span>)
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Najcześciej uruchamiany program:</span>
+    <span class="property-value">
+      <a href="#programs/<%- topCountProgram._id %>"><%- topCountProgram.name %></a> - <%- topCountProgram.total %>x
+      (<span class="programFinished"><span class="finalState"><%- topCountProgram.finished %></span></span> +
+      <span class="programStopped"><span class="finalState"><%- topCountProgram.stopped %></span></span> +
+      <span class="programErrored"><span class="finalState"><%- topCountProgram.errored %></span></span>)
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Najrzadziej uruchamiany program:</span>
+    <span class="property-value">
+      <a href="#programs/<%- bottomCountProgram._id %>"><%- bottomCountProgram.name %></a> - <%- bottomCountProgram.total %>x
+      (<span class="programFinished"><span class="finalState"><%- bottomCountProgram.finished %></span></span> +
+      <span class="programStopped"><span class="finalState"><%- bottomCountProgram.stopped %></span></span> +
+      <span class="programErrored"><span class="finalState"><%- bottomCountProgram.errored %></span></span>)
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Najczęściej nieukończony program:</span>
+    <span class="property-value">
+      <a href="#programs/<%- topErrorProgram._id %>"><%- topErrorProgram.name %></a> - <%- topErrorProgram.total %>x
+      (<span class="programFinished"><span class="finalState"><%- topErrorProgram.finished %></span></span> +
+      <span class="programStopped"><span class="finalState"><%- topErrorProgram.stopped %></span></span> +
+      <span class="programErrored"><span class="finalState"><%- topErrorProgram.errored %></span></span>)
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Najdłużej wykorzystywana strefa:</span>
+    <span class="property-value">
+      <a href="#zones/<%- topTimeZone._id %>"><%- topTimeZone.name %></a> - <%- topTimeZone.total %>
+      (<span class="programFinished"><span class="finalState"><%- topTimeZone.finished %></span></span> +
+      <span class="programStopped"><span class="finalState"><%- topTimeZone.stopped %></span></span> +
+      <span class="programErrored"><span class="finalState"><%- topTimeZone.errored %></span></span>)
+    </span>
+  </div>
+  <div class="property">
+    <span class="property-name">Najkrócej wykorzystywana strefa:</span>
+    <span class="property-value">
+      <a href="#zones/<%- bottomTimeZone._id %>"><%- bottomTimeZone.name %></a> - <%- bottomTimeZone.total %>
+      (<span class="programFinished"><span class="finalState"><%- bottomTimeZone.finished %></span></span> +
+      <span class="programStopped"><span class="finalState"><%- bottomTimeZone.stopped %></span></span> +
+      <span class="programErrored"><span class="finalState"><%- bottomTimeZone.errored %></span></span>)
+    </span>
+  </div>
+</div>
+<div class="goToChart">
+  <a class="button" data-type="programCounts">Ilość uruchomień wg programów</a>
+  <a class="button" data-type="programTimes">Czas wygrzewania wg programów</a>
+  <a class="button" data-type="zoneTimes">Czas wygrzewania wg stref</a>
+</div>
+<div class="content chartContainer" data-type="programCounts">
+  <h2>Ilość uruchomień wg programów</h2>
+  <div class="chart programCountsChart"></div>
+</div>
+<div class="content chartContainer" data-type="programTimes">
+  <h2>Czas wygrzewania wg programów</h2>
+  <div class="chart programTimesChart"></div>
+</div>
+<div class="content chartContainer" data-type="zoneTimes">
+  <h2>Czas wygrzewania wg stref</h2>
+  <div class="chart zoneTimesChart"></div>
+</div>
+<div class="tooltip">????</div>

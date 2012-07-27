@@ -58,6 +58,12 @@ function(
 
       return [
         {
+          href: '#history;stats',
+          text: 'Pokaż statystyki',
+          className: 'blue action',
+          privileges: 'stats'
+        },
+        {
           href: '#history;purge',
           text: 'Wyczyść',
           className: 'blue purge-history action',

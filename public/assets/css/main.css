@@ -1,5 +1,6 @@
 @import url("../../vendor/chosen/chosen.css");
 @import url("../../vendor/scrollview/jquery.mobile.scrollview.css");
+@import url("../../vendor/jqplot/jquery.jqplot.min.css");
 @import url("reset.css");
 @import url("common.css");
 @import url("layout.css");
