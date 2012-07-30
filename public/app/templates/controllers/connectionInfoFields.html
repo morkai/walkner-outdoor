@@ -7,20 +7,20 @@
   <ul class="fields">
     <li>
       <label for="controller-modbus-tcp-host">Host</label>
-      <input id="controller-modbus-tcp-host" name="controller.connectionInfo.host" class="short textline" type="text" value="<%= controller.connectionInfo.host %>">
+      <input id="controller-modbus-tcp-host" name="controller.connectionInfo.modbus-tcp.host" class="short textline" type="text" value="<%= controller.connectionInfo.host %>">
     <li>
       <label for="controller-modbus-tcp-port">Port</label>
-      <input id="controller-modbus-tcp-port" name="controller.connectionInfo.port" class="short textline" type="number" value="<%= controller.connectionInfo.port %>">
+      <input id="controller-modbus-tcp-port" name="controller.connectionInfo.modbus-tcp.port" class="short textline" type="number" value="<%= controller.connectionInfo.port %>">
   </ul>
 <li class="controller-type" data-type="libcoap">
   <ul class="fields">
     <li>
       <label for="controller-libcoap-uri">URI</label>
-      <input id="controller-libcoap-uri" name="controller.connectionInfo.uri" class="short textline" type="text" value="<%= controller.connectionInfo.uri %>">
+      <input id="controller-libcoap-uri" name="controller.connectionInfo.libcoap.uri" class="short textline" type="text" value="<%= controller.connectionInfo.uri || '' %>">
   </ul>
 <li class="controller-type" data-type="remote-libcoap">
   <ul class="fields">
     <li>
       <label for="controller-remote-libcoap-uri">URI</label>
-      <input id="controller-remote-libcoap-uri" name="controller.connectionInfo.uri" class="short textline" type="text" value="<%= controller.connectionInfo.uri %>">
+      <input id="controller-remote-libcoap-uri" name="controller.connectionInfo.remote-libcoap.uri" class="short textline" type="text" value="<%= controller.connectionInfo.uri || '' %>">
   </ul>

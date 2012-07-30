@@ -99,6 +99,8 @@ function(
     var data = formEl.toObject({skipEmpty: false}).controller;
     var controller = this.model;
 
+    data.connectionInfo = data.connectionInfo[data.type];
+
     controller.save(data, {
       success: function()
       {
