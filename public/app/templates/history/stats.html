@@ -1,3 +1,23 @@
+<form class="form" method="post" action="" autocomplete="off">
+  <ul class="fields horizontal">
+    <li>
+      <label for="stats-range-from">Od</label>
+      <input id="stats-range-from" name="from" class="small textline" type="text" autofocus value="<%- from %>" maxlength="10" placeholder="YYYY-MM-DD">
+    <li>
+      <label for="stats-range-to">Do</label>
+      <input id="stats-range-to" name="to" class="small textline" type="text" value="<%- to %>" maxlength="10" placeholder="YYYY-MM-DD">
+    <li>
+      <label>Akcje</label>
+      <input class="reload button" type="button" value="Zmień zakres">
+  </ul>
+</form>
+
+<% if (totalRunPrograms === 0) { %>
+<p class="content">
+  Brak danych w wybranym okresie czasu.
+</p>
+<% } else { %>
+
 <div class="properties">
   <div class="property">
     <span class="property-name">Łączna ilość uruchomień programów:</span>
@@ -63,21 +83,34 @@
     </span>
   </div>
 </div>
+
 <div class="goToChart">
+  <a class="button" data-type="dateTimes">Czas wygrzewania w czasie</a>
   <a class="button" data-type="programCounts">Ilość uruchomień wg programów</a>
   <a class="button" data-type="programTimes">Czas wygrzewania wg programów</a>
   <a class="button" data-type="zoneTimes">Czas wygrzewania wg stref</a>
 </div>
+
+<div class="content chartContainer" data-type="dateTimes">
+  <h2>Czas wygrzewania w czasie</h2>
+  <div class="chart dateTimesChart"></div>
+</div>
+
 <div class="content chartContainer" data-type="programCounts">
   <h2>Ilość uruchomień wg programów</h2>
   <div class="chart programCountsChart"></div>
 </div>
+
 <div class="content chartContainer" data-type="programTimes">
   <h2>Czas wygrzewania wg programów</h2>
   <div class="chart programTimesChart"></div>
 </div>
+
 <div class="content chartContainer" data-type="zoneTimes">
   <h2>Czas wygrzewania wg stref</h2>
   <div class="chart zoneTimesChart"></div>
 </div>
+
 <div class="tooltip">????</div>
+
+<% } %>

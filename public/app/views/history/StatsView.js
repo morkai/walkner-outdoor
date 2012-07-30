@@ -3,6 +3,7 @@ define(
   'jQuery',
   'Underscore',
   'Backbone',
+  'moment',
 
   'app/time',
   'app/models/HistoryEntry',
@@ -16,9 +17,10 @@ define(
 /**
  * @param {jQuery} $
  * @param {Underscore} _
+ * @param {Backbone} Backbone
+ * @param {moment} moment
  * @param {Object} time
  * @param {function(new:HistoryEntry)} HistoryEntry
- * @param {Backbone} Backbone
  * @param {Viewport} viewport
  * @param {function(new:PageLayout)} PageLayout
  * @param {String} statsTpl
@@ -27,6 +29,7 @@ function(
   $,
   _,
   Backbone,
+  moment,
   time,
   HistoryEntry,
   viewport,
@@ -62,7 +65,8 @@ function(
       ];
     },
     events: {
-      'click .goToChart a': 'goToChart'
+      'click .goToChart a': 'goToChart',
+      'click .reload': 'reload'
     }
   });
 
@@ -74,6 +78,7 @@ function(
 
     this.plots = {
       programTimes: null,
+      programCounts: null,
       zoneTimes: null
     };
 
@@ -82,23 +87,14 @@ function(
     this.lastPointIndex = -1;
     this.topOffset = 0;
     this.leftOffset = 0;
+
+    this.from = '';
+    this.to = '';
   };
 
   StatsView.prototype.destroy = function()
   {
-    $(window).off('resize', this.resizePlots);
-
-    for (var plotName in this.plots)
-    {
-      if (!this.plots.hasOwnProperty(plotName) || !this.plots[plotName])
-      {
-        continue;
-      }
-
-      this.plots[plotName].destroy();
-      this.plots[plotName] = null;
-    }
-
+    this.destroyPlots();
     this.remove();
   };
 
@@ -113,7 +109,9 @@ function(
     _.defer(function()
     {
       self.topOffset = -self.$tooltip.outerHeight(true) - 10;
+      self.$tooltip.hide();
 
+      self.renderDateChart('dateTimes');
       self.renderTimesChart('programTimes');
       self.renderCountsChart('programCounts');
       self.renderTimesChart('zoneTimes');
@@ -124,11 +122,76 @@ function(
     return this;
   };
 
+  /**
+   * @private
+   */
+  StatsView.prototype.reload = function()
+  {
+    viewport.msg.loading();
+
+    this.from = this.$('#stats-range-from').val();
+    this.to = this.$('#stats-range-to').val();
+
+    this.$('input.reload').attr('disabled', true);
+
+    var me = this;
+
+    $.ajax({
+      url: '/history;stats',
+      data: {
+        from: new Date(this.from).getTime(),
+        to: new Date(this.to).getTime()
+      },
+      success: function(stats)
+      {
+        me.model = stats;
+
+        me.destroyPlots();
+        $(me.el).empty();
+        me.render();
+
+        viewport.msg.hide();
+      },
+      error: function()
+      {
+        viewport.msg.show({
+          type: 'error',
+          text: 'Nie udało się zmienić zakresu :('
+        });
+      }
+    });
+  };
+
+  /**
+   * @private
+   */
+  StatsView.prototype.destroyPlots = function()
+  {
+    $(window).off('resize', this.resizePlots);
+
+    for (var plotName in this.plots)
+    {
+      if (!this.plots.hasOwnProperty(plotName) || !this.plots[plotName])
+      {
+        continue;
+      }
+
+      this.plots[plotName].destroy();
+      this.plots[plotName] = null;
+    }
+  };
+
+  /**
+   * @private
+   * @return {Object}
+   */
   StatsView.prototype.getTemplateData = function()
   {
     var stats = this.model;
-    var data = {};
-    var id;
+    var data = {
+      from: this.from,
+      to: this.to
+    };
 
     data.totalRunPrograms = stats.programCounts.$total.$total;
     data.totalFinishedPrograms = stats.programCounts.$total.finish;
@@ -181,6 +244,11 @@ function(
         entry = entries[id];
         entryId = id;
       }
+    }
+
+    if (typeof entry === 'undefined')
+    {
+      return {};
     }
 
     return {
@@ -267,11 +335,11 @@ function(
     var data = [[], [], []];
     var $chartEl = this.$('.' + type + 'Chart');
 
-    this.collectChartData(this.model[type], labels, data);
+    this.collectChartData(this.model[type], labels, data, false);
 
     $chartEl.height(labels.length * PIXELS_PER_Y);
     $chartEl.on(
-      'jqplotDataMouseOver', this.showTooltip.bind(null, time.toString)
+      'jqplotDataMouseOver', this.showTooltip.bind(null, time.toString, true)
     );
 
     $chartEl.jqplot(data, {
@@ -332,10 +400,10 @@ function(
     var data = [[], [], []];
     var $chartEl = this.$('.' + type + 'Chart');
 
-    this.collectChartData(this.model[type], labels, data);
+    this.collectChartData(this.model[type], labels, data, false);
 
     $chartEl.height(labels.length * PIXELS_PER_Y);
-    $chartEl.on('jqplotDataMouseOver', this.showTooltip.bind(null, null));
+    $chartEl.on('jqplotDataMouseOver', this.showTooltip.bind(null, null, true));
 
     $chartEl.jqplot(data, {
       stackSeries: true,
@@ -363,10 +431,84 @@ function(
     this.plots[type] = $chartEl.data('jqplot');
   };
 
+  var TIME_UNIT_TO_FORMAT = {
+    'hour': 'HH:00',
+    'day': 'YYYY-MM-DD',
+    'month': 'YYYY-MM',
+    'year': 'YYYY'
+  };
+
   /**
    * @private
    */
-  StatsView.prototype.collectChartData = function(input, labels, data)
+  StatsView.prototype.renderDateChart = function(type)
+  {
+    var input = {};
+    var format = TIME_UNIT_TO_FORMAT[this.model[type].$unit];
+
+    for (var k in this.model[type])
+    {
+      if (!this.model[type].hasOwnProperty(k) || k[0] === '$')
+      {
+        continue;
+      }
+
+      input[moment(parseInt(k)).format(format)] = this.model[type][k];
+    }
+
+    var labels = [];
+    var data = [[], [], []];
+    var $chartEl = this.$('.' + type + 'Chart');
+
+    this.collectChartData(input, labels, data, true);
+
+    $chartEl.height(400);
+    $chartEl.on(
+      'jqplotDataMouseOver', this.showTooltip.bind(null, time.toString, false)
+    );
+
+    $chartEl.jqplot(data, {
+      stackSeries: true,
+      seriesColors: SERIES_COLORS,
+      seriesDefaults: {
+        renderer: $.jqplot.BarRenderer,
+        rendererOptions: {
+          highlightMouseOver: false
+        },
+        pointLabels: {
+          show: true,
+          stackedValue: true,
+          onlySeriesIndex: 2,
+          formatString: '...',
+          formatter: function(_, value)
+          {
+            return time.toString(parseInt(value));
+          }
+        }
+      },
+      axes: {
+        xaxis: {
+          renderer: $.jqplot.CategoryAxisRenderer,
+          ticks: labels
+        },
+        yaxis: {
+          tickOptions: {
+            formatter: function(_, value)
+            {
+              return time.toString(value);
+            }
+          }
+        }
+      }
+    });
+
+    this.plots[type] = $chartEl.data('jqplot');
+  };
+
+  /**
+   * @private
+   */
+  StatsView.prototype.collectChartData = function(input, labels, data, noIndex)
   {
     var index = 1;
 
@@ -379,15 +521,20 @@ function(
 
       var label = this.model.idToNameMap[id];
 
+      if (typeof label === 'undefined')
+      {
+        label = id;
+      }
+
       labels.push(label.length > 20 ? label.substr(0, 20) + '...' : label);
 
       for (var finishState in FINISH_STATES)
       {
         if (FINISH_STATES.hasOwnProperty(finishState))
         {
-          data[FINISH_STATES[finishState]].push([
-            input[id][finishState], index
-          ]);
+          data[FINISH_STATES[finishState]].push(
+            noIndex ? input[id][finishState] : [input[id][finishState], index]
+          );
         }
       }
 
@@ -397,17 +544,21 @@ function(
 
   /**
    * @private
+   * @param {?Function} formatter
+   * @param {Boolean} horizontal
    * @param {Object} e
    * @param {Number} seriesIndex
    * @param {Number} pointIndex
    * @param {Array} data
    */
-  StatsView.prototype.showTooltip = function(formatter, e, seriesIndex, pointIndex, data)
+  StatsView.prototype.showTooltip = function(formatter, horizontal, e, seriesIndex, pointIndex, data)
   {
     if (seriesIndex !== this.lastSeriesIndex
       || pointIndex !== this.lastPointIndex)
     {
-      this.$tooltip.text(formatter ? formatter(data[0]) : data[0]);
+      var value = horizontal ? data[0] : data[1];
+
+      this.$tooltip.text(formatter ? formatter(value) : value);
       this.$tooltip.css('background-color', SERIES_COLORS[seriesIndex]);
       this.$tooltip.show();
 

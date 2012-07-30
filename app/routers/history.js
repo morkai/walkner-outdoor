@@ -84,6 +84,25 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
 {
   var HistoryEntry = app.db.model('HistoryEntry');
 
+  var from = parseInt(req.query.from);
+  var to = parseInt(req.query.to);
+
+  if (isNaN(from))
+  {
+    from = 0;
+  }
+
+  if (isNaN(to))
+  {
+    to = Date.now();
+  }
+
+  var condition = {
+    finishState: {$exists: true},
+    startedAt: {$gte: new Date(from)},
+    finishedAt: {$lte: new Date(to)}
+  };
+
   var reduceTotalTime = (function(entry, prev)
   {
     var finishTime = entry.finishedAt.getTime();
@@ -101,7 +120,6 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
     function groupProgramTotals()
     {
       var keys = ['programId', 'finishState', 'programName'];
-      var condition = {finishState: {$exists: true}};
       var initial = {totalTime: 0, totalCount: 0};
 
       HistoryEntry.collection.group(
@@ -172,7 +190,6 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
     function groupTotalTimesByZone()
     {
       var keys = ['zoneId', 'finishState', 'zoneName'];
-      var condition = {finishState: {$exists: true}};
       var initial = {totalTime: 0, totalCount: 0};
 
       HistoryEntry.collection.group(
@@ -213,6 +230,117 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
         stats.zoneTimes[result.zoneId].$total += result.totalTime;
         stats.zoneTimes.$total[result.finishState] += result.totalTime;
         stats.zoneTimes.$total.$total += result.totalTime;
+      });
+
+      return true;
+    },
+    function groupTotalTimesByDate(err)
+    {
+      if (err)
+      {
+        throw err;
+      }
+
+      var diff = Math.round((to - from) / 1000);
+      var unit;
+      var keyf;
+
+      switch (true)
+      {
+        case diff <= 86400:
+          unit = 'hour';
+          keyf = function(entry)
+          {
+            var d = entry.startedAt;
+
+            return {
+              finishState: entry.finishState,
+              date: new Date(
+                d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()
+              )
+            };
+          };
+          break;
+
+        case diff <= 2678400:
+          unit = 'day';
+          keyf = function(entry)
+          {
+            var d = entry.startedAt;
+
+            return {
+              finishState: entry.finishState,
+              date: new Date(d.getFullYear(), d.getMonth(), d.getDate())
+            };
+          };
+          break;
+
+        case diff <= 32140800:
+          unit = 'month';
+          keyf = function(entry)
+          {
+            var d = entry.startedAt;
+
+            return {
+              finishState: entry.finishState,
+              date: new Date(d.getFullYear(), d.getMonth(), 1)
+            };
+          };
+          break;
+
+        default:
+          unit = 'year';
+          keyf = function(entry)
+          {
+            return {
+              finishState: entry.finishState,
+              date: new Date(entry.startedAt.getFullYear(), 0, 1)
+            };
+          };
+      }
+
+      var initial = {totalTime: 0, totalCount: 0};
+      var nextStep = this;
+
+      HistoryEntry.collection.group(
+        keyf, condition, initial, reduceTotalTime, function(err, results)
+        {
+          nextStep(err, results, unit);
+        }
+      );
+    },
+    function assignTotalTimesByDate(err, results, unit)
+    {
+      if (err)
+      {
+        throw err;
+      }
+
+      stats.dateTimes = {
+        $unit: unit
+      };
+
+      results.sort(function(a, b)
+      {
+        return a.date.getTime() > b.date.getTime();
+      });
+
+      results.forEach(function(result)
+      {
+        var time = result.date.getTime().toString();
+
+        if (!stats.dateTimes.hasOwnProperty(time))
+        {
+          stats.dateTimes[time] = {
+            $total: 0,
+            finish: 0,
+            stop: 0,
+            error: 0
+          };
+        }
+
+        stats.dateTimes[time][result.finishState] = result.totalTime;
+        stats.dateTimes[time].$total += result.totalTime;
       });
 
       return true;

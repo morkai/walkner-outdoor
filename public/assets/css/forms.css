@@ -19,6 +19,10 @@
 .fields > li:first-child {
   margin-top: 0;
 }
+.fields.horizontal > li {
+  margin: 0 1em 0 0;
+  display: inline-block;
+}
 .fields label {
   display: block;
   font-weight: bold;
@@ -161,6 +165,11 @@ input[type="reset"]::-moz-focus-inner {
 .button:focus:active {
   border-color: #9BC3EB;
   text-shadow: -1px -1px 1px #FFF;
+}
+.button:disabled,
+.button.disabled {
+  color: #999;
+  cursor: default;
 }
 .checkbox {
   position: absolute;
