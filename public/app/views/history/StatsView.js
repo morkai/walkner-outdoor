@@ -432,7 +432,7 @@ function(
   };
 
   var TIME_UNIT_TO_FORMAT = {
-    'hour': 'HH:00',
+    'hour': 'YYYY-MM-DD HH:00',
     'day': 'YYYY-MM-DD',
     'month': 'YYYY-MM',
     'year': 'YYYY'
