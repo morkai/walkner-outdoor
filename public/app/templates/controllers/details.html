@@ -14,14 +14,20 @@
   <% if (controller.type === 'modbus-tcp') { %>
   <div class="property">
     <span class="property-name">Host:</span>
-    <span class="property-value"><code><%- controller.connectionInfo.host %></code></span>
+    <span class="property-value"><code><%- controller.connectionInfo.host || '127.0.0.1' %></code></span>
   </div>
   <div class="property">
     <span class="property-name">Port:</span>
-    <span class="property-value"><code><%- controller.connectionInfo.port %></code></span>
+    <span class="property-value"><code><%- controller.connectionInfo.port || 502 %></code></span>
   </div>
   <% } %>
   <% if (controller.type === 'libcoap') { %>
+  <div class="property">
+    <span class="property-name">URI:</span>
+    <span class="property-value"><code><%- controller.connectionInfo.uri %></code></span>
+  </div>
+  <% } %>
+  <% if (controller.type === 'remote-libcoap') { %>
   <div class="property">
     <span class="property-name">URI:</span>
     <span class="property-value"><code><%- controller.connectionInfo.uri %></code></span>
