@@ -15,7 +15,7 @@ exports.disconnectTimeout = 10000;
 /**
  * Path to `coap-client` executable.
  */
-exports.coapClientPath = '/home/walkner/ipv6_project/coap-client';
+exports.coapClientPath = '/home/walkner/outdoor/coap-client';
 
 /**
  * Path to directory with `one.bin` and `zero.bin` files.
