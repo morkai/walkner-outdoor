@@ -8,6 +8,9 @@ var RemoteZone = require('./RemoteZone');
 var config = require('../../config/libcoap');
 var compileProgram = require('../utils/program').compileProgram;
 
+var STATE_WITH_ID_LENGTH = 22;
+var STATE_WITHOUT_ID_LENGTH = 10;
+
 /**
  * @constructor
  * @extends LibcoapController
@@ -101,10 +104,11 @@ RemoteLibcoapController.prototype.getRemoteState = function(done)
 
     var buf = new Buffer(stdout, 'binary');
 
-    if (buf.length !== 22)
+    if (buf.length !== STATE_WITHOUT_ID_LENGTH
+      && buf.length !== STATE_WITH_ID_LENGTH)
     {
       return done(util.format(
-        "Invalid remote state buffer length. Expected [22] bytes, got [%d]",
+        "Invalid remote state buffer length. Expected [10] or [22] bytes, got [%d]",
         buf.length
       ));
     }
@@ -124,7 +128,9 @@ RemoteLibcoapController.prototype.getRemoteState = function(done)
       manual: buf[7] === 1,
       connected: buf[8] === 1,
       stopButton: buf[9] === 1,
-      programId: buf.length >= 20 ? buf.toString('hex', 10, 22) : null
+      programId: buf.length === STATE_WITHOUT_ID_LENGTH
+        ? buf.toString('hex', STATE_WITHOUT_ID_LENGTH, STATE_WITHOUT_ID_LENGTH)
+        : null
     };
 
     done(null, state);
