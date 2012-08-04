@@ -92,8 +92,6 @@ function(
 
       this.$('.stopProgram').addClass('disabled', true).click(function()
       {
-        console.log(this);
-
         viewport.msg.show({
           type: 'error',
           time: 5000,
@@ -263,6 +261,12 @@ function(
     this.$('.timeToEnd').text(timeToEnd);
 
     var completion = 100 - (this.remainingTime * 100 / this.totalTime);
+
+    if (completion > 100)
+    {
+      completion = 100;
+    }
+
     var progressValueEl = this.$('.progressValue');
 
     if (completion < 1)
