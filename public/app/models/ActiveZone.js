@@ -17,7 +17,10 @@ function(_, Backbone)
    * @param {Object} [options]
    */
   var ActiveZone = Backbone.Model.extend({
-    urlRoot: '/activeZones'
+    urlRoot: '/activeZones',
+    defaults: {
+      assignedProgram: null
+    }
   });
 
   /**
