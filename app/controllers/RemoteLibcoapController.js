@@ -128,8 +128,8 @@ RemoteLibcoapController.prototype.getRemoteState = function(done)
       manual: buf[7] === 1,
       connected: buf[8] === 1,
       stopButton: buf[9] === 1,
-      programId: buf.length === STATE_WITHOUT_ID_LENGTH
-        ? buf.toString('hex', STATE_WITHOUT_ID_LENGTH, STATE_WITHOUT_ID_LENGTH)
+      programId: buf.length === STATE_WITH_ID_LENGTH
+        ? buf.toString('hex', STATE_WITHOUT_ID_LENGTH, STATE_WITH_ID_LENGTH)
         : null
     };
 
