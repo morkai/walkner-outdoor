@@ -4,5 +4,5 @@
  */
 exports.cmd = 'google-chrome' +
               ' --incognito' +
-              ' --kiosk=http://localhost/' +
-              ' --user-data-dir=/root/chrome';
+              ' --user-data-dir=/root/chrome' +
+              ' --kiosk http://localhost/';
