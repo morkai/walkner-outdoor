@@ -29,7 +29,7 @@ and extract it.
 
 Go to the project's directory:
 
-    $ cd walkner-av/
+    $ cd walkner-outdoor/
 
 Install the dependencies:
 
