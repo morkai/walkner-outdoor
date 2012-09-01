@@ -200,6 +200,10 @@ function startRemoteStateMonitor(zone)
         handleProgramStoppedState(zone);
         break;
 
+      case RemoteZone.STATE_CONNECTED:
+        handleRemoteControllerRestart(zone);
+        break;
+
       default:
         console.error(
           "Unexpected remote state during program execution on zone [%s]: %d",
@@ -265,6 +269,19 @@ function handleProgramStoppedState(zone)
   process.nextTick(function()
   {
     zone.programStopped();
+  });
+}
+
+/**
+ * @param {RemoteZone} zone
+ */
+function handleRemoteControllerRestart(zone)
+{
+  zone.stopRemoteStateMonitor();
+
+  process.nextTick(function()
+  {
+    zone.changeState('programErrored', {error: 'Nieoczekiwany restart sterownika.'});
   });
 }
 
