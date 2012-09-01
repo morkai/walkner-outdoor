@@ -165,19 +165,21 @@ function handleNotConnectedState(zone)
  */
 function handleConnectedState(zone)
 {
-  zone.startRemoteStateMonitor(
-    zone.makeCancellable(true, function(remoteState)
+  function monitorState(remoteState)
+  {
+    if (remoteState.code === RemoteZone.STATE_CONNECTED)
     {
-      if (remoteState.code === RemoteZone.STATE_CONNECTED)
-      {
-        zone.uploadAssignedProgram();
-      }
-      else
-      {
-        handleRemoteStateChange(zone, remoteState);
-      }
-    })
-  );
+      zone.uploadAssignedProgram();
+    }
+    else
+    {
+      zone.stopRemoteStateMonitor();
+
+      handleRemoteStateChange(zone, remoteState);
+    }
+  }
+
+  zone.startRemoteStateMonitor(zone.makeCancellable(true, monitorState));
 }
 
 /**
