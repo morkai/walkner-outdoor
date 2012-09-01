@@ -48,8 +48,6 @@ exports.leave = function(newState, options, done)
 {
   var zone = this;
 
-  zone.inputChangeListener = null;
-
   zone.stopRemoteStateMonitor();
 
   if (newState === 'remote/disconnected')
@@ -60,62 +58,6 @@ exports.leave = function(newState, options, done)
 
   done();
 };
-
-/**
- * @param {String} input
- * @param {Number} newValue
- * @param {Number} oldValue
- */
-function onInputChange(input, newValue, oldValue)
-{
-  if (input === 'stopButton')
-  {
-    return handleStopButtonChange(this, newValue, oldValue);
-  }
-
-  if (input === 'connected')
-  {
-    return handleConnectedChange(this, newValue, oldValue);
-  }
-}
-
-/**
- * @param {RemoteZone} zone
- * @param {Number} newValue
- * @param {Number} oldValue
- */
-function handleStopButtonChange(zone, newValue, oldValue)
-{
-  // Ignore the stop button input changes if the program was not started
-  // manually
-  if (!zone.program.manual)
-  {
-    return;
-  }
-
-  // If the stop button is pressed (newValue=1) then stop the running program
-  if (newValue === 1)
-  {
-    return zone.programStopped();
-  }
-}
-
-/**
- * @param {RemoteZone} zone
- * @param {Number} newValue
- * @param {Number} oldValue
- */
-function handleConnectedChange(zone, newValue, oldValue)
-{
-  // If the zone cart was plugged off then stop the running program
-  // with an error
-  if (newValue === 0)
-  {
-    return zone.changeState('programErrored', {
-      error: "Odłączenie wózka strefy."
-    });
-  }
-}
 
 /**
  * @param {RemoteZone} zone
