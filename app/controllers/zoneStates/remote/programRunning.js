@@ -125,8 +125,12 @@ function stopUnknownProgram(zone, done)
       }
 
       done();
-      zone.changeState('programErrored', {skip: true});
-    })
+
+      setTimeout(zone.makeCancellable(function()
+      {
+        zone.changeState('programErrored', {skip: true});
+      }), 500);
+    });
   });
 }
 
@@ -157,11 +161,11 @@ function startRemoteProgram(zone, program, done)
   {
     if (err)
     {
+      done("nie udało się załadować programu na sterownik :(");
+
       zone.changeState('programErrored', {
         skip: true
       });
-
-      done("nie udało się załadować programu na sterownik :(");
     }
     else
     {
