@@ -53,6 +53,7 @@ exports.leave = function(newState, options, done)
   if (newState === 'remote/disconnected')
   {
     zone.interruptedProgram = zone.program;
+    zone.interruptedProgram.interruptTime = Date.now();
     zone.program = null;
   }
 
@@ -158,24 +159,23 @@ function startRemoteProgram(zone, program, done)
   {
     if (err)
     {
-      process.nextTick(function()
-      {
-        zone.changeState('programErrored', {
-          skip: true
-        });
+      zone.changeState('programErrored', {
+        skip: true
       });
 
-      return done("nie udało się załadować programu na sterownik :(");
+      done("nie udało się załadować programu na sterownik :(");
     }
-
-    startRemoteStateMonitor(zone);
-
-    process.nextTick(function()
+    else
     {
-      zone.updateProgress(program.totalTime, 'on', 0, 0);
-    });
+      done();
 
-    done();
+      zone.updateProgress(program.totalTime, 'on', 0, 0);
+
+      setTimeout(zone.makeCancellable(function()
+      {
+        startRemoteStateMonitor(zone);
+      }), 1000);
+    }
   });
 }
 
