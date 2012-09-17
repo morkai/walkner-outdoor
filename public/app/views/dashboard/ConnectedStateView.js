@@ -116,6 +116,11 @@ function(
       e.preventDefault();
     }
 
+    if (this.$('.startProgram').hasClass('disabled'))
+    {
+      return;
+    }
+
     this.toggleAction();
     viewport.msg.loading();
 
@@ -163,11 +168,7 @@ function(
    */
   ConnectedStateView.prototype.toggleAction = function()
   {
-    var startProgramEl = this.$('.startProgram');
-
-    startProgramEl.attr(
-      'disabled', startProgramEl.attr('disabled') ? false : true
-    );
+    this.$('.startProgram').toggleClass('disabled');
   };
 
   /**
