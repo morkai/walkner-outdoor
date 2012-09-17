@@ -224,6 +224,18 @@ RemoteZone.prototype.stopRemoteStateMonitor = function()
   this.controller.stopRemoteStateMonitor();
 };
 
+RemoteZone.prototype.markProgramAsInterrupted = function()
+{
+  if (this.interruptedProgram === null)
+  {
+    return;
+  }
+
+  this.controller.markProgramAsInterrupted(this.zone._id, this.interruptedProgram);
+
+  this.interruptedProgram = null;
+};
+
 /**
  * @constructor
  */

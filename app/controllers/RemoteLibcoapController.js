@@ -19,6 +19,7 @@ function RemoteLibcoapController(process)
 {
   LibcoapController.call(this, process);
 
+  this.cancelRemoteStateMonitor = null;
   this.lastInputsUpdate = 0;
   this.inputs = {
     connected: -1,
@@ -239,13 +240,37 @@ RemoteLibcoapController.prototype.startRemoteStateMonitor = function(listener)
   if (!controller.timers.remoteStateMonitor)
   {
     controller.timers.remoteStateMonitor = setTimeout(monitorState, 1);
+
+    if (typeof listener.cancel === 'function')
+    {
+      controller.cancelRemoteStateMonitor = listener.cancel;
+    }
   }
 };
 
 RemoteLibcoapController.prototype.stopRemoteStateMonitor = function()
 {
   clearTimeout(this.timers.remoteStateMonitor);
-  delete this.timers.remoteStateMonitor;
+  this.timers.remoteStateMonitor = null;
+
+  if (typeof this.cancelRemoteStateMonitor === 'function')
+  {
+    this.cancelRemoteStateMonitor();
+    this.cancelRemoteStateMonitor = null;
+  }
+};
+
+/**
+ * @param {String} zoneId
+ * @param {Object} interruptedProgram
+ */
+RemoteLibcoapController.prototype.markProgramAsInterrupted = function(zoneId, interruptedProgram)
+{
+  this.sendMessage('markProgramAsInterrupted', {
+    zoneId: zoneId,
+    programId: interruptedProgram._id,
+    interruptTime: interruptedProgram.interruptTime
+  });
 };
 
 /**

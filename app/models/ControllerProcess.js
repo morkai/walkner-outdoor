@@ -637,6 +637,16 @@ _.extend(messageHandlers, {
       controllerId: this.controller._id,
       results: results
     });
+  },
+
+  markProgramAsInterrupted: function(data)
+  {
+    var zone = this.zones[data.zoneId];
+
+    if (zone)
+    {
+      zone.markProgramAsInterrupted(data.programId, data.interruptTime);
+    }
   }
 
 });

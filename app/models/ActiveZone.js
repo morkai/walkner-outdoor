@@ -65,6 +65,10 @@ ActiveZone.prototype.connected = function(fromDisconnect)
   {
     this.lastConnectTime = Date.now();
   }
+  else
+  {
+    this.program = null;
+  }
 
   this.emitNewState('connected', {
     lastConnectTime: this.lastConnectTime
@@ -286,6 +290,26 @@ ActiveZone.prototype.programmed = function(program)
   this.emitState({assignedProgram: zone.program});
 
   this.emit('programmed', zone._id, zone.program);
+};
+
+/**
+ * @param {String} programId
+ * @param {Number} interruptTime
+ */
+ActiveZone.prototype.markProgramAsInterrupted = function(programId, interruptTime)
+{
+  if (this.historyEntry === null || this.historyEntry.get('programId').toString() !== programId)
+  {
+    return;
+  }
+
+  this.historyEntry.set({
+    finishState: 'error',
+    finishedAt: interruptTime,
+    errorMessage: 'Nieoczekiwany restart sterownika.'
+  });
+  this.historyEntry.save();
+  this.historyEntry = null;
 };
 
 /**

@@ -92,10 +92,7 @@ function handleReconnect(zone, done)
         {
           done();
 
-          process.nextTick(function()
-          {
-            handleRemoteStateChange(zone, remoteState);
-          });
+          handleRemoteStateChange(zone, remoteState);
         }
       })
     );
@@ -165,6 +162,8 @@ function handleNotConnectedState(zone)
  */
 function handleConnectedState(zone)
 {
+  zone.markProgramAsInterrupted();
+
   function monitorState(remoteState)
   {
     if (remoteState.code === RemoteZone.STATE_CONNECTED)
@@ -190,11 +189,8 @@ function handleProgramRunningState(zone, remoteState)
 {
   zone.stopRemoteStateMonitor();
 
-  process.nextTick(function()
-  {
-    zone.changeState('programRunning', {
-      remoteState: remoteState
-    });
+  zone.changeState('programRunning', {
+    remoteState: remoteState
   });
 }
 
@@ -212,12 +208,12 @@ function handleProgramFinishedState(zone)
       throw err;
     }
 
-    zone.finishProgram();
+    zone.program = zone.interruptedProgram;
+    zone.interruptedProgram = null;
 
-    process.nextTick(function()
-    {
-      handleConnectedState(zone);
-    });
+    zone.finishProgram(null, true);
+
+    handleConnectedState(zone);
   });
 }
 
@@ -235,12 +231,12 @@ function handleProgramStoppedState(zone)
       throw err;
     }
 
+    zone.program = zone.interruptedProgram;
+    zone.interruptedProgram = null;
+
     zone.remoteProgramStopped();
 
-    process.nextTick(function()
-    {
-      handleConnectedState(zone);
-    });
+    handleConnectedState(zone);
   });
 }
 

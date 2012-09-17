@@ -67,16 +67,17 @@ exports.leave = function(newState, options, done)
  */
 function handleInterruptedProgram(zone, remoteState, done)
 {
-  zone.remoteProgramRunning(remoteState);
-
-  startRemoteStateMonitor(zone);
-
-  process.nextTick(function()
-  {
-    updateRemoteProgress(zone, remoteState);
-  });
+  console.debug(
+    'Resuming an interrupted program [%s] on zone [%s].',
+    zone.program.name,
+    zone.zone.name
+  );
 
   done();
+
+  zone.remoteProgramRunning(remoteState);
+  startRemoteStateMonitor(zone);
+  updateRemoteProgress(zone, remoteState);
 }
 
 /**
@@ -89,6 +90,12 @@ function handleUnknownProgram(zone, remoteState, done)
   if (!zone.assignedProgram
     || remoteState.programId !== zone.assignedProgram._id)
   {
+    console.debug(
+      'Stopping an unknown program [%s] on zone [%s].',
+      remoteState.programId,
+      zone.zone.name
+    );
+
     stopUnknownProgram(zone, done);
   }
   else
@@ -117,12 +124,8 @@ function stopUnknownProgram(zone, done)
         throw err;
       }
 
-      process.nextTick(function()
-      {
-        zone.changeState('programErrored', {skip: true});
-      });
-
       done();
+      zone.changeState('programErrored', {skip: true});
     })
   });
 }
@@ -134,18 +137,13 @@ function stopUnknownProgram(zone, done)
  */
 function handleManualStart(zone, remoteState, done)
 {
+  done();
+
   zone.program = _.clone(zone.assignedProgram);
 
   zone.remoteProgramRunning(remoteState);
-
   startRemoteStateMonitor(zone);
-
-  process.nextTick(function()
-  {
-    updateRemoteProgress(zone, remoteState);
-  });
-
-  done();
+  updateRemoteProgress(zone, remoteState);
 }
 
 /**
@@ -252,11 +250,7 @@ function handleProgramRunningState(zone, remoteState)
 function handleProgramFinishedState(zone)
 {
   zone.stopRemoteStateMonitor();
-
-  process.nextTick(function()
-  {
-    zone.changeState('programFinished');
-  });
+  zone.changeState('programFinished');
 }
 
 /**
@@ -265,11 +259,7 @@ function handleProgramFinishedState(zone)
 function handleProgramStoppedState(zone)
 {
   zone.stopRemoteStateMonitor();
-
-  process.nextTick(function()
-  {
-    zone.programStopped();
-  });
+  zone.programStopped();
 }
 
 /**
@@ -278,11 +268,7 @@ function handleProgramStoppedState(zone)
 function handleRemoteControllerRestart(zone)
 {
   zone.stopRemoteStateMonitor();
-
-  process.nextTick(function()
-  {
-    zone.changeState('programErrored', {error: 'Nieoczekiwany restart sterownika.'});
-  });
+  zone.changeState('programErrored', {error: 'Nieoczekiwany restart sterownika.'});
 }
 
 /**

@@ -10,12 +10,9 @@ exports.enter = function(oldState, options, done)
 
   if (options.manual)
   {
-    process.nextTick(function()
-    {
-      zone.connected();
-    });
-
     done();
+
+    zone.connected();
   }
   else
   {

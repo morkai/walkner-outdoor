@@ -8,21 +8,20 @@ exports.enter = function(oldState, options, done)
 {
   var zone = this;
 
+  done();
+
   if (options.skip)
   {
-    process.nextTick(function()
-    {
-      zone.changeState('connected');
-    });
+    zone.changeState('connected');
   }
   else
   {
+    done();
+
     zone.inputChangeListener = onInputChange;
 
     zone.finishProgram(options.error.message || options.error);
   }
-
-  done();
 };
 
 exports.leave = function(newState, options, done)
