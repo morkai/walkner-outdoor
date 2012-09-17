@@ -58,6 +58,11 @@ exports.calcRemainingTime = function(program, remoteState)
 
   var currentStep = program.steps[remoteState.stepIndex];
 
+  if (!currentStep)
+  {
+    return remainingTime;
+  }
+
   remainingTime -=
     (currentStep.timeOn + currentStep.timeOff) * remoteState.stepIteration;
 
