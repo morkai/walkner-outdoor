@@ -30,10 +30,23 @@ function($, user)
     },
     resetZone: function()
     {
+      var $resetZone = this.$('.resetZone');
+
+      if ($resetZone.hasClass('disabled'))
+      {
+        return;
+      }
+
+      $resetZone.addClass('disabled');
+
       $.ajax({
         type: 'POST',
         url: '/zones/' + this.model.id,
-        data: {action: 'reset'}
+        data: {action: 'reset'},
+        error: function()
+        {
+          $resetZone.removeClass('disabled');
+        }
       });
     }
   };
