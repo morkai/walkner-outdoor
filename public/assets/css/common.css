@@ -40,9 +40,6 @@ body {
   -moz-box-sizing: border-box;
 }
 .dialog > .cancel {
-  display: none;
-}
-.touchEnabled .dialog > .cancel {
   display: inline-block;
   position: absolute;
   top: .5em;
