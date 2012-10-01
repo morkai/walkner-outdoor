@@ -64,6 +64,9 @@ Configuration of a controller based on [libcoap](http://sourceforge.net/projects
     with the controller is considered as lost. Countdown starts after every
     failed request until it reaches 0 or any other request succeeds.
 
+  * `coapClientTimeout` - a number of milliseconds after which the `coap-client`
+     process will be killed if it does not exit before that time.
+
   * `coapClientPath` - an absolute path to the `coap-client` executable.
 
   * `stateFilesDir` - an absolute path to a directory with `one.bin`

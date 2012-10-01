@@ -10,12 +10,18 @@ exports.maxRetries = 1;
  * successful request was made.
  * Timer starts after each failed request.
  */
-exports.disconnectTimeout = 5000;
+exports.disconnectTimeout = 4000;
+
+/**
+ * Number of milliseconds after which the `coap-client` process will
+ * be killed if it does not exit before that time.
+ */
+exports.coapClientTimeout = 8000;
 
 /**
  * Path to `coap-client` executable.
  */
-exports.coapClientPath = '/home/walkner/outdoor/bin/coap-client';
+exports.coapClientPath = normalize(__dirname + '/../bin/coap-client');
 
 /**
  * Path to directory with `one.bin` and `zero.bin` files.

@@ -267,7 +267,7 @@ LibcoapController.prototype.execCmd = function(
 
   var controller = this;
 
-  exec(cmd, {encoding: 'binary'}, function(err, stdout)
+  exec(cmd, {encoding: 'binary', timeout: config.coapClientTimeout}, function(err, stdout)
   {
     count += 1;
 
