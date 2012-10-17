@@ -224,10 +224,17 @@ function(
         return controller._id === zone.controller;
       });
 
-      zone.controller = {
-        _id: controller._id,
-        name: controller.name
-      };
+      if (controller)
+      {
+        zone.controller = {
+          _id: controller._id,
+          name: controller.name
+        };
+      }
+      else
+      {
+        zone.controller = null;
+      }
     }
 
     var zoneView = new ZoneDiagView({model: zone});
