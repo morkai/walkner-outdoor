@@ -1,6 +1,7 @@
 var fork = require('child_process').fork;
 var _ = require('underscore');
 var step = require('step');
+var ObjectId = require('mongoose').SchemaTypes.ObjectId;
 var ActiveZone = require('./ActiveZone');
 
 var messageHandlers = {};
@@ -445,7 +446,17 @@ _.extend(messageHandlers, {
       return;
     }
 
-    app.io.sockets.emit('zone started', activeZone);
+    if (_.isObject(activeZone.zone.program) && !activeZone.zone.program._id)
+    {
+      activeZone.once('programmed', function()
+      {
+        app.io.sockets.emit('zone started', activeZone);
+      });
+    }
+    else
+    {
+      app.io.sockets.emit('zone started', activeZone);
+    }
   },
 
   zoneStopped: function(zoneId)
