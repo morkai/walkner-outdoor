@@ -4,9 +4,9 @@
     <span class="property-name">Czas uruchomienia:</span>
     <span class="property-value"><%- startedAt %></span>
   </div>
-  <div class="property" data-property="uptime">
+  <div class="property">
     <span class="property-name">Uptime:</span>
-    <span class="property-value" data-startTime="<%- startTime %>">-</span>
+    <span class="property-value" data-property="uptime" data-startTime="<%- startTime %>">-</span>
   </div>
   <div class="property" data-property="eth0">
     <span class="property-name">IP (eth0):</span>
@@ -20,12 +20,47 @@
 
 <h2>Uruchomione programy</h2>
 <p class="content box noProgramsMessage">Aktualnie nie ma uruchomionych żadnych programów.</p>
-<div class="programs"></div>
+<div class="programs container">
+  <table>
+    <thead>
+      <tr>
+        <th>Nazwa
+        <th>Sterownik
+        <th>Uruchomiony przez
+        <th>Czas uruchomienia
+        <th>Uptime
+        <th>Akcje
+      <tbody>
+  </table>
+</div>
 
 <h2>Strefy</h2>
 <p class="content box noZonesMessage">Aktualnie nie ma żadnych stref.</p>
-<div class="zones"></div>
+<div class="zones container">
+  <table>
+    <thead>
+      <tr>
+        <th>Nazwa
+        <th>Sterownik
+        <th>Czas uruchomienia
+        <th>Uptime
+        <th>Wykonywany program
+        <th>Akcje
+    <tbody>
+  </table>
+</div>
 
 <h2>Sterowniki</h2>
 <p class="content box noControllersMessage">Aktualnie nie ma żadnych sterowników.</p>
-<div class="controllers"></div>
+<div class="controllers container">
+  <table>
+    <thead>
+      <tr>
+        <th>Nazwa
+        <th>Czas uruchomienia
+        <th>Uptime
+        <th>Czas wykonania żądania
+        <th>Akcje
+    <tbody>
+  </table>
+</div>

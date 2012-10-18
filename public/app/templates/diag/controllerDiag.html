@@ -1,24 +1,7 @@
-<div class="content controller" data-id="<%- _id %>">
-  <div class="property">
-    <span class="property-name" data-property="name">Sterownik:</span>
-    <span class="property-value">
-      <a href="#controllers/<%- _id %>"><%- name %></a>
-    </span>
-  </div>
-  <div class="property" data-property="startedAt">
-    <span class="property-name">Czas uruchomienia:</span>
-    <span class="property-value"><%- startedAt %></span>
-  </div>
-  <div class="property" data-property="uptime">
-    <span class="property-name">Uptime:</span>
-    <span class="property-value" data-startTime="<%- startTime %>">0</span>
-  </div>
-  <div class="property" data-property="requestTime">
-    <span class="property-name">Czas wykonania żądania (ms):</span>
-    <span class="property-value">? (avg=? min=? max=?)</span>
-  </div>
-  <div class="actions">
-    <input class="green start action" type="button" value="Start">
-    <input class="red stop action" type="button" value="Stop">
-  </div>
-</div>
+<td data-property="name"><a href="#controllers/<%- _id %>"><%- name %></a>
+<td data-property="startedAt"><%- startedAt %>
+<td data-property="uptime" data-startTime="<%- startTime %>">0
+<td data-property="requestTime">? (avg=? min=? max=?)
+<td class="actions">
+  <input class="green start action" type="button" value="Start">
+  <input class="red stop action" type="button" value="Stop">

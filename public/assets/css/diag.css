@@ -14,20 +14,6 @@
   position: relative;
   margin-right: 0;
 }
-.diag .offline {
-  border: 1px solid #F00;
-}
-.diag .online {
-  border: 1px solid #0F0;
-}
-.diag .actions {
-  margin-top: .5em;
-  font-size: 1.5em;
-  text-align: center;
-}
-.diag .action {
-  display: none;
-}
 .diag .online .stop,
 .diag .offline .start {
   display: inline-block;
@@ -38,4 +24,49 @@
 }
 .diag .app .property:first-child {
   margin-left: 0;
+}
+.diag .container {
+  margin: 1em;
+}
+.diag table {
+  width: 100%;
+  background: #FFF;
+  box-shadow: 0 1px 3px #666;
+}
+.diag .actions {
+  width: 1%;
+  white-space: nowrap;
+  font-size: 1.5em;
+  text-align: center;
+  display: table-cell;
+}
+.diag .action {
+  display: none;
+  width: 4em;
+}
+.diag th {
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: .5em;
+  background-image: linear-gradient(top, white, #F1F1F1);
+  background-image: -webkit-linear-gradient(top, white, #F1F1F1);
+  background-image: -moz-linear-gradient(top, white, #F1F1F1);
+  background-image: -o-linear-gradient(top, white, #F1F1F1);
+}
+.diag td {
+  padding: .25em .5em;
+  vertical-align: middle;
+  text-align: center;
+  border-top: 1px solid #E0E0E0;
+  border-left: 1px solid #E0E0E0;
+}
+.diag td:first-child {
+  border-left: 0;
+  font-weight: bold;
+}
+.diag tr:nth-child(even) td {
+  background: #FCFCFC;
+}
+.diag tr:hover td {
+  background: #FEFEE5;
 }

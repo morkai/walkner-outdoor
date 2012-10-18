@@ -1,30 +1,8 @@
-<div class="content zone" data-id="<%- _id %>">
-  <div class="property">
-    <span class="property-name">Strefa:</span>
-    <span class="property-value">
-      <a href="#zones/<%- _id %>"><%- name %></a>
-    </span>
-  </div>
-  <div class="property">
-    <span class="property-name">Sterownik:</span>
-    <span class="property-value">
-      <a href="#controllers/<%- controller._id %>"><%- controller.name %></a>
-    </span>
-  </div>
-  <div class="property" data-property="startedAt">
-    <span class="property-name">Czas uruchomienia:</span>
-    <span class="property-value"><%- startedAt %></span>
-  </div>
-  <div class="property" data-property="uptime">
-    <span class="property-name">Uptime:</span>
-    <span class="property-value" data-startTime="<%- startTime %>">0</span>
-  </div>
-  <div class="property" data-property="program">
-    <span class="property-name">Uruchomiony program:</span>
-    <a class="property-value" href="#programs/<%- program._id %>"><%- program.name %></a>
-  </div>
-  <div class="actions">
-    <input class="green start action" type="button" value="Start">
-    <input class="red stop action" type="button" value="Stop">
-  </div>
-</div>
+<td data-property="name"><a href="#zones/<%- _id %>"><%- name %></a>
+<td data-property="controller"><a href="#controllers/<%- controller._id %>"><%- controller.name %></a>
+<td data-property="startedAt"><%- startedAt %>
+<td data-property="uptime" data-startTime="<%- startTime %>">0
+<td data-property="program">-
+<td class="actions">
+  <input class="green start action" type="button" value="Start">
+  <input class="red stop action" type="button" value="Stop">

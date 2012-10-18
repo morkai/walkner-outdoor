@@ -30,7 +30,8 @@ function(
    */
   var ZoneDiagView = Backbone.View.extend({
     template: _.template(zoneDiagTpl),
-    className: 'box',
+    tagName: 'tr',
+    className: 'zone',
     events: {
       'click .start': 'startZone',
       'click .stop': 'stopZone'
@@ -48,7 +49,7 @@ function(
 
     if (model.online)
     {
-      model.startedAt = moment(model.startTime).format('LLLL');
+      model.startedAt = moment(model.startTime).format('LLL');
     }
     else
     {
@@ -57,9 +58,9 @@ function(
       model.startedAt = '-';
     }
 
-    if (!model.program)
+    if (!_.isObject(model.program) || model.state !== 'programRunning')
     {
-      model.program = {_id: 0, name: '-'};
+      model.program = null;
     }
   };
 
@@ -72,12 +73,14 @@ function(
   {
     this.el.innerHTML = this.template(this.model);
 
-    var zoneEl = this.$('.zone');
+    var zoneEl = $(this.el);
+
+    zoneEl.removeClass('offline online');
 
     if (!this.model.online)
     {
-      this.$('.property[data-property="startedAt"]').hide();
-      this.$('.property[data-property="uptime"]').hide();
+      this.$('[data-property="startedAt"]').text('-');
+      this.$('[data-property="uptime"]').text('-');
 
       zoneEl.addClass('offline');
     }
@@ -97,20 +100,15 @@ function(
   ZoneDiagView.prototype.renderProgram = function()
   {
     var program = this.model.program;
-    var propertyEl = this.$('.property[data-property="program"]');
+    var propertyEl = this.$('[data-property="program"]');
 
-    if (program.id)
+    if (_.isObject(program))
     {
-      var valueEl = propertyEl.find('.property-value');
-
-      valueEl.attr('href', '#programs/' + program._id);
-      valueEl.text(program.name);
-
-      propertyEl.show();
+      propertyEl.html('<a href="#programs/' + program._id + '">' + program.name + '</a>');
     }
     else
     {
-      propertyEl.hide();
+      propertyEl.text('-');
     }
   };
 
@@ -123,8 +121,8 @@ function(
 
     model.online = true;
     model.startTime = Date.now();
-    model.startedAt = moment(model.startTime).format('LLLL');
-    model.program = {_id: 0, name: '-'};
+    model.startedAt = moment(model.startTime).format('LLL');
+    model.program = null;
 
     this.render();
   };
@@ -139,7 +137,7 @@ function(
     model.online = false;
     model.startTime = 0;
     model.startedAt = '-';
-    model.program = {_id: 0, name: '-'};
+    model.program = null;
 
     this.render();
   };

@@ -1,31 +1,12 @@
-<div class="content program online" data-id="<%- _id %>" data-zoneId="<%- zoneId %>">
-  <div class="property">
-    <span class="property-name">Program:</span>
-    <a class="property-value" href="#programs/<%- programId %>"><%- programName %></a>
-  </div>
-  <div class="property">
-    <span class="property-name">Strefa:</span>
-    <a class="property-value" href="#zones/<%- zoneId %>"><%- zoneName %></a>
-  </div>
-  <div class="property">
-    <span class="property-name">Uruchomiony przez:</span>
-    <span class="property-value">
-      <% if (typeof startUserId === 'string') { %>
-      <a href="#zones/<%- startUserId %>"><%- startUserName %></a>
-      <% } else { %>
-      <%- startUserName %>
-      <% } %>
-    </span>
-  </div>
-  <div class="property">
-    <span class="property-name">Czas uruchomienia:</span>
-    <span class="property-value"><%- startedAt %></span>
-  </div>
-  <div class="property" data-property="uptime">
-    <span class="property-name">Czas trwania:</span>
-    <span class="property-value" data-startTime="<%- startTime %>">0</span>
-  </div>
-  <div class="actions">
-    <input class="red stop action" type="button" value="Stop">
-  </div>
-</div>
+<td data-property="program"><a href="#programs/<%- programId %>"><%- programName %></a>
+<td data-property="zone"><a href="#zones/<%- zoneId %>"><%- zoneName %></a>
+<td data-property="startUser">
+  <% if (typeof startUserId === 'string') { %>
+  <a href="#zones/<%- startUserId %>"><%- startUserName %></a>
+  <% } else { %>
+  <%- startUserName %>
+  <% } %>
+<td data-property="startedAt"><%- startedAt %>
+<td data-property="uptime" data-startTime="<%- startTime %>">0
+<td class="actions">
+  <input class="red stop action" type="button" value="Stop">

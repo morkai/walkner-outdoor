@@ -30,7 +30,8 @@ function(
    */
   var ProgramDiagView = Backbone.View.extend({
     template: _.template(programDiagTpl),
-    className: 'box',
+    tagName: 'tr',
+    className: 'program online',
     events: {
       'click .stop': 'stopProgram'
     }
@@ -43,7 +44,7 @@ function(
     var startedAt = moment(model.startedAt);
 
     model.startTime = startedAt.valueOf();
-    model.startedAt = startedAt.format('LLLL');
+    model.startedAt = startedAt.format('LLL');
   };
 
   ProgramDiagView.prototype.destroy = function()

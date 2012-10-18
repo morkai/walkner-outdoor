@@ -30,7 +30,8 @@ function(
    */
   var ControllerDiagView = Backbone.View.extend({
     template: _.template(controllerDiagTpl),
-    className: 'box',
+    tagName: 'tr',
+    className: 'controller',
     events: {
       'click .start': 'startController',
       'click .stop': 'stopController'
@@ -43,7 +44,7 @@ function(
 
     if (model.online)
     {
-      model.startedAt = moment(model.startTime).format('LLLL');
+      model.startedAt = moment(model.startTime).format('LLL');
     }
     else
     {
@@ -62,13 +63,15 @@ function(
   {
     this.el.innerHTML = this.template(this.model);
 
-    var controllerEl = this.$('.controller');
+    var controllerEl = $(this.el);
+
+    controllerEl.removeClass('offline online');
 
     if (!this.model.online)
     {
-      this.$('.property[data-property="startedAt"]').hide();
-      this.$('.property[data-property="uptime"]').hide();
-      this.$('.property[data-property="requestTime"]').hide();
+      this.$('[data-property="startedAt"]').text('-');
+      this.$('[data-property="uptime"]').text('-');
+      this.$('[data-property="requestTime"]').text('-');
 
       controllerEl.addClass('offline');
     }
@@ -89,7 +92,7 @@ function(
 
     model.online = true;
     model.startTime = Date.now();
-    model.startedAt = moment(this.model.startTime).format('LLLL');
+    model.startedAt = moment(this.model.startTime).format('LLL');
 
     this.render();
   };
@@ -121,7 +124,7 @@ function(
     value += ' min=' + (results.min ? results.min : '1');
     value += ' max=' + (results.max ? results.max : '1') + ')';
 
-    this.$('.property[data-property="requestTime"] .property-value').text(value);
+    this.$('[data-property="requestTime"]').text(value);
   };
 
   /**

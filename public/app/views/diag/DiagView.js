@@ -5,6 +5,7 @@ define(
   'Backbone',
   'moment',
 
+  'app/time',
   'app/socket',
   'app/views/viewport',
   'app/views/PageLayout',
@@ -19,6 +20,7 @@ define(
  * @param {Underscore} _
  * @param {Backbone} Backbone
  * @param {moment} moment
+ * @param {Object} time
  * @param {io.SocketNamespace} socket
  * @param {Viewport} viewport
  * @param {function(new:PageLayout)} PageLayout
@@ -32,6 +34,7 @@ function(
   _,
   Backbone,
   moment,
+  time,
   socket,
   viewport,
   PageLayout,
@@ -166,6 +169,8 @@ function(
 
     if (programs.length === 0)
     {
+      this.$('.programs').hide();
+
       return;
     }
 
@@ -183,7 +188,7 @@ function(
     var controllerView = new ControllerDiagView({model: controller});
 
     this.$('.noControllersMessage').hide();
-    this.$('.controllers').append(controllerView.render().el);
+    this.$('.controllers tbody').append(controllerView.render().el);
 
     this.controllerViews[controller._id] = controllerView;
   };
@@ -240,7 +245,7 @@ function(
     var zoneView = new ZoneDiagView({model: zone});
 
     this.$('.noZonesMessage').hide();
-    this.$('.zones').append(zoneView.render().el);
+    this.$('.zones tbody').append(zoneView.render().el);
 
     this.zoneViews[zone._id] = zoneView;
   };
@@ -279,12 +284,14 @@ function(
       return;
     }
 
+    var zoneView = this.zoneViews[data._id];
+
     if (data.state === 'programRunning')
     {
       this.addProgram({
         _id: data.historyEntry,
         zoneId: data._id,
-        zoneName: this.zoneViews[data._id].model.name,
+        zoneName: zoneView.model.name,
         programId: data.program._id,
         programName: data.program.name,
         startUserId: data.program.startUser
@@ -293,6 +300,8 @@ function(
           ? data.program.startUser.name : null,
         startTime: data.program.startTime
       });
+
+      zoneView.programStarted(data.program);
     }
     else
     {
@@ -307,6 +316,8 @@ function(
           break;
         }
       }
+
+      zoneView.programStopped();
     }
   };
 
@@ -319,9 +330,10 @@ function(
     var programView = new ProgramDiagView({model: historyEntry});
 
     this.$('.noProgramsMessage').hide();
-    this.$('.programs').append(programView.render().el);
+    this.$('.programs tbody').append(programView.render().el);
+    this.$('.programs').show();
 
-    this.programViews[historyEntry.id] = programView;
+    this.programViews[historyEntry._id] = programView;
   };
 
   /**
@@ -344,6 +356,7 @@ function(
     if (_.size(this.programViews) === 0)
     {
       this.$('.noProgramsMessage').show();
+      this.$('.programs').hide();
     }
   };
 
@@ -352,25 +365,21 @@ function(
    */
   DiagView.prototype.updateUptime = function()
   {
-    var now = Date.now();
+    var now = Date.now() - time.offset;
 
-    this.$('.property[data-property="uptime"] .property-value').each(function()
+    this.$('[data-property="uptime"]').each(function()
     {
       var $el = $(this);
       var startTime = parseInt($el.attr('data-startTime'));
-      var seconds = (now - startTime) / 1000;
-      var uptime;
 
-      if (seconds < 60)
+      if (startTime === 0)
       {
-        uptime = Math.round(seconds) + ' s';
+        $el.text('-');
       }
       else
       {
-        uptime = Math.round(seconds / 60) + ' min';
+        $el.text(time.toString((now - startTime) / 1000));
       }
-
-      $el.text(uptime);
     });
 
     setTimeout(this.updateUptime, 1000);
