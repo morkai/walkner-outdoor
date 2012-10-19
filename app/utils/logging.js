@@ -1,3 +1,4 @@
+var format = require('util').format;
 var config = require('../../config/logging');
 
 var logLevels = process.env.NODE_ENV === 'production'
@@ -32,12 +33,16 @@ function decorateLog(level)
 
   args.shift();
 
-  var date = getDateString();
-  var string = padR(level, 5, ' ') + ' [' + date + '] ' + args.shift();
+  var message = level + '\t' + getDateString() + '\t' + format.apply(null, args).trim() + '\n';
 
-  args.unshift(string);
-
-  _console[level].apply(console, args);
+  if (level === 'error')
+  {
+    process.stderr.write(message);
+  }
+  else
+  {
+    process.stdout.write(message);
+  }
 }
 
 function getDateString()
@@ -50,7 +55,20 @@ function getDateString()
   str += ' ' + pad0(now.getUTCHours());
   str += ':' + pad0(now.getUTCMinutes());
   str += ':' + pad0(now.getUTCSeconds());
-  str += '.' + pad0(now.getUTCMilliseconds());
+  str += '.';
+
+  var ms = now.getUTCMilliseconds();
+
+  if (ms < 10)
+  {
+    str += '00';
+  }
+  else if (ms < 100)
+  {
+    str += '0';
+  }
+
+  str += ms;
 
   return str;
 }
@@ -58,16 +76,4 @@ function getDateString()
 function pad0(str)
 {
   return (str.toString().length === 1 ? '0' : '') + str;
-}
-
-function padR(str, length, chr)
-{
-  str = str.toString();
-
-  for (var i = str.length; i < length; ++i)
-  {
-    str += chr;
-  }
-
-  return str;
 }
