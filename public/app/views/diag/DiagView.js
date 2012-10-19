@@ -217,7 +217,7 @@ function(
 
     if (prepend === true)
     {
-      $backup.hide().prependTo($backups).fadeIn();
+      $backups.prepend($backup).hide().fadeIn();
     }
     else
     {
