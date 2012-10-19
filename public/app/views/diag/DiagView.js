@@ -12,6 +12,7 @@ define(
   'app/views/diag/ControllerDiagView',
   'app/views/diag/ZoneDiagView',
   'app/views/diag/ProgramDiagView',
+  'app/views/diag/BackupFileView',
 
   'text!app/templates/diag/diag.html'
 ],
@@ -27,6 +28,7 @@ define(
  * @param {function(new:ControllerDiagView)} ControllerDiagView
  * @param {function(new:ZoneDiagView)} ZoneDiagView
  * @param {function(new:ProgramDiagView)} ProgramDiagView
+ * @param {function(new:BackupFileView)} BackupFileView
  * @param {String} diagTpl
  */
 function(
@@ -41,6 +43,7 @@ function(
   ControllerDiagView,
   ZoneDiagView,
   ProgramDiagView,
+  BackupFileView,
   diagTpl)
 {
   /**
@@ -67,7 +70,13 @@ function(
       'zone state changed': 'onZoneStateChange',
       'program started': 'onProgramStart',
       'program stopped': 'onProgramStop',
-      'reconnect': 'refresh'
+      'reconnect': 'refresh',
+      'backup created': 'onBackupFileCreate',
+      'backup removed': 'onBackupFileRemove'
+    },
+    events: {
+      'click .createBackup': 'onCreateBackupClick',
+      'click .removeBackups': 'onRemoveBackupsClick'
     }
   });
 
@@ -84,6 +93,7 @@ function(
     this.controllerViews = {};
     this.zoneViews = {};
     this.programViews = {};
+    this.backupViews = {};
 
     this.uptimeTimer = null;
   };
@@ -97,13 +107,14 @@ function(
       socket.removeListener(topic, this[this.topics[topic]]);
     }
 
-    _.destruct(this, 'controllerViews', 'zoneViews', 'programViews');
+    _.destruct(this, 'controllerViews', 'zoneViews', 'programViews', 'backupViews');
 
     this.remove();
 
     this.controllerViews = null;
     this.zoneViews = null;
     this.programViews = null;
+    this.backupViews = null;
   };
 
   DiagView.prototype.render = function()
@@ -117,6 +128,7 @@ function(
       wlan0: this.model.wlan0.join(', ')
     });
 
+    this.renderBackups();
     this.renderControllers();
     this.renderZones();
     this.renderPrograms();
@@ -124,6 +136,19 @@ function(
     this.updateUptime();
 
     return this;
+  };
+
+  /**
+   * @private
+   */
+  DiagView.prototype.renderBackups = function()
+  {
+    var diagView = this;
+
+    _.each(this.model.backups, function(backupFile)
+    {
+      diagView.addBackupFile(backupFile, false);
+    });
   };
 
   /**
@@ -177,6 +202,47 @@ function(
     this.$('.noProgramsMessage').hide();
 
     _.each(programs, this.addProgram, this);
+  };
+
+  /**
+   * @private
+   * @param {Object} backupFile
+   * @param {Boolean=} prepend
+   */
+  DiagView.prototype.addBackupFile = function(backupFile, prepend)
+  {
+    var backupFileView = new BackupFileView({model: backupFile});
+    var $backups = this.$('.backups tbody');
+    var $backup = $(backupFileView.render().el);
+
+    if (prepend === true)
+    {
+      $backup.hide().prependTo($backups).fadeIn();
+    }
+    else
+    {
+      $backups.append($backup);
+    }
+
+    this.backupViews[backupFile.id] = backupFileView;
+  };
+
+  /**
+   * @private
+   * @param {String} id
+   */
+  DiagView.prototype.removeBackupFile = function(id)
+  {
+    var backupFileView = this.backupViews[id];
+
+    if (!backupFileView)
+    {
+      return;
+    }
+
+    delete this.backupViews[id];
+
+    backupFileView.destroy();
   };
 
   /**
@@ -503,7 +569,107 @@ function(
   DiagView.prototype.refresh = function()
   {
     window.location.reload();
-  }
+  };
+
+  /**
+   * @private
+   * @param {Object} backupFile
+   */
+  DiagView.prototype.onBackupFileCreate = function(backupFile)
+  {
+    this.addBackupFile(backupFile, true);
+  };
+
+  /**
+   * @private
+   * @param {String|Array.<String>} backupFileIds
+   */
+  DiagView.prototype.onBackupFileRemove = function(backupFileIds)
+  {
+    if (_.isArray(backupFileIds))
+    {
+      var diagView = this;
+
+      backupFileIds.forEach(function(backupFileId)
+      {
+        diagView.removeBackupFile(backupFileId);
+      });
+    }
+    else
+    {
+      this.removeBackupFile(backupFileIds);
+    }
+  };
+
+  /**
+   * @private
+   */
+  DiagView.prototype.onCreateBackupClick = function(e)
+  {
+    var $action = $(e.target);
+
+    $action.attr('disabled', true);
+
+    $.ajax({
+      type: 'POST',
+      url: '/diag/backups',
+      success: function()
+      {
+        viewport.msg.show({
+          type: 'success',
+          time: 2000,
+          text: 'Nowa kopia zapasowa bazy danych została stworzona :)'
+        });
+      },
+      error: function()
+      {
+        viewport.msg.show({
+          type: 'error',
+          time: 3000,
+          text: 'Nie udało się stworzyć kopii zapasowej bazy danych :('
+        });
+      },
+      complete: function()
+      {
+        $action.removeAttr('disabled');
+      }
+    });
+  };
+
+  /**
+   * @private
+   */
+  DiagView.prototype.onRemoveBackupsClick = function(e)
+  {
+    var $action = $(e.target);
+
+    $action.attr('disabled', true);
+
+    $.ajax({
+      type: 'DELETE',
+      url: '/diag/backups',
+      success: function()
+      {
+        viewport.msg.show({
+          type: 'success',
+          time: 2000,
+          text: 'Starych kopie zapasowe bazy danych zostały usunięte :)'
+        });
+      },
+      error: function()
+      {
+        viewport.msg.show({
+          type: 'error',
+          time: 3000,
+          text: 'Nie udało się usunąć starych kopii zapasowych bazy danych :('
+        });
+      },
+      complete: function()
+      {
+        $action.removeAttr('disabled');
+      }
+    });
+  };
 
   return DiagView;
 });

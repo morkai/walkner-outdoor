@@ -4,7 +4,19 @@
 }
 .diag h2 {
   font-size: 1.5em;
-  margin: 0 .75em;
+  margin: 1.25em .75em 0 .75em;
+}
+.diag h2 .actions {
+  float: right;
+  font-size: 1em;
+  margin-top: -.25em;
+}
+.diag h2 li {
+  margin-right: 0;
+  margin-left: .25em;
+}
+.diag h2 .action {
+  width: auto;
 }
 .diag .box {
   display: inline-block;
@@ -13,10 +25,7 @@
 .diag .content {
   position: relative;
   margin-right: 0;
-}
-.diag .online .stop,
-.diag .offline .start {
-  display: inline-block;
+  margin-bottom: 0;
 }
 .diag .app .property {
   display: inline-block;
@@ -33,7 +42,7 @@
   background: #FFF;
   box-shadow: 0 1px 3px #666;
 }
-.diag .actions {
+.diag table .actions {
   width: 1%;
   white-space: nowrap;
   font-size: 1.5em;
@@ -41,7 +50,7 @@
   display: table-cell;
 }
 .diag .action {
-  display: none;
+  display: inline-block;
   width: 4em;
 }
 .diag th {
@@ -69,4 +78,15 @@
 }
 .diag tr:hover td {
   background: #FEFEE5;
+}
+.diag .stop,
+.diag .start {
+  display: none;
+}
+.diag .online .stop,
+.diag .offline .start {
+  display: inline-block;
+}
+.diag .backups tbody tr:first-child .remove {
+  display: none;
 }

@@ -18,6 +18,14 @@ Download: http://www.mongodb.org/downloads
 
 Installation instructions: http://www.mongodb.org/display/DOCS/Quickstart
 
+### `PATH` executables
+
+For the database backup functionality to work, `tar` and `gzip` executables
+should be reachable by `node` process through the `PATH` environmental variable.
+
+Most *nix distributions already have them out of the box.
+For Windows installations, see [Gow](https://github.com/bmatzelle/gow/wiki).
+
 ## Installation
 
 Clone the repository:
@@ -34,6 +42,10 @@ Go to the project's directory:
 Install the dependencies:
 
     $ npm install
+
+Give write permissions to the `var/` directory and all of its children:
+
+    $ chmod -R 0777 var
 
 ## Configuration
 
@@ -109,6 +121,21 @@ Configuration of a browser that is started by the server when run in
 the production environment.
 
   * `cmd` - command that opens a browser pointed to the application.
+
+### diag.js
+
+Configuration of the diagnostic module.
+
+  * `backupSecretKey` - Value of the `key` query parameter used to bypass
+    the session authorization during download of a backup file.
+
+  * `backupInterval` - Number of seconds between the automatic database
+    backups. Timer is reset, if a new backup is created manually.
+
+  * `backupsPath` - Path to a directory where the database backups should
+    be stored.
+
+  * `mongodump` - Path to the [mongodump](http://docs.mongodb.org/manual/reference/mongodump/) executable.
 
 ### mongod.conf
 
