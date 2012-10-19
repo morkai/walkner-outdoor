@@ -201,7 +201,7 @@ app.del('/diag/backups', authDiag, function(req, res, next)
       return next(err);
     }
 
-    var weekAgo = Date.now() - (3600 * 24 * 7);
+    var weekAgo = Date.now() - (3600 * 24 * 7 * 1000);
 
     backups = backups.filter(function(backup, i)
     {
