@@ -536,7 +536,7 @@ function scheduleBackup(offset)
 
   var backupInterval = (diagConfig.backupInterval * 1000) - (offset || 0);
 
-  backupTimer = setTimeout(createBackupFile, backupInterval);
+  backupTimer = setTimeout(createAndScheduleBackupFile, backupInterval);
 
   var nextBackupDate = new Date(Date.now() + backupInterval);
 
