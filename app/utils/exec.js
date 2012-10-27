@@ -12,7 +12,7 @@ function winExec(cmd, options, callback)
 
   if (typeof options.cwd !== 'string')
   {
-    options.cwd = process.cwd;
+    options.cwd = process.cwd();
   }
 
   cmd = 'cd /D "' + options.cwd + '" & ' + cmd;
