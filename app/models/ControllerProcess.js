@@ -157,7 +157,6 @@ _.extend(ControllerProcess.prototype, {
    * @param {Program} program
    * @param {String} zoneId
    * @param {?Object} user
-   * @param {?Function} onFinish
    * @param {Function} done
    */
   startProgram: function(program, zoneId, user, done)
@@ -249,7 +248,16 @@ _.extend(ControllerProcess.prototype, {
       data: data
     };
 
-    this.childProcess.send(message);
+    try
+    {
+      this.childProcess.send(message);
+    }
+    catch (err)
+    {
+      console.error(err.stack);
+
+      return this.childProcess.kill('SIGKILL');
+    }
 
     if (res)
     {
@@ -277,10 +285,11 @@ _.extend(ControllerProcess.prototype, {
   /**
    * @private
    * @param {Number} code
+   * @param {String} signal
    */
-  onChildProcessExit: function(code)
+  onChildProcessExit: function(code, signal)
   {
-    if (!code)
+    if (!code && signal !== 'SIGKILL')
     {
       return;
     }
