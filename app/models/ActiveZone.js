@@ -156,6 +156,15 @@ ActiveZone.prototype.remoteProgramRunning = function(remoteState)
  */
 ActiveZone.prototype.programFinished = function(remote)
 {
+  if (this.state !== 'programRunning')
+  {
+    return console.error(
+      'Ignoring a change of state from [%s] to [programFinished] on active zone [%s].',
+      this.state,
+      this.zone.name
+    );
+  }
+
   this.program.stopTime = remote
     ? this.program.startTime + this.program.totalTime * 1000
     : Date.now();
@@ -182,6 +191,15 @@ ActiveZone.prototype.programFinished = function(remote)
  */
 ActiveZone.prototype.programStopped = function(user)
 {
+  if (this.state !== 'programRunning')
+  {
+    return console.error(
+      'Ignoring a change of state from [%s] to [programStopped] on active zone [%s].',
+      this.state,
+      this.zone.name
+    );
+  }
+
   this.program.stopTime = Date.now();
   this.program.stopUser = user;
 
@@ -210,6 +228,15 @@ ActiveZone.prototype.programStopped = function(user)
  */
 ActiveZone.prototype.programErrored = function(errorMessage)
 {
+  if (this.state !== 'programRunning')
+  {
+    return console.error(
+      'Ignoring a change of state from [%s] to [programErrored] on active zone [%s].',
+      this.state,
+      this.zone.name
+    );
+  }
+
   this.program.stopTime = Date.now();
   this.program.errorMessage = errorMessage;
 
