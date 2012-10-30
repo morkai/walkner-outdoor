@@ -1,5 +1,10 @@
 <td data-property="name"><a href="#zones/<%- _id %>"><%- name %></a>
-<td data-property="controller"><a href="#controllers/<%- controller._id %>"><%- controller.name %></a>
+<td data-property="controller">
+  <% if (controller) { %>
+  <a href="#controllers/<%- controller._id %>"><%- controller.name %></a>
+  <% } else { %>
+  -
+  <% } %>
 <td data-property="startedAt"><%- startedAt %>
 <td data-property="uptime" data-startTime="<%- startTime %>">0
 <td data-property="program">-
