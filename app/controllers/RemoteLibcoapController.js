@@ -308,14 +308,17 @@ RemoteLibcoapController.prototype.execCmdWithData =
   var controller = this;
   var client = spawn(config.coapClientPath, cmd);
   var stdout = '';
+  var timeoutTimer = setTimeout(function() { client.kill('SIGKILL'); }, config.coapClientTimeout);
 
   client.stdout.on('data', function(data)
   {
     stdout += data;
   });
 
-  client.on('exit', function(err)
+  client.on('exit', function(err, signal)
   {
+    clearTimeout(timeoutTimer);
+
     count += 1;
 
     if (stdout.indexOf('400') !== -1)
@@ -323,7 +326,7 @@ RemoteLibcoapController.prototype.execCmdWithData =
       err = stdout;
     }
 
-    if (err && count <= maxRetries)
+    if ((err || signal === 'SIGKILL') && count <= maxRetries)
     {
       process.nextTick(function()
       {
