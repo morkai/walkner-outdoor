@@ -8,6 +8,7 @@ var RemoteZone = require('./RemoteZone');
 var config = require('../../config/libcoap');
 var compileProgram = require('../utils/program').compileProgram;
 
+var STATE_MONITOR_INTERVAL = 400;
 var STATE_WITH_ID_LENGTH = 22;
 var STATE_WITHOUT_ID_LENGTH = 10;
 
@@ -228,7 +229,7 @@ RemoteLibcoapController.prototype.startRemoteStateMonitor = function(listener)
         return;
       }
 
-      controller.timers.remoteStateMonitor = setTimeout(monitorState, 400);
+      controller.timers.remoteStateMonitor = setTimeout(monitorState, STATE_MONITOR_INTERVAL);
 
       if (!err)
       {

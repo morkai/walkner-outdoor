@@ -25,7 +25,10 @@ exports.enter = function(oldState, options, done)
 
 exports.leave = function(newState, options, done)
 {
-  this.startInputMonitor();
+  if (newState.indexOf('stopped') === -1 && newState.indexOf('disconnected') === -1)
+  {
+    this.startInputMonitor();
+  }
 
   done();
 };

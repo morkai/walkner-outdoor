@@ -21,6 +21,7 @@ function Zone(controller, zone)
   this.timers = {};
   this.callbacks = {};
   this.inputChangeListener = null;
+  this.monitorInput = false;
   this.doesNeedReset = false;
   this.doesNeedPlugIn = false;
 }
@@ -168,8 +169,7 @@ Zone.prototype.getInput = function(input, done)
 };
 
 /**
- * @param {Object.<String, Boolean>}
- * @param {Boolean} newState
+ * @param {Object.<String, Boolean>} leds
  * @param {?Function} [done]
  */
 Zone.prototype.setLeds = function(leds, done)
@@ -345,12 +345,29 @@ Zone.prototype.startInputMonitor = function()
 {
   var zone = this;
 
+  if (zone.monitorInput)
+  {
+    return;
+  }
+
+  zone.monitorInput = true;
+
   function getInput(input, interval)
   {
     var timer = input + 'InputMonitor';
 
+    if (!zone.monitorInput)
+    {
+      return;
+    }
+
     zone.getInput(input, function()
     {
+      if (!zone.monitorInput)
+      {
+        return;
+      }
+
       zone.timers[timer] = setTimeout(
         function()
         {
@@ -371,6 +388,7 @@ Zone.prototype.startInputMonitor = function()
 Zone.prototype.stopInputMonitor = function()
 {
   this.inputChangeListener = null;
+  this.monitorInput = false;
 
   var zone = this;
 
