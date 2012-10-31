@@ -6,6 +6,7 @@ var path = require('path');
 var _ = require('underscore');
 var step = require('step');
 var auth = require('../utils/middleware').auth;
+var devscan = require('../utils/devscan');
 var controllerProcesses = require('../models/controllerProcesses');
 var diagConfig = require('../../config/diag');
 var authDiag = auth('diag');
@@ -320,6 +321,18 @@ app.del('/diag/backups/:id', authDiag, function(req, res, next)
     app.io.sockets.emit('backup removed', backupId);
 
     return res.send(204);
+  });
+});
+
+app.get('/diag/devscan', authDiag, function(req, res, next)
+{
+  devscan.scan(function(err, result)
+  {
+    return res.json({
+      success: !err,
+      error: err ? (err.message || err) : undefined,
+      result: result
+    });
   });
 });
 

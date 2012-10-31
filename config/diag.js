@@ -28,3 +28,11 @@ exports.backupsPath = normalize(__dirname + '/../var/backups');
  * @type {String}
  */
 exports.mongodump = 'mongodump';
+
+/**
+ * IP address of a COAP controller with devscan support
+ * Must exist in the database.
+ *
+ * @type {String}
+ */
+exports.coordinatorIp = '1111::215:8dff:fe0f:33b8';

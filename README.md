@@ -137,6 +137,9 @@ Configuration of the diagnostic module.
 
   * `mongodump` - Path to the [mongodump](http://docs.mongodb.org/manual/reference/mongodump/) executable.
 
+  * `coordinatorIp` - IP address of a COAP controller with devscan support
+    (must exist in the database).
+
 ### mongod.conf
 
 Configuration of the MongoDB server. Description of the individual options can

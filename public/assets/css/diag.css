@@ -90,3 +90,49 @@
 .diag .backups tbody tr:first-child .remove {
   display: none;
 }
+.diag .graphContainer {
+  box-shadow: 0 1px 3px #666;
+  background: #FFF;
+  margin-top: 1em;
+  position: relative;
+}
+.diag .graph .link {
+  stroke: #333;
+  stroke-width: 2px;
+}
+.diag .graph path {
+  fill: #333;
+  stroke-width: 2px;
+  stroke: #333;
+}
+.diag .graph .controller.available path {
+  fill: #5AAB25;
+}
+.diag .graph .controller.online path {
+  fill: #808080;
+}
+.diag .graph .zone.disconnected path {
+  fill: #808080;
+}
+.diag .graph .zone.connected path {
+  fill: #007FFF;
+}
+.diag .graph .zone.programRunning path {
+  fill: #FFFF00;
+}
+.diag .graph .zone.programFinished path {
+  fill: #5AAB25;
+}
+.diag .graph .zone.programStopped path {
+  fill: #F0A000;
+}
+.diag .graph .zone.programErrored path {
+  fill: #FF3A3A;
+}
+.diag .graphContainer .action {
+  position: absolute;
+  top: .5em;
+  right: .5em;
+  width: auto;
+  font-size: 1.4em;
+}

@@ -13,6 +13,7 @@ define(
   'app/views/diag/ZoneDiagView',
   'app/views/diag/ProgramDiagView',
   'app/views/diag/BackupFileView',
+  'app/views/diag/GraphView',
 
   'text!app/templates/diag/diag.html'
 ],
@@ -29,6 +30,7 @@ define(
  * @param {function(new:ZoneDiagView)} ZoneDiagView
  * @param {function(new:ProgramDiagView)} ProgramDiagView
  * @param {function(new:BackupFileView)} BackupFileView
+ * @param {function(new:GraphView)} GraphView
  * @param {String} diagTpl
  */
 function(
@@ -44,6 +46,7 @@ function(
   ZoneDiagView,
   ProgramDiagView,
   BackupFileView,
+  GraphView,
   diagTpl)
 {
   /**
@@ -94,6 +97,7 @@ function(
     this.zoneViews = {};
     this.programViews = {};
     this.backupViews = {};
+    this.graphView = null;
 
     this.uptimeTimer = null;
   };
@@ -107,7 +111,7 @@ function(
       socket.removeListener(topic, this[this.topics[topic]]);
     }
 
-    _.destruct(this, 'controllerViews', 'zoneViews', 'programViews', 'backupViews');
+    _.destruct(this, 'controllerViews', 'zoneViews', 'programViews', 'backupViews', 'graphView');
 
     this.remove();
 
@@ -115,6 +119,7 @@ function(
     this.zoneViews = null;
     this.programViews = null;
     this.backupViews = null;
+    this.graphView = null;
   };
 
   DiagView.prototype.render = function()
@@ -132,10 +137,22 @@ function(
     this.renderControllers();
     this.renderZones();
     this.renderPrograms();
+    this.renderGraph();
 
     this.updateUptime();
 
     return this;
+  };
+
+  /**
+   * @private
+   */
+  DiagView.prototype.renderGraph = function()
+  {
+    this.graphView = new GraphView({model: this.model});
+    this.graphView.render();
+
+    this.$('.controllers.container').append(this.graphView.el);
   };
 
   /**
@@ -352,6 +369,8 @@ function(
 
     var zoneView = this.zoneViews[data._id];
 
+    zoneView.model.state = data.state;
+
     if (data.state === 'programRunning')
     {
       this.addProgram({
@@ -512,6 +531,8 @@ function(
       return;
     }
 
+    zoneView.model.state = data.state;
+
     zoneView.started();
   };
 
@@ -527,6 +548,8 @@ function(
     {
       return;
     }
+
+    zoneView.model.state = null;
 
     zoneView.stopped();
   };
