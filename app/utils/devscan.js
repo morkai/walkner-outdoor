@@ -1,5 +1,6 @@
 var parseUrl = require('url').parse;
 var format = require('util').format;
+var _ = require('underscore');
 var exec = require('../utils/exec');
 var diagConfig = require('../../config/diag');
 var libcoapConfig = require('../../config/libcoap');
@@ -10,7 +11,8 @@ var lastDevscanPayload = null;
 
 exports.lastResult = {
   version: Date.now(),
-  links: []
+  links: [],
+  nodes: []
 };
 
 exports.scan = function(done)
@@ -57,8 +59,7 @@ exports.scan = function(done)
 
       lastDevscanPayload = currentPayload;
 
-      exports.lastResult.version = Date.now();
-      exports.lastResult.links = parseDevscanPayload(currentPayload, macToIdMap);
+      parseLastDevscanPayload(macToIdMap);
 
       app.io.sockets.emit('devscan', exports.lastResult);
 
@@ -67,15 +68,35 @@ exports.scan = function(done)
   });
 };
 
-function parseDevscanPayload(payload, macToIdMap, done)
+function parseLastDevscanPayload(macToIdMap)
 {
   var match;
   var links = [];
+  var nodes = [];
 
-  while ((match = devscanRegExp.exec(payload)) !== null)
+  function addUnknownNode(ip, mac)
   {
-    var sourceMac = extractMacFromIp(match[1]);
-    var targetMac = extractMacFromIp(match[2]);
+    var id = ip.replace(/\.|:/g, '');
+
+    macToIdMap[mac] = id;
+
+    nodes.push({
+      id: id,
+      name: mac,
+      type: 'controller',
+      devscan: true,
+      data: {}
+    });
+
+    return id;
+  }
+
+  while ((match = devscanRegExp.exec(lastDevscanPayload)) !== null)
+  {
+    var sourceIp = match[1];
+    var targetIp = match[2];
+    var sourceMac = extractMacFromIp(sourceIp);
+    var targetMac = extractMacFromIp(targetIp);
 
     if (targetMac === sourceMac)
     {
@@ -85,18 +106,26 @@ function parseDevscanPayload(payload, macToIdMap, done)
     var sourceId = macToIdMap[sourceMac];
     var targetId = macToIdMap[targetMac];
 
-    if (!sourceId || !targetId)
+    if (_.isUndefined(sourceId))
     {
-      continue;
+      sourceId = addUnknownNode(sourceIp, sourceMac);
+    }
+
+    if (_.isUndefined(targetId))
+    {
+      targetId = addUnknownNode(targetIp, targetMac);
     }
 
     links.push({
       source: sourceId,
-      target: targetId
+      target: targetId,
+      devscan: true
     });
   }
 
-  return links;
+  exports.lastResult.version = Date.now();
+  exports.lastResult.links = links;
+  exports.lastResult.nodes = nodes;
 }
 
 function extractMacFromIp(ip)

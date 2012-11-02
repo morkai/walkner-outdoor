@@ -183,13 +183,15 @@ function(
       return;
     }
 
+    graphView.removeDevscanNodesAndLinks();
+
     graphView.devscanVersion = result.version;
+    graphView.nodes = graphView.nodes.concat(result.nodes);
 
     var devscanLinks = result.links.map(function(link)
     {
       link.source = graphView.getNodeIndexById(link.source);
       link.target = graphView.getNodeIndexById(link.target);
-      link.type = 'devscan';
 
       return link;
     }).filter(function(link)
@@ -197,13 +199,23 @@ function(
       return link.source !== -1 && link.target !== -1;
     });
 
-    graphView.links = graphView.links.filter(function(link)
-    {
-      return link.type !== 'devscan';
-    });
     graphView.links = graphView.links.concat(devscanLinks);
 
-    graphView.restartLinks(true);
+    graphView.restart();
+  };
+
+  /**
+   * @private
+   */
+  GraphView.prototype.removeDevscanNodesAndLinks = function()
+  {
+    function notFromDevscan(nodeOrLink)
+    {
+      return nodeOrLink.devscan !== true;
+    }
+
+    this.nodes = this.nodes.filter(notFromDevscan);
+    this.links = this.links.filter(notFromDevscan);
   };
 
   /**
