@@ -136,3 +136,54 @@
   width: auto;
   font-size: 1.4em;
 }
+.diagGraphLegend {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 100;
+  opacity: .2;
+  padding: .5em;
+}
+.diagGraphLegend:hover {
+  opacity: 1;
+  background: #FFF;
+}
+.diagGraphLegend > li {
+  line-height: 1.2;
+  vertical-align: top;
+}
+.diagGraphLegendController,
+.diagGraphLegendZone {
+  display: inline-block;
+  border: 2px solid #333;
+  background: #FFF;
+  width: 1em;
+  height: 1em;
+}
+.diagGraphLegendController {
+  border-radius: 1em;
+}
+.diagGraphLegendController.offline,
+.diagGraphLegendZone.offline {
+  background: #333;
+}
+.diagGraphLegendController.online,
+.diagGraphLegendZone.disconnected {
+  background: #808080;
+}
+.diagGraphLegendController.available,
+.diagGraphLegendZone.programFinished {
+  background: #5AAB25;
+}
+.diagGraphLegendZone.connected {
+  background: #007FFF;
+}
+.diagGraphLegendZone.programRunning {
+  background: #FFFF00;
+}
+.diagGraphLegendZone.programStopped {
+  background: #F0A000;
+}
+.diagGraphLegendZone.programErrored {
+  background: #FF3A3A;
+}
