@@ -152,7 +152,7 @@ function(
     this.graphView = new GraphView({model: this.model});
     this.graphView.render();
 
-    $(this.el).append(this.graphView.el);
+    this.$('.systemGraph').append(this.graphView.el);
   };
 
   /**
