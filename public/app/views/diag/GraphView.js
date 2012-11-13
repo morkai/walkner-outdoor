@@ -123,6 +123,8 @@ function(
         h = window.innerHeight;
       }
 
+      h -= 2 * parseFloat($(graphView.el).css('margin-top'));
+
       graphView.setUpVis($graph[0], w, h);
       graphView.setUpForce([w, h]);
 
