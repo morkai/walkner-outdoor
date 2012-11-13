@@ -152,7 +152,7 @@ function(
     this.graphView = new GraphView({model: this.model});
     this.graphView.render();
 
-    this.$('.controllers.container').append(this.graphView.el);
+    $(this.el).append(this.graphView.el);
   };
 
   /**
@@ -177,6 +177,8 @@ function(
 
     if (controllers.length === 0)
     {
+      this.$('.controllers').hide();
+
       return;
     }
 
@@ -194,6 +196,8 @@ function(
 
     if (zones.length === 0)
     {
+      this.$('.zones').hide();
+
       return;
     }
 
@@ -272,6 +276,7 @@ function(
 
     this.$('.noControllersMessage').hide();
     this.$('.controllers tbody').append(controllerView.render().el);
+    this.$('.controllers').show();
 
     this.controllerViews[controller._id] = controllerView;
   };
@@ -329,6 +334,7 @@ function(
 
     this.$('.noZonesMessage').hide();
     this.$('.zones tbody').append(zoneView.render().el);
+    this.$('.zones').show();
 
     this.zoneViews[zone._id] = zoneView;
   };
