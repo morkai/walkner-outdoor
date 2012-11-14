@@ -328,11 +328,12 @@ app.get('/diag/devscan', authDiag, function(req, res, next)
 {
   devscan.scan(function(err, result)
   {
-    return res.json({
-      success: !err,
-      error: err ? (err.message || err) : undefined,
-      result: result
-    });
+    if (err)
+    {
+      return next(err);
+    }
+
+    return res.json(result);
   });
 });
 

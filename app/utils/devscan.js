@@ -7,7 +7,14 @@ var libcoapConfig = require('../../config/libcoap');
 
 var devscanRegExp = new RegExp('\\[([0-9a-f:]+)\\]via\\[([0-9a-f:]+)\\]', 'g');
 var macFromIpRegExp = /^[0-9a-f]{4}:[0-9a-f]{4}:[0-9a-f]{4}:[0-9a-f]{4}:([0-9a-f]{2})([0-9a-f]{2}):([0-9a-f]{2})[0-9a-f]{2}:[0-9a-f]{2}([0-9a-f]{2}):([0-9a-f]{2})([0-9a-f]{2})$/;
-var lastDevscanPayload = null;
+
+var scansInProgress = -1;
+var scanQueue;
+var macToIdMap;
+var macToIpMap;
+var devscanResults;
+var nodes;
+var links;
 
 exports.lastResult = {
   version: Date.now(),
@@ -22,112 +29,213 @@ exports.scan = function(done)
 {
   if (!coordinatorIp)
   {
-    return done("Device scanning is disabled.");
+    return done(new Error("Device scanning is disabled."));
   }
 
-  var cmd = format('%s -o - "coap://[%s]/devscan"', libcoapConfig.coapClientPath, coordinatorIp);
-  var options = {
-    timeout: libcoapConfig.coapClientTimeout
-  };
+  done(null, exports.lastResult);
+
+  if (scansInProgress !== -1)
+  {
+    return;
+  }
+
+  scansInProgress = 0;
+  scanQueue = [];
+  macToIdMap = {};
+  macToIpMap = {};
+  devscanResults = {};
 
   app.db.model('Controller').find({type: 'remote-libcoap'}, {connectionInfo: 1}, function(err, controllers)
   {
     if (err)
     {
-      return done(err);
-    }
+      console.error('[devscan] Failed to retrieve the remote-libcoap controllers: %s', err.message);
 
-    var macToIdMap = {};
+      scansInProgress = -1;
+
+      return;
+    }
 
     controllers.forEach(function(controller)
     {
       macToIdMap[extractMacFromUri(controller.connectionInfo.uri)] = controller.id;
     });
 
-    exec(cmd, options, function(err, stdout)
-    {
-      if (err)
-      {
-        return done(err);
-      }
+    scanQueue.push(coordinatorIp);
 
-      var currentPayload = stdout.toString();
-
-      if (currentPayload === lastDevscanPayload)
-      {
-        return done(null, exports.lastResult);
-      }
-
-      lastDevscanPayload = currentPayload;
-
-      parseLastDevscanPayload(macToIdMap);
-
-      app.io.sockets.emit('devscan', exports.lastResult);
-
-      return done(null, exports.lastResult);
-    });
+    execNextDevscan();
   });
 };
 
-function parseLastDevscanPayload(macToIdMap)
+function execNextDevscan()
 {
-  var match;
-  var links = [];
-  var nodes = [];
-
-  function addUnknownNode(ip, mac)
+  if (scanQueue.length === 0 && scansInProgress === 0)
   {
-    var id = ip.replace(/\.|:/g, '');
-
-    macToIdMap[mac] = id;
-
-    nodes.push({
-      id: id,
-      name: mac,
-      type: 'controller',
-      devscan: true,
-      data: {}
-    });
-
-    return id;
+    return process.nextTick(analyzeDevscanResults);
   }
 
-  while ((match = devscanRegExp.exec(lastDevscanPayload)) !== null)
+  var ip = expandIpv6(scanQueue.shift());
+
+  if (ip in devscanResults)
   {
-    var sourceIp = expandIpv6(match[1]);
-    var targetIp = expandIpv6(match[2]);
-    var sourceMac = extractMacFromIpv6(sourceIp);
-    var targetMac = extractMacFromIpv6(targetIp);
+    return process.nextTick(execNextDevscan);
+  }
 
-    if (targetMac === sourceMac)
+  devscanResults[ip] = null;
+
+  var cmd = format('%s -o - "coap://[%s]/devscan"', libcoapConfig.coapClientPath, ip);
+  var options = {timeout: libcoapConfig.coapClientTimeout};
+
+  ++scansInProgress;
+
+  return exec(cmd, options, function(err, stdout)
+  {
+    --scansInProgress;
+
+    if (err)
     {
-      targetIp = coordinatorIp;
-      targetMac = coordinatorMac;
+      console.error('[devscan] Failed to scan the <%s> controller: %s', ip, err.message);
+    }
+    else
+    {
+      devscanResults[ip] = parseDevscanPayload(stdout.toString());
     }
 
-    var sourceId = macToIdMap[sourceMac];
-    var targetId = macToIdMap[targetMac];
+    process.nextTick(execNextDevscan);
+  });
+}
 
-    if (_.isUndefined(sourceId))
+/**
+ * @param {String} ip
+ * @param {String} mac
+ * @return {String}
+ */
+function getNodeId(ip, mac)
+{
+  if (mac in macToIdMap)
+  {
+    return macToIdMap[mac];
+  }
+
+  var id = ip.replace(/:/g, '');
+
+  macToIdMap[mac] = id;
+
+  nodes.push({
+    id: id,
+    name: mac,
+    type: 'controller',
+    devscan: true,
+    data: {}
+  });
+
+  return id;
+}
+
+function analyzeDevscanResults()
+{
+  nodes = [];
+  links = [];
+
+  var coordinatorId = getNodeId(coordinatorIp, coordinatorMac);
+  var coordinatorDevscan = devscanResults[coordinatorIp];
+
+  for (var dstMac in coordinatorDevscan)
+  {
+    var dstIp = macToIpMap[dstMac];
+    var dstId = getNodeId(dstIp, dstMac);
+    var hopMac = coordinatorDevscan[dstMac];
+    var hopId;
+
+    if (hopMac === null)
     {
-      sourceId = addUnknownNode(sourceIp, sourceMac);
+      hopId = coordinatorId;
     }
-
-    if (_.isUndefined(targetId))
+    else
     {
-      targetId = addUnknownNode(targetIp, targetMac);
+      hopId = findLastHopId(dstMac, hopMac);
     }
 
     links.push({
-      source: sourceId,
-      target: targetId,
+      source: dstId,
+      target: hopId,
       devscan: true
     });
   }
 
   exports.lastResult.version = Date.now();
-  exports.lastResult.links = links;
   exports.lastResult.nodes = nodes;
+  exports.lastResult.links = links;
+
+  app.io.sockets.emit('devscan', exports.lastResult);
+
+  scansInProgress = -1;
+  scanQueue = null;
+  macToIdMap = null;
+  macToIpMap = null;
+  devscanResults = null;
+  nodes = null;
+  links = null;
+}
+
+function findLastHopId(dstMac, hopMac)
+{
+  var hopIp = macToIpMap[hopMac];
+  var hopId = getNodeId(hopIp, hopMac);
+  var hopDevscan = devscanResults[hopIp];
+
+  if (typeof hopDevscan === 'undefined')
+  {
+    return hopId;
+  }
+
+  var nextHopMac = hopDevscan[dstMac];
+
+  if (typeof nextHopMac === 'undefined' || nextHopMac === null)
+  {
+    return hopId;
+  }
+
+  return findLastHopId(dstMac, nextHopMac);
+}
+
+/**
+ * @param {String} payload
+ * @return {Object.<String, ?String>}
+ */
+function parseDevscanPayload(payload)
+{
+  var devscanResult = {};
+
+  if (payload.length === 0)
+  {
+    return devscanResult;
+  }
+
+  var match;
+
+  while ((match = devscanRegExp.exec(payload)) !== null)
+  {
+    var dstIp = expandIpv6(match[1]);
+    var hopIp = expandIpv6(match[2]);
+    var dstMac = extractMacFromIpv6(dstIp);
+    var hopMac = extractMacFromIpv6(hopIp);
+
+    macToIpMap[dstMac] = dstIp;
+
+    if (dstMac === hopMac)
+    {
+      devscanResult[dstMac] = null;
+    }
+    else
+    {
+      devscanResult[dstMac] = hopMac;
+    }
+
+    scanQueue.push(dstIp);
+  }
+
+  return devscanResult;
 }
 
 function extractMacFromUri(uri)

@@ -153,14 +153,13 @@ function(
 
     this.devscanXhr = $.ajax({
       url: '/diag/devscan',
-      success: function(res)
+      success: function(result)
       {
-        if (!res.success)
-        {
-          return;
-        }
-
-        graphView.onDevscan(res.result);
+        graphView.onDevscan(result);
+      },
+      error: function(arguments)
+      {
+        console.log(arguments);
       },
       complete: function()
       {
