@@ -20,6 +20,11 @@ var emulProcessFile = 'ipv6_obs.elf';
 /**
  * @type {Number}
  */
+var cpuLimit = -1;
+
+/**
+ * @type {Number}
+ */
 var coordinatorId = 1;
 
 /**
@@ -192,9 +197,15 @@ function Node(id, sees)
 
   /**
    * @private
-   * @type {ChildProcess}
+   * @type {?ChildProcess}
    */
   this.process = null;
+
+  /**
+   * @private
+   * @type {?ChildProcess}
+   */
+  this.cpuLimitProcess = null;
 
   /**
    * @type {?Number}
@@ -264,6 +275,11 @@ Node.prototype.startProcess = function(done)
     node.process = null;
   });
 
+  if (cpuLimit !== -1)
+  {
+    this.startCpuLimiter();
+  }
+
   return done && done();
 };
 
@@ -298,6 +314,25 @@ Node.prototype.restartProcess = function(done)
   this.stopProcess(function()
   {
     node.startProcess(done);
+  });
+};
+
+/**
+ * @private
+ */
+Node.prototype.startCpuLimiter = function()
+{
+  var node = this;
+  var args = [
+    '-z',
+    '-p', this.process.pid.toString(),
+    '-l', cpuLimit.toString()
+  ];
+
+  this.cpuLimitProcess = childProcess.spawn('cpulimit', args);
+  this.cpuLimitProcess.on('exit', function()
+  {
+    node.cpuLimitProcess = null;
   });
 };
 
@@ -353,6 +388,13 @@ for (var i = 0, l = process.argv.length; i < l; ++i)
 
     case '-f':
       emulDataFile = value;
+      break;
+
+    case '-l':
+      if (value > 0 && value < 100)
+      {
+        cpuLimit = parseInt(value);
+      }
       break;
   }
 }
