@@ -95,6 +95,7 @@
   background: #FFF;
   margin-top: 1em;
   position: relative;
+  min-height: 250px;
 }
 .diag .graph .link {
   stroke: #333;
