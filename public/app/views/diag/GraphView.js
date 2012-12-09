@@ -93,6 +93,7 @@ function(
     if (this.devscanXhr !== null)
     {
       this.devscanXhr.abort();
+      this.devscanXhr = null;
     }
 
     clearTimeout(this.devscanTimer);
@@ -102,7 +103,7 @@ function(
     {
       socket.removeListener(topic, this[this.topics[topic]]);
     }
-    
+
     this.remove();
   };
 
@@ -110,31 +111,36 @@ function(
   {
     this.el.innerHTML = this.template();
 
-    var graphView = this;
+    var renderGraph = this.renderGraph.bind(this);
 
     require(['/vendor/d3-min.js'], function()
     {
-      var $graph = graphView.$('.graph').first();
-      var w = $graph.width();
-      var h = $graph.height();
-
-      if (window.innerHeight > h)
-      {
-        h = window.innerHeight;
-      }
-
-      h -= 2 * parseFloat($(graphView.el).css('margin-top'));
-
-      graphView.setUpVis($graph[0], w, h);
-      graphView.setUpForce([w, h]);
-
-      graphView.model.controllers.forEach(graphView.addController);
-      graphView.model.zones.forEach(graphView.addZone);
-
-      graphView.devscan();
+      _.defer(renderGraph);
     });
 
     return this;
+  };
+
+  GraphView.prototype.renderGraph = function()
+  {
+    var $graph = this.$('.graph').first();
+    var w = $graph.width();
+    var h = $graph.height();
+
+    if (window.innerHeight > h)
+    {
+      h = window.innerHeight;
+    }
+
+    h -= 2 * parseFloat($(this.el).css('margin-top'));
+
+    this.setUpVis($graph[0], w, h);
+    this.setUpForce([w, h]);
+
+    this.model.controllers.forEach(this.addController);
+    this.model.zones.forEach(this.addZone);
+
+    this.devscan();
   };
 
   GraphView.prototype.devscan = function()
@@ -159,7 +165,7 @@ function(
       },
       error: function(arguments)
       {
-        console.log(arguments);
+
       },
       complete: function()
       {
