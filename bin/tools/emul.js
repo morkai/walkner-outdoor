@@ -253,7 +253,8 @@ Node.prototype.startProcess = function(done)
     return done();
   }
 
-  var args = this.id === coordinatorId ? [].concat(coordinatorArgs) : [];
+  var isCoordinator = this.id === coordinatorId;
+  var args = isCoordinator ? [].concat(coordinatorArgs) : [];
 
   args.push('-c', this.id, '-m', this.mask);
 
@@ -265,7 +266,7 @@ Node.prototype.startProcess = function(done)
   {
     code = Number(code);
 
-    if (code !== 0)
+    if (code !== 0 || signal !== 'SIGINT')
     {
       console.log('[%s] process killed. Code=%d Signal=%s', node.id, code, signal);
 
@@ -301,7 +302,7 @@ Node.prototype.stopProcess = function(done)
     this.process.on('exit', done);
   }
 
-  this.process.kill();
+  this.process.kill('SIGINT');
 };
 
 /**
