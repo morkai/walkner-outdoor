@@ -156,6 +156,11 @@ function analyzeDevscanResults()
       hopId = findLastHopId(dstMac, hopMac);
     }
 
+    if (hopId === null)
+    {
+      continue;
+    }
+
     links.push({
       source: dstId,
       target: hopId,
@@ -181,10 +186,18 @@ function analyzeDevscanResults()
 function findLastHopId(dstMac, hopMac)
 {
   var hopIp = macToIpMap[hopMac];
+
+  if (typeof hopIp === 'undefined')
+  {
+    console.error('hopIp undefined for dstMac=%s hopMac=%s', dstMac, hopMac);
+
+    return null;
+  }
+
   var hopId = getNodeId(hopIp, hopMac);
   var hopDevscan = devscanResults[hopIp];
 
-  if (typeof hopDevscan === 'undefined')
+  if (typeof hopDevscan === 'undefined' || hopDevscan === null)
   {
     return hopId;
   }
