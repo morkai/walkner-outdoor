@@ -1,7 +1,5 @@
 var util = require('util');
 var spawn = require('child_process').spawn;
-var _ = require('underscore');
-var step = require('step');
 var Controller = require('./Controller');
 var LibcoapController = require('./LibcoapController');
 var RemoteZone = require('./RemoteZone');
