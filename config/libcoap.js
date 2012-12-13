@@ -21,7 +21,7 @@ exports.coapClientTimeout = 8000;
 /**
  * Path to `coap-client` executable.
  */
-exports.coapClientPath = normalize(__dirname + '/../bin/coap-client');
+exports.coapClientPath = normalize(__dirname + '/../bin/coap-client-03');
 
 /**
  * Path to directory with `one.bin` and `zero.bin` files.
