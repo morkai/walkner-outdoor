@@ -1,9 +1,13 @@
+var net = require('net');
 var parseUrl = require('url').parse;
 var format = require('util').format;
 var _ = require('underscore');
 var exec = require('../utils/exec');
 var diagConfig = require('../../config/diag');
-var libcoapConfig = require('../../config/libcoap');
+
+var libcoapConfig = null;
+var cfProxyConfig = null;
+var cfProxy;
 
 var devscanRegExp = new RegExp('\\[([0-9a-f:]+)\\]via\\[([0-9a-f:]+)\\]', 'g');
 var macFromIpRegExp = /^[0-9a-f]{4}:[0-9a-f]{4}:[0-9a-f]{4}:[0-9a-f]{4}:([0-9a-f]{2})([0-9a-f]{2}):([0-9a-f]{2})[0-9a-f]{2}:[0-9a-f]{2}([0-9a-f]{2}):([0-9a-f]{2})([0-9a-f]{2})$/;
@@ -45,11 +49,15 @@ exports.scan = function(done)
   macToIpMap = {};
   devscanResults = {};
 
-  app.db.model('Controller').find({type: 'remote-libcoap'}, {connectionInfo: 1}, function(err, controllers)
+  app.db.model('Controller').find({type: diagConfig.coordinatorType}, {connectionInfo: 1}, function(err, controllers)
   {
     if (err)
     {
-      console.error('[devscan] Failed to retrieve the remote-libcoap controllers: %s', err.message);
+      console.error(
+        '[devscan] Failed to retrieve the %s controllers: %s',
+        diagConfig.coordinatorType,
+        err.message
+      );
 
       scansInProgress = -1;
 
@@ -58,7 +66,22 @@ exports.scan = function(done)
 
     controllers.forEach(function(controller)
     {
-      macToIdMap[extractMacFromUri(controller.connectionInfo.uri)] = controller.id;
+      var mac;
+
+      if (_.isString(controller.connectionInfo.ip))
+      {
+        mac = extractMacFromIpv6(controller.connectionInfo.ip);
+      }
+      else if (_.isString(controller.connectionInfo.uri))
+      {
+        mac = extractMacFromUri(controller.connectionInfo.uri);
+      }
+      else
+      {
+        return;
+      }
+
+      macToIdMap[mac] = controller.id;
     });
 
     scanQueue.push(coordinatorIp);
@@ -83,23 +106,86 @@ function execNextDevscan()
 
   devscanResults[ip] = null;
 
+  switch (diagConfig.coordinatorType)
+  {
+    case 'cf-proxy-08':
+      execCfProxy80DevScan(ip);
+      break;
+
+    case 'libcoap':
+    case 'remote-libcoap':
+      execLibcoapDevscan(ip);
+      break;
+  }
+}
+
+/**
+ * @param {String} ip
+ */
+function execLibcoapDevscan(ip)
+{
+  if (libcoapConfig === null)
+  {
+    libcoapConfig = require('../../config/libcoap');
+  }
+
   var cmd = format('%s -o - "coap://[%s]/devscan"', libcoapConfig.coapClientPath, ip);
   var options = {timeout: libcoapConfig.coapClientTimeout};
 
   ++scansInProgress;
 
-  return exec(cmd, options, function(err, stdout)
+  exec(cmd, options, function(err, stdout)
   {
     --scansInProgress;
 
     if (err)
     {
-      console.error('[devscan] Failed to scan the <%s> controller: %s', ip, err.message);
+      console.error("[devscan] Failed to scan the [%s] controller: %s", ip, err.message);
     }
     else
     {
       devscanResults[ip] = parseDevscanPayload(stdout.toString());
     }
+
+    process.nextTick(execNextDevscan);
+  });
+}
+
+/**
+ * @param {String} ip
+ */
+function execCfProxy80DevScan(ip)
+{
+  if (cfProxyConfig === null)
+  {
+    cfProxyConfig = require('../../config/cf-proxy');
+    cfProxy = new (require('californium-proxy').Proxy)({
+      host: cfProxyConfig.host,
+      port: cfProxyConfig.port,
+      reconnect: true,
+      maxReconnectDelay: 5000
+    });
+  }
+
+  var req = cfProxy.request({
+    type: 'non',
+    code: 'get',
+    options: {
+      proxyUri: 'coap://[' + ip + ']',
+      uriPath: '/devscan'
+    }
+  });
+
+  req.on('error', function(err)
+  {
+    console.error("[devscan] Failed to scan the [%s] controller: %s", ip, err.message);
+
+    process.nextTick(execNextDevscan);
+  });
+
+  req.on('response', function(res)
+  {
+    devscanResults[ip] = parseDevscanPayload(res.getPayload().toString());
 
     process.nextTick(execNextDevscan);
   });

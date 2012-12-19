@@ -35,4 +35,11 @@ exports.mongodump = 'mongodump';
  *
  * @type {String}
  */
-exports.coordinatorIp = '1111::215:8dff:fe0f:33b8';
+exports.coordinatorIp = '2222::3';
+
+/**
+ * Type of the coordinator controller used for devscan.
+ *
+ * @type {String}
+ */
+exports.coordinatorType = 'remote-libcoap';

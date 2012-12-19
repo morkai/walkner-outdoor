@@ -42,12 +42,8 @@ function(_, Backbone, controllerTypes)
         break;
 
       case 'libcoap':
-        data.connectionInfo = _.defaults(data.connectionInfo || {}, {
-          uri: 'coap://127.0.0.1'
-        });
-        break;
-
       case 'remote-libcoap':
+      case 'cf-proxy-08':
         data.connectionInfo = _.defaults(data.connectionInfo || {}, {
           uri: 'coap://127.0.0.1'
         });

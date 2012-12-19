@@ -24,6 +24,10 @@ switch (controllerType)
     Controller = require('./RemoteLibcoapController');
     break;
 
+  case 'cf-proxy-08':
+    Controller = require('./CfProxy08Controller');
+    break;
+
   default:
     console.error('Unknown controller type: %s', controllerType);
     process.exit(1);

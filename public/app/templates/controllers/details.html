@@ -33,4 +33,10 @@
     <span class="property-value"><code><%- controller.connectionInfo.uri %></code></span>
   </div>
   <% } %>
+  <% if (controller.type === 'cf-proxy-08') { %>
+  <div class="property">
+    <span class="property-name">IP:</span>
+    <span class="property-value"><code><%- controller.connectionInfo.ip %></code></span>
+  </div>
+  <% } %>
 </div>
