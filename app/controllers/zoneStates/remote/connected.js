@@ -201,11 +201,11 @@ function handleProgramFinishedState(zone)
 {
   zone.stopRemoteStateMonitor();
 
-  zone.setRemoteState(RemoteZone.STATE_CONNECTED, function(err)
+  zone.setRemoteState(RemoteZone.STATE_CONNECTED, zone.makeCancellable(function(err)
   {
     if (err)
     {
-      throw err;
+      throw new Error("Failed to change the remote state from PROGRAM_FINISHED to CONNECTED after reconnect: " + err.message);
     }
 
     zone.program = zone.interruptedProgram;
@@ -214,7 +214,7 @@ function handleProgramFinishedState(zone)
     zone.finishProgram(null, true);
 
     handleConnectedState(zone);
-  });
+  }));
 }
 
 /**
@@ -224,11 +224,11 @@ function handleProgramStoppedState(zone)
 {
   zone.stopRemoteStateMonitor();
 
-  zone.setRemoteState(RemoteZone.STATE_CONNECTED, function(err)
+  zone.setRemoteState(RemoteZone.STATE_CONNECTED, zone.makeCancellable(function(err)
   {
     if (err)
     {
-      throw err;
+      throw new Error("Failed to change the remote state from PROGRAM_STOPPED to CONNECTED after reconnect: " + err.message);
     }
 
     zone.program = zone.interruptedProgram;
@@ -237,7 +237,7 @@ function handleProgramStoppedState(zone)
     zone.remoteProgramStopped();
 
     handleConnectedState(zone);
-  });
+  }));
 }
 
 /**
