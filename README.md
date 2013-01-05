@@ -84,6 +84,18 @@ Configuration of a controller based on [libcoap](http://sourceforge.net/projects
   * `stateFilesDir` - an absolute path to a directory with `one.bin`
     and `zero.bin` files.
 
+### cf-proxy.js
+
+Configuration of a controller based on [californium-proxy-node](https://github.com/morkai/californium-proxy-node).
+
+  * `host` - an address of the proxy server.
+
+  * `port` - a port of the proxy server.
+
+  * `disconnectTimeout` - a number of milliseconds, after which a connection
+    with the controller is considered as lost. Countdown starts after every
+    failed request until it reaches 0 or any other request succeeds.
+
 ### logging.js
 
 Logs configuration. Logs of the following levels will be redirected to `stdout`:
