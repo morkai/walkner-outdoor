@@ -329,7 +329,7 @@ LibcoapController.prototype.startConnectionMonitor = function()
 };
 
 /**
- * @private
+ * @protected
  */
 LibcoapController.prototype.startDisconnectTimer = function()
 {
