@@ -6,8 +6,8 @@ var normalize = require('path').normalize;
 exports.maxRetries = 1;
 
 /**
- * Assume the connection if after the specified number of milliseconds no
- * successful request was made.
+ * Assume the connection is lost if after the specified number of milliseconds
+ * no successful request was made.
  * Timer starts after each failed request.
  */
 exports.disconnectTimeout = 4000;
