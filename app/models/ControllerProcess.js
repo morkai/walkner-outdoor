@@ -256,6 +256,11 @@ _.extend(ControllerProcess.prototype, {
     {
       console.error(err.stack);
 
+      if (res)
+      {
+        res(err);
+      }
+
       return this.childProcess.kill('SIGKILL');
     }
 
