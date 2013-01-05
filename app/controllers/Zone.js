@@ -627,7 +627,6 @@ Zone.prototype.onInputChange = function(input, newValue, oldValue)
 };
 
 /**
- * @private
  * @param {Boolean} [multi]
  * @param {Function} callback
  * @return {Function}
