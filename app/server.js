@@ -105,9 +105,12 @@ step(
     {
       var config = require('../config/browser.js');
 
-      console.debug('Starting the Internet browser.');
+      if (typeof config.cmd === 'string' && config.cmd.length !== 0)
+      {
+        console.debug('Starting the Internet browser.');
 
-      require('child_process').exec(config.cmd);
+        require('child_process').exec(config.cmd);
+      }
     }
 
     return true;
