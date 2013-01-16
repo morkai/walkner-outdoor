@@ -67,6 +67,9 @@ strong {
 .menu .refresh-link a {
   cursor: pointer;
 }
+.touchEnabled .menu .gateway-link {
+  width: 4em;
+}
 .list {
   background: #FFF;
   box-shadow: 0 1px 3px #666;

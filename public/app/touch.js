@@ -1,9 +1,6 @@
-define(['require', 'jQuery'], function(require, $)
+define(['require', 'jQuery', 'app/user'], function(require, $, user)
 {
-  var enableTouch = window.location.hostname === 'localhost' ||
-                    window.location.hostname === '127.0.0.1';
-
-  if (enableTouch === false)
+  if (user.touchEnabled === false)
   {
     return {enabled: false};
   }

@@ -1,6 +1,22 @@
 define(function()
 {
-  var user = window && window.USER ? window.USER : {};
+  var user = window && typeof window.USER === 'object' && window.USER
+    ? window.USER : {};
+
+  if (typeof user.ipAddress !== 'string')
+  {
+    user.ipAddress = '127.0.0.1';
+  }
+
+  if (typeof user.touchEnabled !== 'boolean')
+  {
+    user.touchEnabled = true;
+  }
+
+  if (typeof user.gatewayUrl !== 'string')
+  {
+    user.gatewayUrl = null;
+  }
 
   /**
    * @return {Boolean}

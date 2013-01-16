@@ -100,6 +100,21 @@ function(require, $, _, Backbone, user, touch, menuTpl)
     this.showLinkIfAllowedTo('controllers', 'viewControllers');
     this.showLinkIfAllowedTo('users', 'viewUsers');
     this.showLinkIfAllowedTo('diag', 'diag');
+
+    this.showGatewayLink();
+  };
+
+  /**
+   * @private
+   */
+  MenuView.prototype.showGatewayLink = function()
+  {
+    if (user.gatewayUrl === null)
+    {
+      return;
+    }
+
+    this.showLink('gateway').find('a').attr('href', user.gatewayUrl);
   };
 
   /**
@@ -118,11 +133,11 @@ function(require, $, _, Backbone, user, touch, menuTpl)
   /**
    * @private
    * @param {String} link
-   * @param {String} privilege
+   * @return {jQuery}
    */
   MenuView.prototype.showLink = function(link)
   {
-    this.$('.' + link + '-link').css('display', 'inline-block');
+    return this.$('.' + link + '-link').css('display', 'inline-block');
   };
 
   /**

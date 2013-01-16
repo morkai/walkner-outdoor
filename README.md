@@ -152,6 +152,20 @@ Configuration of the diagnostic module.
   * `coordinatorIp` - IP address of a COAP controller with devscan support
     (must exist in the database).
 
+### ui.js
+
+Configuration related to the UI.
+
+  * `gatewayUrl` - a function that generates a link to the Walkner Gateway
+    based on a hostname of the user. Return `null` to hide the link.
+
+  * `touchEnabled` - A list of touch enablers, i.e. objects specifying values
+    that when matched against client's values will result in that client
+    having UI with touch features enabled. Supported types are:
+
+      * `hostname` - a value of the `Host` header without a port,
+      * `ip` - remote IP address of the client.
+
 ### mongod.conf
 
 Configuration of the MongoDB server. Description of the individual options can

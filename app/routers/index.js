@@ -1,4 +1,6 @@
+var _ = require('underscore');
 var guestUser = require('../../config/auth').guestUser;
+var uiConfig = require('../../config/ui');
 
 var limits = 'define("app/models/limits", '
   + JSON.stringify(require(__dirname + '/../../config/limits'))
@@ -6,9 +8,47 @@ var limits = 'define("app/models/limits", '
 
 app.get('/', function(req, res)
 {
+  var ipAddress = req.connection.remoteAddress;
+  var hostname = typeof req.headers.host === 'string'
+    ? req.headers.host.split(':')[0] : 'localhost';
+  var touchEnabled = false;
+
+  for (var i = 0, l = uiConfig.touchEnablers.length; i < l; ++i)
+  {
+    var touchEnabler = uiConfig.touchEnablers[i];
+    var expectedValue;
+    var actualValue;
+
+    switch (touchEnabler.type)
+    {
+      case 'hostname':
+        expectedValue = touchEnabler.value;
+        actualValue = hostname;
+        break;
+
+      case 'ip':
+        expectedValue = touchEnabler.value;
+        actualValue = ipAddress;
+        break;
+    }
+
+    if (actualValue === expectedValue)
+    {
+      touchEnabled = true;
+
+      break;
+    }
+  }
+
+  var user = _.extend(req.session.user || guestUser, {
+    ipAddress: ipAddress,
+    touchEnabled: touchEnabled,
+    gatewayUrl: uiConfig.gatewayUrl(hostname)
+  });
+
   res.render(app.settings.env === 'production' ? 'index-min.ejs' : 'index.ejs', {
     layout: false,
-    user: JSON.stringify(req.session.user || guestUser)
+    user: JSON.stringify(user)
   });
 });
 
