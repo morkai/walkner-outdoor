@@ -4,21 +4,24 @@
 
 ### node.js
 
-Server-side JavaScript.
+Node.js is a server side software system designed for writing scalable
+Internet applications in JavaScript.
 
-Download: http://nodejs.org/#download
-
-Installation instructions: https://github.com/joyent/node/wiki/Installation
+  * __Version__: 0.8.x
+  * __Website__: http://nodejs.org/
+  * __Download__: http://nodejs.org/download/
+  * __Installation guide__: https://github.com/joyent/node/wiki/Installation
 
 ### MongoDB
 
-NoSQL database.
+MongoDB is a scalable, high-performance, open source NoSQL database.
 
-Download: http://www.mongodb.org/downloads
+  * __Version__: 2.x.x
+  * __Website__: http://mongodb.org/
+  * __Download__: http://www.mongodb.org/downloads
+  * __Installation guide__: http://www.mongodb.org/display/DOCS/Quickstart
 
-Installation instructions: http://www.mongodb.org/display/DOCS/Quickstart
-
-### `PATH` executables
+### PATH executables
 
 For the database backup functionality to work, `tar` and `gzip` executables
 should be reachable by `node` process through the `PATH` environmental variable.
@@ -30,22 +33,30 @@ For Windows installations, see [Gow](https://github.com/bmatzelle/gow/wiki).
 
 Clone the repository:
 
-    git clone git://github.com/morkai/walkner-outdoor.git
+```
+git clone git://github.com/morkai/walkner-outdoor.git
+```
 
 or [download](https://github.com/morkai/walkner-outdoor/zipball/master)
 and extract it.
 
 Go to the project's directory:
 
-    $ cd walkner-outdoor/
+```
+cd walkner-outdoor/
+```
 
 Install the dependencies:
 
-    $ npm install
+```
+npm install
+```
 
 Give write permissions to the `var/` directory and all of its children:
 
-    $ chmod -R 0777 var
+```
+chmod -R 0777 var
+```
 
 ## Configuration
 
@@ -198,3 +209,8 @@ following commands:
 
 Application should be available on a port defined in `config/express.js` file
 (`8080` by default). Point the Internet browser to http://127.0.0.1:8080/.
+
+## License
+
+This project is released under the
+[CC BY-NC 3.0](https://raw.github.com/morkai/walkner-outdoor/master/license.md).
