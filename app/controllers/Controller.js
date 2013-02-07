@@ -1,6 +1,6 @@
 var util = require('util');
 var _ = require('underscore');
-var step = require('step');
+var step = require('h5.step');
 var Zone = require('./Zone');
 
 const REQUEST_TIMES_SEND_INTERVAL = 2000;
@@ -82,10 +82,10 @@ Controller.prototype.stopController = function(done)
     {
       if (_.size(controller.zones) === 0)
       {
-        return true;
+        return;
       }
 
-      var group = this.group();
+      var group = this.group;
 
       _.each(controller.zones, function(zone, zoneId)
       {
@@ -96,7 +96,7 @@ Controller.prototype.stopController = function(done)
     },
     function finalizeControllerStep()
     {
-      controller.finalize(this);
+      controller.finalize(this.next());
     },
     function cleanUpStep()
     {
@@ -106,8 +106,6 @@ Controller.prototype.stopController = function(done)
       });
       controller.timers = {};
       controller.controller = null;
-
-      return true;
     },
     done
   );

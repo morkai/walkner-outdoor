@@ -1,4 +1,4 @@
-var step = require('step');
+var step = require('h5.step');
 
 exports.validLeaveStates = [];
 
@@ -13,10 +13,8 @@ exports.enter = function(oldState, options, done)
     step(
       function resetStep()
       {
-        var group = this.group();
-
-        zone.setState(false, group());
-        zone.setLeds({green: false, red: false}, group());
+        zone.setState(false, this.parallel());
+        zone.setLeds({green: false, red: false}, this.parallel());
       },
       function doneStep()
       {

@@ -1,5 +1,3 @@
-var step = require('step');
-
 exports.validLeaveStates = [];
 
 exports.enter = function(oldState, options, done)

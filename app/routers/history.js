@@ -1,4 +1,4 @@
-var step = require('step');
+var step = require('h5.step');
 var auth = require('../utils/middleware').auth;
 
 app.get('/history', auth('viewHistory'), function(req, res, next)
@@ -123,14 +123,14 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
       var initial = {totalTime: 0, totalCount: 0};
 
       HistoryEntry.collection.group(
-        keys, condition, initial, reduceTotalTime, this
+        keys, condition, initial, reduceTotalTime, this.next()
       );
     },
     function assignProgramTotals(err, results)
     {
       if (err)
       {
-        throw err;
+        return this.done(next, err);
       }
 
       stats.programCounts = {
@@ -184,8 +184,6 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
         stats.programTimes.$total[result.finishState] += result.totalTime;
         stats.programTimes.$total.$total += result.totalTime;
       });
-
-      return true;
     },
     function groupTotalTimesByZone()
     {
@@ -193,14 +191,14 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
       var initial = {totalTime: 0, totalCount: 0};
 
       HistoryEntry.collection.group(
-        keys, condition, initial, reduceTotalTime, this
+        keys, condition, initial, reduceTotalTime, this.next()
       );
     },
     function assignTotalTimesByZone(err, results)
     {
       if (err)
       {
-        throw err;
+        return this.done(next, err);
       }
 
       stats.zoneTimes = {
@@ -231,16 +229,9 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
         stats.zoneTimes.$total[result.finishState] += result.totalTime;
         stats.zoneTimes.$total.$total += result.totalTime;
       });
-
-      return true;
     },
-    function groupTotalTimesByDate(err)
+    function groupTotalTimesByDate()
     {
-      if (err)
-      {
-        throw err;
-      }
-
       var diff = Math.round((to - from) / 1000);
       var unit;
       var keyf;
@@ -300,7 +291,7 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
       }
 
       var initial = {totalTime: 0, totalCount: 0};
-      var nextStep = this;
+      var nextStep = this.next();
 
       HistoryEntry.collection.group(
         keyf, condition, initial, reduceTotalTime, function(err, results)
@@ -313,7 +304,7 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
     {
       if (err)
       {
-        throw err;
+        return this.done(next, err);
       }
 
       stats.dateTimes = {
@@ -342,16 +333,9 @@ app.get('/history;stats', auth('stats'), function(req, res, next)
         stats.dateTimes[time][result.finishState] = result.totalTime;
         stats.dateTimes[time].$total += result.totalTime;
       });
-
-      return true;
     },
-    function sendResponse(err)
+    function sendResponse()
     {
-      if (err)
-      {
-        return next(err);
-      }
-
       res.send(stats);
     }
   );

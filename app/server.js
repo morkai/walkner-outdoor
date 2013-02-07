@@ -10,7 +10,7 @@ var express = require('express');
 var MongoStore = require('connect-mongodb');
 var io = require('socket.io');
 var mongoose = require('mongoose');
-var step = require('step');
+var step = require('h5.step');
 
 (function()
 {
@@ -35,7 +35,7 @@ step(
     console.debug('Starting...');
     console.debug('Connecting to MongoDB...');
 
-    var next = this;
+    var next = this.next();
 
     function tryToConnect()
     {
@@ -59,12 +59,10 @@ step(
     console.debug('Connected to MongoDB!');
 
     require('./models');
-
-    return this();
   },
   function markInterruptedHistoryEntries()
   {
-    var next = this;
+    var next = this.next();
 
     app.db.model('HistoryEntry').markInterruptedEntries(function(err, count)
     {
@@ -80,20 +78,20 @@ step(
   {
     console.debug('Starting controller processes...');
 
-    app.db.model('Controller').startAll(true, this);
+    app.db.model('Controller').startAll(true, this.next());
   },
   function startZonesStep()
   {
     console.debug('Started controller processes!');
     console.debug('Starting zones...');
 
-    app.db.model('Zone').startAll(true, this);
+    app.db.model('Zone').startAll(true, this.next());
   },
   function listenStep()
   {
     console.debug('Started zones!');
 
-    app.listen(expressConfig.port, this);
+    app.listen(expressConfig.port, this.next());
   },
   function startBrowser()
   {
@@ -112,8 +110,6 @@ step(
         require('child_process').exec(config.cmd);
       }
     }
-
-    return true;
   },
   function startStep()
   {

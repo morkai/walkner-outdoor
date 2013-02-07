@@ -1,4 +1,4 @@
 /**
  * MongoDB connection URI.
  */
-exports.uri = 'mongodb://localhost/walkner-outdoor';
+exports.uri = 'mongodb://127.0.0.1/walkner-outdoor';

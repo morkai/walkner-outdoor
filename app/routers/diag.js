@@ -4,7 +4,7 @@ var fs = require('fs');
 var exec = require('../utils/exec');
 var path = require('path');
 var _ = require('underscore');
-var step = require('step');
+var step = require('h5.step');
 var auth = require('../utils/middleware').auth;
 var devscan = require('../utils/devscan');
 var controllerProcesses = require('../models/controllerProcesses');
@@ -44,18 +44,16 @@ app.get('/diag', authDiag, function(req, res, next)
           });
         }
       });
-
-      return true;
     },
     function getAllControllersStep()
     {
-      Controller.find().asc('name').run(this);
+      Controller.find().asc('name').run(this.next());
     },
     function setControllersStep(err, allControllers)
     {
       if (err)
       {
-        throw err;
+        return this.done(next, err);
       }
 
       var startedControllers = controllerProcesses.getStartedControllers();
@@ -78,23 +76,21 @@ app.get('/diag', authDiag, function(req, res, next)
 
         controllers.push(controller);
       });
-
-      return true;
     },
     function getAllZonesStep(err)
     {
       if (err)
       {
-        throw err;
+        return this.done(next, err);
       }
 
-      Zone.find().asc('name').run(this);
+      Zone.find().asc('name').run(this.next());
     },
     function setZonesStep(err, allZones)
     {
       if (err)
       {
-        throw err;
+        return this.done(next, err);
       }
 
       var startedZones = controllerProcesses.getStartedZones();
@@ -120,28 +116,14 @@ app.get('/diag', authDiag, function(req, res, next)
 
         zones.push(zone);
       });
-
-      return true;
     },
-    function setProgramsStep(err)
+    function setProgramsStep()
     {
-      if (err)
-      {
-        throw err;
-      }
-
       data.programs = controllerProcesses.getStartedPrograms();
-
-      return true;
     },
-    function getAllBackupsStep(err)
+    function getAllBackupsStep()
     {
-      var nextStep = this;
-
-      if (err)
-      {
-        return nextStep(err);
-      }
+      var nextStep = this.next();
 
       getBackupsList(function(err, backups)
       {
@@ -153,16 +135,9 @@ app.get('/diag', authDiag, function(req, res, next)
         return nextStep();
       });
     },
-    function sendResponseStep(err)
+    function sendResponseStep()
     {
-      if (err)
-      {
-        next(err);
-      }
-      else
-      {
-        res.send(data);
-      }
+      res.send(data);
     }
   );
 });
@@ -340,20 +315,15 @@ app.get('/diag/devscan', authDiag, function(req, res, next)
 function getBackupsList(done)
 {
   step(
-    function getAllBackupsStep(err)
+    function getAllBackupsStep()
     {
-      if (err)
-      {
-        throw err;
-      }
-
-      fs.readdir(diagConfig.backupsPath, this);
+      fs.readdir(diagConfig.backupsPath, this.next());
     },
     function filterAndStatBackupsStep(err, files)
     {
       if (err)
       {
-        throw err;
+        return this.done(done, err);
       }
 
       var backupFileRegExp = /\.tar\.gz$/;
@@ -363,7 +333,7 @@ function getBackupsList(done)
         return backupFileRegExp.test(file);
       });
 
-      var createStatsGroup = this.group();
+      var createStatsGroup = this.group;
 
       files.forEach(function(file)
       {
@@ -390,7 +360,7 @@ function getBackupsList(done)
         return done(err);
       }
 
-      var backups = stats.map(prepareBackupFileFromStats);
+      var backups = (stats || []).map(prepareBackupFileFromStats);
 
       backups.sort(function(a, b)
       {

@@ -4,7 +4,7 @@ const CONNECTED_INPUT_MONITOR_INTERVAL = 1000;
 const INPUT_CHANGE_AFTER_MIN_READS = 1;
 
 var util = require('util');
-var step = require('step');
+var step = require('h5.step');
 var zoneStates = require('./zoneStates');
 
 /**
@@ -438,11 +438,11 @@ Zone.prototype.changeState = function(newStateName, options, done)
   step(
     function leaveOldStateStep()
     {
-      oldState.leave.call(zone, newStateName, options, this);
+      oldState.leave.call(zone, newStateName, options, this.next());
     },
     function enterNewStateStep()
     {
-      newState.enter.call(zone, oldStateName, options, this);
+      newState.enter.call(zone, oldStateName, options, this.next());
     },
     function setCurrentStateStep(err)
     {

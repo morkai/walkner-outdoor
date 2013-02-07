@@ -1,7 +1,7 @@
 var util = require('util');
 var exec = require('child_process').exec;
 var _ = require('underscore');
-var step = require('step');
+var step = require('h5.step');
 var Controller = require('./Controller');
 var config = require('../../config/libcoap');
 
@@ -99,11 +99,9 @@ LibcoapController.prototype.setZoneLeds = function(leds, controllerInfo, done)
   step(
     function setGreenLedStep()
     {
-      var next = this;
-
       if (!leds.hasOwnProperty('green'))
       {
-        return next();
+        return;
       }
 
       var greenLedResource = controllerInfo.greenLedResource
@@ -111,20 +109,18 @@ LibcoapController.prototype.setZoneLeds = function(leds, controllerInfo, done)
 
       var value = Controller.LED_STATE_VALUES['green'][Boolean(leds.green)];
 
-      controller.setResource(greenLedResource, value, next);
+      controller.setResource(greenLedResource, value, this.next());
     },
     function setRedLedStep(err)
     {
       if (err)
       {
-        throw "Nie udało się ustawić zielonej lampy :(";
+        return this.done(done, "Nie udało się ustawić zielonej lampy :(");
       }
-
-      var next = this;
 
       if (!leds.hasOwnProperty('red'))
       {
-        return next();
+        return;
       }
 
       var redLedResource = controllerInfo.redLedResource
@@ -132,11 +128,11 @@ LibcoapController.prototype.setZoneLeds = function(leds, controllerInfo, done)
 
       var value = Controller.LED_STATE_VALUES['red'][Boolean(leds.red)];
 
-      controller.setResource(redLedResource, value, next);
+      controller.setResource(redLedResource, value, this.next());
     },
     function checkErrorStep(err)
     {
-      if (err && typeof err.message === 'string')
+      if (err)
       {
         err = "Nie udało się ustawić czerwonej lampy :(";
       }

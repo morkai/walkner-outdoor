@@ -1,6 +1,6 @@
 var fork = require('child_process').fork;
 var _ = require('underscore');
-var step = require('step');
+var step = require('h5.step');
 var ObjectId = require('mongoose').SchemaTypes.ObjectId;
 var ActiveZone = require('./ActiveZone');
 
@@ -325,20 +325,18 @@ _.extend(ControllerProcess.prototype, {
       function restartControllerStep()
       {
         controllerProcess.setUpChildProcess();
-        controllerProcess.startController(this);
+        controllerProcess.startController(this.next());
       },
       function restartZonesStep(err)
       {
         if (err)
         {
-          throw err;
+          return this.skip(err);
         }
-
-        var group = this.group();
 
         for (var zoneId in activeZones)
         {
-          controllerProcess.startZone(activeZones[zoneId].zone, group());
+          controllerProcess.startZone(activeZones[zoneId].zone, this.group());
         }
       },
       function checkErrorStep(err)

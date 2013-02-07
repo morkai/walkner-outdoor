@@ -1,6 +1,6 @@
 var util = require('util');
 var _ = require('underscore');
-var step = require('step');
+var step = require('h5.step');
 var modbus = require('h5.modbus');
 var Controller = require('./Controller');
 
@@ -131,8 +131,6 @@ ModbusTcpController.prototype.setZoneLeds = function(leds, controllerInfo, done)
   step(
     function setLedsStep()
     {
-      var group = this.group();
-
       for (var led in leds)
       {
         controller.executeTimedRequest({
@@ -140,7 +138,7 @@ ModbusTcpController.prototype.setZoneLeds = function(leds, controllerInfo, done)
           unit: controllerInfo[led + 'LedUnit'],
           address: controllerInfo[led + 'LedOutput'],
           value: Controller.LED_STATE_VALUES[led][Boolean(leds[led])],
-          handler: group()
+          handler: this.group()
         });
       }
     },
@@ -167,7 +165,7 @@ ModbusTcpController.prototype.getZoneInput = function(
   step(
     function getInputStep()
     {
-      var next = this;
+      var next = this.next();
 
       controller.executeTimedRequest({
         fn: 2,

@@ -1,6 +1,5 @@
 var util = require('util');
 var _ = require('underscore');
-var step = require('step');
 var calcRemainingTime = require('../../../utils/program').calcRemainingTime;
 var RemoteZone;
 

@@ -1,7 +1,7 @@
 var net = require('net');
 var util = require('util');
 var _ = require('underscore');
-var step = require('step');
+var step = require('h5.step');
 var coap = require('californium-proxy');
 var codeRegistry = coap.codeRegistry;
 var Controller = require('./Controller');
@@ -95,16 +95,16 @@ CfProxy08Controller.prototype.setZoneLeds = function(leds, controllerInfo, done)
   step(
     function setGreenLedStep()
     {
-      var next = this;
-
       if (!leds.hasOwnProperty('green'))
       {
-        return next();
+        return;
       }
 
       var value = Controller.LED_STATE_VALUES['green'][Boolean(leds.green)];
 
       var req = controller.request('put', '/io/greenLed', new Buffer([value]));
+
+      var next = this.next();
 
       req.on('error', next);
 
@@ -117,19 +117,19 @@ CfProxy08Controller.prototype.setZoneLeds = function(leds, controllerInfo, done)
     {
       if (err)
       {
-        throw "Nie udało się ustawić zielonej lampy :(";
+        return this.done(done, "Nie udało się ustawić zielonej lampy :(");
       }
-
-      var next = this;
 
       if (!leds.hasOwnProperty('red'))
       {
-        return next();
+        return;
       }
 
       var value = Controller.LED_STATE_VALUES['red'][Boolean(leds.red)];
 
       var req = controller.request('put', '/io/redLed', new Buffer([value]));
+
+      var next = this.next();
 
       req.on('error', next);
 
@@ -140,7 +140,7 @@ CfProxy08Controller.prototype.setZoneLeds = function(leds, controllerInfo, done)
     },
     function checkErrorStep(err)
     {
-      if (err && typeof err.message === 'string')
+      if (err)
       {
         err = "Nie udało się ustawić czerwonej lampy :(";
       }

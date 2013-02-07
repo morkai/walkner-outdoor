@@ -1,5 +1,5 @@
 var _ = require('underscore');
-var step = require('step');
+var step = require('h5.step');
 
 exports.validLeaveStates = [
   'disconnected',
@@ -154,14 +154,14 @@ function executeStep(zone, stepIndex, stepIteration, turnOnStartTime)
   step(
     function turnOnStep()
     {
-      var next = this;
+      var next = this.next();
       var startTime = turnOnStartTime || Date.now();
 
       zone.setState(true, function(err)
       {
         if (!program.running)
         {
-          return;
+          return next();
         }
 
         if (err)
@@ -189,14 +189,14 @@ function executeStep(zone, stepIndex, stepIteration, turnOnStartTime)
     {
       if (!program.running)
       {
-        return;
+        return this.done();
       }
 
-      var next = this;
+      var next = this.next();
 
       if (err)
       {
-        throw err;
+        return next(err);
       }
 
       var startTime = Date.now();
@@ -207,7 +207,7 @@ function executeStep(zone, stepIndex, stepIteration, turnOnStartTime)
       {
         if (!program.running)
         {
-          return;
+          return next();
         }
 
         if (err)

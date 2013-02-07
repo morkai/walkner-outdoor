@@ -1,5 +1,5 @@
 var _ = require('underscore');
-var step = require('step');
+var step = require('h5.step');
 var limits = require('../../config/limits');
 var auth = require('../utils/middleware').auth;
 var controllerProcesses = require('../models/controllerProcesses');
@@ -66,53 +66,54 @@ app.get('/zones/:id', auth('viewZones'), function(req, res, next)
   step(
     function findZoneStep()
     {
-      app.db.model('Zone').findById(req.params.id, this);
+      app.db.model('Zone').findById(req.params.id, this.next());
     },
     function findControllerStep(err, zone)
     {
       if (err)
       {
-        throw err;
+        return this.skip(err);
       }
 
       if (!zone)
       {
-        throw 404;
+        return this.skip(404);
       }
 
-      var zone = zone.toJSON();
-      var next = this;
+      zone = zone.toJSON();
+
+      var nextStep = this.next();
 
       if (!zone.controller)
       {
-        return next(null, zone);
+        return nextStep(null, zone);
       }
 
       var controllerId = zone.controller;
       var fields = {name: 1, type: 1};
 
       app.db.model('Controller').findById(controllerId, fields).run(
-        function(err, controller) { next(err, zone, controller); }
+        function(err, controller) { nextStep(err, zone, controller); }
       );
     },
     function findProgramStep(err, zone, controller)
     {
       if (err)
       {
-        throw err;
+        return this.skip(err);
       }
 
       zone.controller = controller ? controller.toJSON() : null;
 
-      var next = this;
+      var nextStep = this.next();
 
       if (!zone.program)
       {
-        return next(null, zone);
+        return nextStep(null, zone);
       }
 
       app.db.model('Program').findById(zone.program, {name: 1}).run(
-        function(err, program) { next(err, zone, program); }
+        function(err, program) { nextStep(err, zone, program); }
       );
     },
     function sendResponseStep(err, zone, program)
@@ -305,62 +306,52 @@ app.get('/zones/:id/programs', function(req, res, nextHandler)
   step(
     function findZoneStep()
     {
-      Zone.findById(req.params.id, {name: 1, program: 1}).run(this);
+      Zone.findById(req.params.id, {name: 1, program: 1}).run(this.next());
     },
     function fetchAssignedProgramStep(err, zone)
     {
-      var nextStep = this;
-
       if (err)
       {
-        return nextStep(err);
+        return this.skip(err);
       }
 
       if (!zone)
       {
-        return nextStep(404);
+        return this.skip(404);
       }
 
-      Program.findById(zone.program).run(
-        function(err, program)
-        {
-          nextStep(err, zone, program);
-        }
-      );
+      var nextStep = this.next();
+
+      Program.findById(zone.program).run(function(err, program)
+      {
+        nextStep(err, zone, program);
+      });
     },
     function setAssignedProgram(err, zone, assignedProgram)
     {
-      var nextStep = this;
-
       if (err)
       {
-        return nextStep(err);
+        return this.skip(err);
       }
 
-      var data = {zone: {_id: zone._id, name: zone.name}};
+      this.data = {zone: {_id: zone._id, name: zone.name}};
 
       if (assignedProgram)
       {
-        data.assignedProgram = assignedProgram.toJSON();
+        this.data.assignedProgram = assignedProgram.toJSON();
       }
-
-      return data;
     },
-    function fetchAllProgramsStep(err, data)
+    function fetchAllProgramsStep()
     {
-      var nextStep = this;
-
-      if (err)
-      {
-        return nextStep(err);
-      }
-
       var user = req.session.user;
 
       if (!user || !user.privileges.pickProgram)
       {
-        return nextStep(null, data);
+        return;
       }
+
+      var nextStep = this.next();
+      var data = this.data;
 
       Program.find({}, {name: 1}).run(function(err, allPrograms)
       {
@@ -374,17 +365,17 @@ app.get('/zones/:id/programs', function(req, res, nextHandler)
           return program.toJSON();
         });
 
-        return nextStep(null, data);
+        return nextStep();
       });
     },
-    function sendResponseStep(err, data)
+    function sendResponseStep(err)
     {
       if (err)
       {
         return err === 404 ? res.send(404) : nextHandler(err);
       }
 
-      return res.send(data);
+      return res.send(this.data);
     }
   );
 });
