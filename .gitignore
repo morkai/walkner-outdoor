@@ -1,3 +1,4 @@
 .idea
-var/backups/*
+var/backups/*.tar.gz
 var/logs/*
+Californium.properties
