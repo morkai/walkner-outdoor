@@ -14,6 +14,18 @@ require.config({
   }
 });
 
+requirejs.onError = function(err)
+{
+  if (err.requireType === 'timeout')
+  {
+    window.location.reload();
+  }
+  else
+  {
+    throw err;
+  }
+};
+
 require(
 [
   'domReady',
