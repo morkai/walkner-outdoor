@@ -46,7 +46,7 @@ app.get('/', function(req, res)
     gatewayUrl: uiConfig.gatewayUrl(hostname)
   });
 
-  res.render(app.settings.env === 'production' ? 'index-min.ejs' : 'index.ejs', {
+  res.render('index.ejs', {
     layout: false,
     user: JSON.stringify(user)
   });

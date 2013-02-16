@@ -40,15 +40,10 @@ git clone git://github.com/morkai/walkner-outdoor.git
 or [download](https://github.com/morkai/walkner-outdoor/zipball/master)
 and extract it.
 
-Go to the project's directory:
+Go to the project's directory and install the dependencies:
 
 ```
 cd walkner-outdoor/
-```
-
-Install the dependencies:
-
-```
 npm install
 ```
 
@@ -187,25 +182,29 @@ be found in
 
 If not yet running, start the MongoDB:
 
-    $ mongod -f walkner-outdoor/config/mongod.conf
+```
+mongod -f walkner-outdoor/config/mongod.conf
+```
 
 Start the application server in `development` or `production` environment:
 
   * under *nix:
 
-        $ NODE_ENV=development node walkner-outdoor/server/index.js
+    ```
+    NODE_ENV=development node walkner-outdoor/server/index.js
+    ```
 
   * under Windows:
 
-        $ SET NODE_ENV=development
-        $ node walkner-outdoor/server/index.js
+    ```
+    SET NODE_ENV=development
+    node walkner-outdoor/server/index.js
+    ```
 
-To run the application in `production` environment one must have
-[r.js](https://github.com/jrburke/r.js) properly set up and then execute the
-following commands:
+To run the application in `production` environment one must optimize and minify
+the frontend using r.js. To do that, execute the `public-build` npm script:
 
-    $ r.js walkner-outdoor/bin/build-client.js
-    $ r.js walkner-outdoor/bin/build-min.js
+npm run-script public-build
 
 Application should be available on a port defined in `config/express.js` file
 (`8080` by default). Point the Internet browser to http://127.0.0.1:8080/.

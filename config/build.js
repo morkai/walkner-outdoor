@@ -3,7 +3,6 @@
   dir: "../public-build",
   name: "app/main",
   wrap: true,
-  optimizeCss: "standard",
   paths: {
     "text"     : "vendor/require/text",
     "order"    : "vendor/require/order",
