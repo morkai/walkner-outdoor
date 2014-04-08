@@ -211,5 +211,6 @@ Application should be available on a port defined in `config/express.js` file
 
 ## License
 
-This project is released under the
-[NPOSL-3.0](https://raw.github.com/morkai/walkner-outdoor/master/license.md).
+walkner-outdoor is released under the [CC BY-NC-SA 4.0 License](https://github.com/morkai/walkner-outdoor/blob/master/license.md).
+
+Copyright (c) 2014, Łukasz Walukiewicz (lukasz@walukiewicz.eu). Some Rights Reserved.
